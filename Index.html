@@ -1,1 +1,193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2D6CDF" />
+
+  <title>To Do List</title>
+
+  <!-- PWA manifest : décrit comment l’app s’installe et s’affiche -->
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <!-- Icône iOS (pour l’écran d’accueil) -->
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon-180.png" />
+
+  <link rel="stylesheet" href="./css/app.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logoMark" aria-hidden="true">✓</div>
+      <div class="brandText">
+        <div class="title">To Do List</div>
+        <div class="subtitle">Local • iPad</div>
+      </div>
+    </div>
+
+    <div class="topActions">
+      <button class="btn ghost" id="btnPersist" title="Demander stockage persistant (si disponible)">
+        Stockage
+      </button>
+
+      <label class="btn ghost fileBtn" title="Importer un CSV (Numbers)">
+        Import CSV
+        <input id="fileImport" type="file" accept=".csv,text/csv" hidden />
+      </label>
+
+      <button class="btn ghost" id="btnExport" title="Exporter en CSV">
+        Export CSV
+      </button>
+
+      <button class="btn danger" id="btnReset" title="Effacer toutes les données locales">
+        Reset
+      </button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <!-- Onglets -->
+    <nav class="tabs" role="tablist" aria-label="Onglets">
+      <button class="tab active" id="tabTodo" role="tab" aria-selected="true">To Do List</button>
+      <button class="tab" id="tabArchive" role="tab" aria-selected="false">Archives</button>
+    </nav>
+
+    <!-- Écran To Do -->
+    <section class="screen show" id="screenTodo" role="tabpanel" aria-labelledby="tabTodo">
+      <div class="panel todoTheme">
+        <div class="panelHeader">
+          <h2 class="panelTitle handwritten">À faire aujourd’hui</h2>
+          <div class="panelHint">Cochez “Terminé” → la ligne passe automatiquement en Archives.</div>
+        </div>
+
+        <!-- Formulaire ajout -->
+        <form id="taskForm" class="card formCard">
+          <div class="grid2">
+            <div class="field">
+              <label>Famille de tâches</label>
+              <select id="famille" required></select>
+            </div>
+
+            <div class="field">
+              <label>Catégorie d’interlocuteur</label>
+              <select id="public" required></select>
+            </div>
+
+            <div class="field gridSpan2">
+              <label>Action précise</label>
+              <input id="actionPrecise" type="text" placeholder="Ex : Appeler Charlotte" required />
+            </div>
+
+            <div class="field">
+              <label>Nom</label>
+              <input id="nom" type="text" placeholder="Ex : LALLIER" />
+            </div>
+
+            <div class="field">
+              <label>Date limite</label>
+              <input id="dateLimite" type="date" />
+            </div>
+
+            <div class="field">
+              <label>Temps estimé (HH:MM)</label>
+              <input id="tempsEstime" type="text" inputmode="numeric" placeholder="01:00" />
+            </div>
+
+            <div class="field">
+              <label>Temps consacré (HH:MM)</label>
+              <input id="tempsConsacre" type="text" inputmode="numeric" placeholder="00:30" />
+            </div>
+
+            <div class="field">
+              <label>Statut</label>
+              <select id="statut" required></select>
+            </div>
+
+            <div class="field">
+              <label class="inline">
+                <input id="reunion" type="checkbox" />
+                <span>Réunion</span>
+              </label>
+            </div>
+
+            <div class="field gridSpan2">
+              <label>Action supplémentaire</label>
+              <input id="actionSup" type="text" placeholder="Ex : Mail + relance" />
+            </div>
+          </div>
+
+          <div class="formFooter">
+            <label class="inline">
+              <input id="aAfficher" type="checkbox" checked />
+              <span>À afficher</span>
+            </label>
+
+            <button class="btn primary" type="submit">
+              Ajouter
+            </button>
+          </div>
+        </form>
+
+        <!-- Filtres -->
+        <div class="card filtersCard">
+          <div class="filtersRow">
+            <div class="field small">
+              <label>Filtre statut</label>
+              <select id="filterStatut">
+                <option value="__ALL__">Tous</option>
+              </select>
+            </div>
+
+            <div class="field small">
+              <label>Filtre famille</label>
+              <select id="filterFamille">
+                <option value="__ALL__">Toutes</option>
+              </select>
+            </div>
+
+            <div class="field grow">
+              <label>Recherche</label>
+              <input id="searchTodo" type="search" placeholder="Rechercher (action, nom…)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Liste -->
+        <div class="listWrap" id="todoList"></div>
+      </div>
+    </section>
+
+    <!-- Écran Archives -->
+    <section class="screen" id="screenArchive" role="tabpanel" aria-labelledby="tabArchive">
+      <div class="panel archiveTheme">
+        <div class="panelHeader">
+          <h2 class="panelTitle typewriter">Archives</h2>
+          <div class="panelHint">Style “dossier cartonné” années 30.</div>
+        </div>
+
+        <div class="card filtersCard archiveFilters">
+          <div class="filtersRow">
+            <div class="field small">
+              <label>Filtre famille</label>
+              <select id="filterArchiveFamille">
+                <option value="__ALL__">Toutes</option>
+              </select>
+            </div>
+
+            <div class="field grow">
+              <label>Recherche</label>
+              <input id="searchArchive" type="search" placeholder="Rechercher dans les archives…" />
+            </div>
+          </div>
+        </div>
+
+        <div class="listWrap" id="archiveList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footNote">
+      Données locales (IndexedDB). Offline via service worker.
+    </div>
 
