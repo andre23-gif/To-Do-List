@@ -6,14 +6,11 @@
   <title>To Do List</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  ./manifest.webmanifest
+  ./icon-192.png
   <meta name="theme-color" content="#0B1F3B">
 
   <style>
-    /* =======================
-       THEME ART DÉCO (bleu nuit + doré)
-       ======================= */
     :root{
       --navy:#0B1F3B;
       --navy2:#07162A;
@@ -39,9 +36,6 @@
       font-family: ui-rounded, system-ui, -apple-system, sans-serif;
     }
 
-    /* =======================
-       HEADER + GROS BOUTONS
-       ======================= */
     header{
       padding:18px 14px 12px;
       background: linear-gradient(180deg, rgba(11,31,59,.92), rgba(7,22,42,.92));
@@ -94,16 +88,6 @@
       border-color: rgba(226,201,120,.9);
     }
 
-    .tab.green{
-      border-color: rgba(44,167,104,.75);
-      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
-      color:#fff;
-    }
-    .tab.green:hover{ filter: brightness(1.05); }
-
-    /* =======================
-       LAYOUT
-       ======================= */
     main{
       max-width: 980px;
       margin: 0 auto;
@@ -111,9 +95,7 @@
     }
     .panel{ margin-top: 12px; }
 
-    /* =======================
-       CADRES ART DÉCO (pur CSS)
-       ======================= */
+    /* Cadre art déco */
     .deco-frame{
       --c: var(--gold);
       --b: 2px;
@@ -134,44 +116,40 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-
     .card-inner{
       padding: 16px;
       border-radius: 10px;
       background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));
     }
 
-    /* =======================
-       FORM (To Do)
-       ======================= */
+    /* FORM */
     .grid{
       display:grid;
       gap:12px;
       grid-template-columns: repeat(2, minmax(0,1fr));
     }
-    .grid-compact{
-      margin-top: 10px;
-      display:grid;
-      gap:12px;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-    }
-    @media (max-width: 860px){
-      .grid-compact{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
     @media (max-width: 760px){
       .grid{ grid-template-columns: 1fr; }
-      .grid-compact{ grid-template-columns: 1fr; }
+    }
+
+    /* Les 4 champs (temps/date/statut) sur DEUX LIGNES + petits encarts */
+    .grid-mini{
+      margin-top: 10px;
+      display:grid;
+      gap:10px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
     }
 
     label span{
       display:block;
       font-size:12px;
-      opacity:.8;
+      opacity:.82;
       margin:0 0 6px;
       color: rgba(11,31,59,.88);
       font-weight: 800;
       letter-spacing: .2px;
     }
+
     input, select, textarea{
       width:100%;
       padding:12px 12px;
@@ -182,6 +160,15 @@
       outline:none;
     }
     textarea{ min-height: 90px; resize: vertical; }
+
+    /* Petits encarts (hauteur/visuel) */
+    .mini-field input,
+    .mini-field select{
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
     input:focus, select:focus, textarea:focus{
       border-color: rgba(200,162,74,.9);
       box-shadow: 0 0 0 4px rgba(200,162,74,.18);
@@ -220,11 +207,8 @@
       border: 2px solid rgba(255,255,255,.12);
       box-shadow: 0 10px 22px rgba(0,0,0,.14);
     }
-    .btn.green:active{ transform: translateY(1px); }
 
-    /* =======================
-       LISTES
-       ======================= */
+    /* LISTES */
     .list-header{
       display:flex;
       align-items:center;
@@ -253,14 +237,14 @@
       gap:10px;
       padding:12px;
       border-radius: 14px;
-      background:
-        linear-gradient(180deg, rgba(11,31,59,.05), rgba(200,162,74,.06));
+      background: linear-gradient(180deg, rgba(11,31,59,.05), rgba(200,162,74,.06));
       border: 1px solid rgba(7,22,42,.10);
     }
     .item.meeting{
       background: linear-gradient(180deg, rgba(31,122,76,.10), rgba(44,167,104,.16));
       border-color: rgba(31,122,76,.20);
     }
+
     .main{ flex:1; }
     .line{
       font-weight: 950;
@@ -273,27 +257,6 @@
       margin-top:4px;
       color: rgba(7,22,42,.82);
       line-height: 1.35;
-    }
-
-    .pill-row{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-    .mini{
-      font-size: 12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(7,22,42,.14);
-      background: rgba(255,255,255,.85);
-      color: rgba(7,22,42,.92);
-      font-weight: 800;
-    }
-    .mini.status{
-      border-color: rgba(200,162,74,.45);
-      background: rgba(255,255,255,.92);
     }
 
     .icon-btn{
@@ -324,9 +287,21 @@
       font-size: 18px;
     }
 
-    /* =======================
-       ARCHIVES : vieux papier + vieux classeur
-       ======================= */
+    /* Statut petit à droite */
+    .status-small{
+      min-width: 128px;
+      max-width: 150px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(200,162,74,.45);
+      background: rgba(255,255,255,.92);
+      font-weight: 900;
+      color: rgba(7,22,42,.92);
+      height: 40px;
+      align-self: center;
+    }
+
+    /* ARCHIVES : vieux papier + classeur */
     .archive-wrapper{
       position: relative;
       padding-left: 18px;
@@ -368,9 +343,7 @@
       margin-top:6px;
     }
 
-    /* =======================
-       MODAL (Réunion)
-       ======================= */
+    /* MODAL */
     .modal-overlay{
       position: fixed;
       inset:0;
@@ -419,37 +392,67 @@
       padding: 14px;
     }
 
-    /* =======================
-       STATS
-       ======================= */
-    .stats-grid{
-      display:grid;
-      gap:12px;
-      grid-template-columns: 1fr;
+    /* Réunion checkbox (encart vert doré) */
+    .meeting-banner{
+      margin-bottom: 12px;
+      --c: rgba(44,167,104,.80);
     }
-    .stats-controls{
+    .meeting-banner .card-inner{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-end;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: linear-gradient(135deg, rgba(31,122,76,.10), rgba(44,167,104,.10));
     }
-    .canvas-wrap{
-      background: rgba(255,255,255,.88);
-      border: 1px solid rgba(7,22,42,.12);
+    .meeting-check{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      user-select:none;
+      font-weight: 950;
+      color: var(--navy2);
+      letter-spacing: .2px;
+    }
+    .meeting-check input{ display:none; }
+    .check-box{
+      width: 44px; height: 44px;
       border-radius: 14px;
-      padding: 10px;
-      overflow:hidden;
+      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
+      border: 2px solid rgba(226,201,120,.55);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.10);
+      position: relative;
     }
-    canvas{ width:100%; height: 280px; }
-    .small-note{
-      font-size:12px;
-      opacity:.7;
-      margin-top:8px;
+    .meeting-check input:checked + .check-box::after{
+      content:"✓";
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: var(--gold2);
+      font-size: 24px;
+      font-weight: 1000;
+      text-shadow: 0 1px 0 rgba(0,0,0,.25);
+    }
+    .meeting-label{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .meeting-label .top{
+      color: var(--gold2);
+      font-weight: 1000;
+      font-size: 16px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+    }
+    .meeting-label .sub{
+      color: rgba(7,22,42,.70);
+      font-size: 12px;
+      font-weight: 800;
     }
 
-    /* =======================
-       FOOTER
-       ======================= */
     footer{
       position:fixed;
       left:0; right:0; bottom:0;
@@ -475,8 +478,6 @@
       <div class="tabs" role="tablist" aria-label="Onglets">
         <button id="tab-todo" class="tab active" type="button" role="tab">À faire</button>
         <button id="tab-archive" class="tab" type="button" role="tab">Archives</button>
-        <button id="tab-stats" class="tab" type="button" role="tab">Statistiques</button>
-        <button id="btn-meeting" class="tab green" type="button">Réunion</button>
       </div>
     </div>
   </header>
@@ -484,6 +485,23 @@
   <main>
     <!-- ONGLET TODO -->
     <section id="todo-section" class="panel">
+
+      <!-- Encadré Réunion (case à cocher + ouvre le pop-up) -->
+      <div class="deco-frame meeting-banner" style="--c: rgba(44,167,104,.80);">
+        <div class="card-inner">
+          <label class="meeting-check" for="meetingToggle">
+            <input id="meetingToggle" type="checkbox">
+            <span class="check-box"></span>
+            <span class="meeting-label">
+              <span class="top">Réunion</span>
+              <span class="sub">Créer un rendez-vous (popup)</span>
+            </span>
+          </label>
+
+          <button class="btn green" id="meetingQuick" type="button">Ouvrir</button>
+        </div>
+      </div>
+
       <div class="deco-frame">
         <div class="card-inner">
           <form id="add-form">
@@ -509,24 +527,26 @@
               </label>
             </div>
 
-            <!-- LIGNE COMPACTE (moins large visuellement) -->
-            <div class="grid-compact">
-              <label>
+            <!-- 2 lignes, petits encarts -->
+            <div class="grid-mini">
+              <label class="mini-field">
                 <span>Temps estimé</span>
                 <input id="tempsEstime" type="time" step="60">
               </label>
 
-              <label>
+              <label class="mini-field">
                 <span>Temps réel</span>
                 <input id="tempsReel" type="time" step="60">
               </label>
+            </div>
 
-              <label>
+            <div class="grid-mini">
+              <label class="mini-field">
                 <span>Date limite</span>
                 <input id="dateLimite" type="date">
               </label>
 
-              <label>
+              <label class="mini-field">
                 <span>Statut</span>
                 <select id="statut"></select>
               </label>
@@ -563,54 +583,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ONGLET STATISTIQUES -->
-    <section id="stats-section" class="panel" hidden>
-      <div class="deco-frame">
-        <div class="card-inner">
-          <div class="list-header">
-            <h2 class="list-title">Statistiques</h2>
-          </div>
-
-          <div class="stats-controls">
-            <label style="min-width:180px;">
-              <span>Du</span>
-              <input id="statsFrom" type="date">
-            </label>
-            <label style="min-width:180px;">
-              <span>Au</span>
-              <input id="statsTo" type="date">
-            </label>
-            <label style="min-width:220px;">
-              <span>Temps à analyser</span>
-              <select id="statsTimeMode">
-                <option value="reel">Temps réel</option>
-                <option value="estime">Temps estimé</option>
-              </select>
-            </label>
-            <button class="btn primary" id="statsRefresh" type="button">Mettre à jour</button>
-          </div>
-
-          <div class="stats-grid" style="margin-top:12px;">
-            <div class="canvas-wrap">
-              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Courbe : minutes par jour</div>
-              <canvas id="lineChart" width="1000" height="280"></canvas>
-              <div class="small-note">Source : dates limite (ou date de création si vide).</div>
-            </div>
-
-            <div class="canvas-wrap">
-              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Camembert : répartition par famille</div>
-              <canvas id="pieChart" width="1000" height="280"></canvas>
-            </div>
-
-            <div class="canvas-wrap">
-              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Histogramme : par statut</div>
-              <canvas id="barChart" width="1000" height="280"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -623,25 +595,33 @@
   <div id="meetingModal" class="modal-overlay" aria-hidden="true">
     <div class="modal deco-frame" style="--c: var(--green2);">
       <div class="modal-head">
-        <h3 class="modal-title"><span class="title-badge" style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));color:#fff;">R</span> Réunion</h3>
+        <h3 class="modal-title">
+          <span class="title-badge" style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));color:#fff;">R</span>
+          Réunion
+        </h3>
         <button class="close-x" id="closeMeeting" type="button">✕</button>
       </div>
       <div class="modal-body">
         <form id="meeting-form">
-          <div class="grid-compact">
-            <label>
+          <!-- Date + Heure (ligne 1) -->
+          <div class="grid-mini">
+            <label class="mini-field">
               <span>Date</span>
               <input id="m_date" type="date" required>
             </label>
-            <label>
+            <label class="mini-field">
               <span>Heure</span>
               <input id="m_time" type="time" step="60" required>
             </label>
-            <label>
+          </div>
+
+          <!-- Lieu + Personnes (ligne 2) -->
+          <div class="grid-mini" style="margin-top:10px;">
+            <label class="mini-field">
               <span>Lieu</span>
               <input id="m_place" placeholder="Ex : Salle 12 / Visio">
             </label>
-            <label>
+            <label class="mini-field">
               <span>Personnes invitées</span>
               <input id="m_people" placeholder="Ex : Nom1, Nom2...">
             </label>
@@ -650,7 +630,7 @@
           <div class="grid" style="margin-top:10px;">
             <label>
               <span>Besoins particuliers</span>
-              <textarea id="m_needs" placeholder="Ex : vidéoprojecteur, documents, etc."></textarea>
+              <textarea id="m_needs" placeholder="Ex : vidéoprojecteur, documents..."></textarea>
             </label>
             <label>
               <span>Compte rendu</span>
@@ -668,51 +648,36 @@
   </div>
 
   <script>
-    /****************************************************************
-     * MENUS déroulants (Macros) + "Moi-même"
-     ****************************************************************/
     const FAMILLES = [
       "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
       "Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir",
       "Pépinières","Photocopies","Préparation","Réunion"
     ];
-
     const CATEGORIES = [
       "Moi-même","Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"
     ];
-
     const STATUTS = ["A faire","En cours","Terminé"];
 
-    /****************************************************************
-     * STOCKAGE LOCAL IndexedDB
-     ****************************************************************/
     const DB_NAME = "todo_local_db";
-    const DB_VERSION = 4; // (statut dynamique + réunions + stats)
+    const DB_VERSION = 5;
     const STORE = "items";
 
     function openDb(){
       return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
-
         req.onupgradeneeded = () => {
           const db = req.result;
           if (!db.objectStoreNames.contains(STORE)) {
             const store = db.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
             store.createIndex("by_statut", "statut");
             store.createIndex("by_archivedAt", "archivedAt");
-            store.createIndex("by_createdAt", "createdAt");
           }
         };
-
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
       });
     }
-
-    function os(db, mode="readonly"){
-      return db.transaction(STORE, mode).objectStore(STORE);
-    }
-
+    function os(db, mode="readonly"){ return db.transaction(STORE, mode).objectStore(STORE); }
     function addItem(db, item){
       return new Promise((resolve, reject) => {
         const req = os(db, "readwrite").add(item);
@@ -720,7 +685,6 @@
         req.onerror = () => reject(req.error);
       });
     }
-
     function putItem(db, item){
       return new Promise((resolve, reject) => {
         const req = os(db, "readwrite").put(item);
@@ -728,7 +692,6 @@
         req.onerror = () => reject(req.error);
       });
     }
-
     function getAll(db){
       return new Promise((resolve, reject) => {
         const req = os(db).getAll();
@@ -736,7 +699,6 @@
         req.onerror = () => reject(req.error);
       });
     }
-
     async function updateStatus(db, id, statut){
       const items = await getAll(db);
       const item = items.find(x => x.id === id);
@@ -746,11 +708,7 @@
       if (statut !== "Terminé") item.archivedAt = null;
       await putItem(db, item);
     }
-
-    async function unarchiveToTodo(db, id){
-      await updateStatus(db, id, "A faire");
-    }
-
+    async function unarchiveToTodo(db, id){ await updateStatus(db, id, "A faire"); }
     function deleteItem(db, id){
       return new Promise((resolve, reject) => {
         const req = os(db, "readwrite").delete(id);
@@ -759,9 +717,6 @@
       });
     }
 
-    /****************************************************************
-     * UI helpers
-     ****************************************************************/
     let db = null;
     const $ = (id) => document.getElementById(id);
 
@@ -774,59 +729,67 @@
         sel.add(opt);
       });
     }
-
     function switchTab(tab){
-      const todo = $("todo-section");
-      const arch = $("archive-section");
-      const stats = $("stats-section");
-
-      const bTodo = $("tab-todo");
-      const bArch = $("tab-archive");
-      const bStats = $("tab-stats");
-
-      todo.hidden = tab !== "todo";
-      arch.hidden = tab !== "archive";
-      stats.hidden = tab !== "stats";
-
-      bTodo.classList.toggle("active", tab === "todo");
-      bArch.classList.toggle("active", tab === "archive");
-      bStats.classList.toggle("active", tab === "stats");
+      $("todo-section").hidden = (tab !== "todo");
+      $("archive-section").hidden = (tab !== "archive");
+      $("tab-todo").classList.toggle("active", tab==="todo");
+      $("tab-archive").classList.toggle("active", tab==="archive");
     }
-
     function esc(str){
       return (str || "").replace(/[&<>"']/g, (m) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
       }[m]));
     }
 
-    function parseTimeToMinutes(t){
-      if (!t || typeof t !== "string" || !t.includes(":")) return 0;
-      const [hh, mm] = t.split(":").map(n => parseInt(n,10));
-      if (Number.isNaN(hh) || Number.isNaN(mm)) return 0;
-      return hh * 60 + mm;
+    function openMeetingModal(){
+      $("meetingModal").classList.add("open");
+      $("meetingModal").setAttribute("aria-hidden","false");
+    }
+    function closeMeetingModal(){
+      $("meetingModal").classList.remove("open");
+      $("meetingModal").setAttribute("aria-hidden","true");
+      $("meeting-form").reset();
+      // remet la case à décocher à false
+      $("meetingToggle").checked = false;
     }
 
-    function dateKeyForItem(item){
-      // Priorité : date limite, sinon date réunion, sinon date création
-      if (item.dateLimite) return item.dateLimite;
-      if (item.meeting && item.meeting.date) return item.meeting.date;
-      const d = new Date(item.createdAt || Date.now());
-      return d.toISOString().slice(0,10);
+    async function createMeetingTask(){
+      const meeting = {
+        date: $("m_date").value,
+        time: $("m_time").value,
+        place: $("m_place").value.trim(),
+        people: $("m_people").value.trim(),
+        needs: $("m_needs").value.trim(),
+        minutes: $("m_minutes").value.trim()
+      };
+
+      const label = `Réunion ${meeting.date || ""} ${meeting.time || ""}`.trim();
+
+      const item = {
+        createdAt: Date.now(),
+        actionPrecise: label || "Réunion",
+        famille: "Réunion",
+        categorie: "Moi-même",
+        nom: meeting.people || "",
+        tempsEstime: "",
+        tempsReel: "",
+        dateLimite: meeting.date || "",
+        statut: "A faire",
+        archivedAt: null,
+        isMeeting: true,
+        meeting
+      };
+
+      await addItem(db, item);
     }
 
-    /****************************************************************
-     * RENDER
-     ****************************************************************/
     async function render(){
       const items = await getAll(db);
-
       const todoItems = items.filter(x => x.statut !== "Terminé");
       const archItems = items.filter(x => x.statut === "Terminé")
                              .sort((a,b) => (b.archivedAt||0) - (a.archivedAt||0));
-
       renderTodo(todoItems);
       renderArchive(archItems);
-      renderStats(items); // stats se met à jour en arrière-plan
     }
 
     function renderTodo(list){
@@ -847,7 +810,7 @@
           : "";
 
         li.innerHTML = `
-          <button class="icon-btn" title="Marquer Terminé">✓</button>
+          <button class="icon-btn" title="Terminé">✓</button>
           <div class="main">
             <div class="line">${esc(item.actionPrecise)}</div>
             <div class="meta">
@@ -857,31 +820,28 @@
               ${temps ? " • " + temps : ""}
               ${meetingInfo ? " • " + meetingInfo : ""}
             </div>
-            <div class="pill-row">
-              <select class="mini status" aria-label="Statut">
-                ${STATUTS.filter(s => s !== "Terminé").map(s => `<option value="${s}" ${item.statut===s?"selected":""}>${s}</option>`).join("")}
-                <option value="Terminé">Terminé</option>
-              </select>
-              ${item.isMeeting ? `<span class="mini" style="border-color:rgba(31,122,76,.35);background:rgba(31,122,76,.06);color:rgba(11,31,59,.92);">Réunion</span>` : ""}
-            </div>
           </div>
+
+          <!-- statut petit à droite -->
+          <select class="status-small" aria-label="Statut">
+            ${STATUTS.map(s => `<option value="${s}" ${item.statut===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+
           <button class="icon-btn trash" title="Supprimer">🗑</button>
         `;
 
         const btnDone = li.querySelector(".icon-btn");
         const btnDel = li.querySelector(".trash");
-        const statusSel = li.querySelector("select.status");
+        const statusSel = li.querySelector(".status-small");
 
         btnDone.addEventListener("click", async () => {
           await updateStatus(db, item.id, "Terminé");
           await render();
         });
-
         btnDel.addEventListener("click", async () => {
           await deleteItem(db, item.id);
           await render();
         });
-
         statusSel.addEventListener("change", async (e) => {
           await updateStatus(db, item.id, e.target.value);
           await render();
@@ -906,7 +866,7 @@
         ].filter(Boolean).join(" • ");
 
         li.innerHTML = `
-          <button class="icon-btn back" title="Reprendre (retour à À faire)">↩︎</button>
+          <button class="icon-btn back" title="Reprendre">↩︎</button>
           <div class="main">
             <div class="line">${esc(item.actionPrecise)}</div>
             <div class="meta">
@@ -929,15 +889,12 @@
       });
     }
 
-    /****************************************************************
-     * IMPORT / EXPORT CSV (format Numbers ; )
-     ****************************************************************/
+    // Import / Export CSV
     function exportCSV(items){
       const headers = [
         "Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur",
         "Nom","Temps estimé","Temps réel","Date limite","Statut"
       ];
-
       const rows = items.map((item, idx) => ([
         idx + 1,
         item.famille || "",
@@ -1003,257 +960,7 @@
       }
     }
 
-    /****************************************************************
-     * MODAL RÉUNION -> crée une activité verte
-     ****************************************************************/
-    function openMeetingModal(){
-      $("meetingModal").classList.add("open");
-      $("meetingModal").setAttribute("aria-hidden","false");
-    }
-    function closeMeetingModal(){
-      $("meetingModal").classList.remove("open");
-      $("meetingModal").setAttribute("aria-hidden","true");
-      $("meeting-form").reset();
-    }
-
-    async function createMeetingTask(){
-      const meeting = {
-        date: $("m_date").value,
-        time: $("m_time").value,
-        place: $("m_place").value.trim(),
-        people: $("m_people").value.trim(),
-        needs: $("m_needs").value.trim(),
-        minutes: $("m_minutes").value.trim()
-      };
-
-      const action = `Réunion ${meeting.date || ""} ${meeting.time || ""}`.trim();
-
-      const item = {
-        createdAt: Date.now(),
-        actionPrecise: action || "Réunion",
-        famille: "Réunion",
-        categorie: "Moi-même",
-        nom: meeting.people || "",
-        tempsEstime: "",
-        tempsReel: "",
-        dateLimite: meeting.date || "",
-        statut: "A faire",
-        archivedAt: null,
-        isMeeting: true,
-        meeting
-      };
-
-      await addItem(db, item);
-    }
-
-    /****************************************************************
-     * STATS (Canvas pur JS)
-     ****************************************************************/
-    function clearCanvas(c){
-      const ctx = c.getContext("2d");
-      ctx.clearRect(0,0,c.width,c.height);
-      return ctx;
-    }
-
-    function drawLineChart(canvas, labels, values, color){
-      const ctx = clearCanvas(canvas);
-      const W = canvas.width, H = canvas.height;
-      const pad = 40;
-
-      ctx.fillStyle = "rgba(7,22,42,.92)";
-      ctx.font = "14px system-ui";
-      ctx.fillText("Minutes", 8, 18);
-
-      const maxV = Math.max(10, ...values);
-      const minV = 0;
-
-      // axes
-      ctx.strokeStyle = "rgba(7,22,42,.18)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(pad, pad);
-      ctx.lineTo(pad, H-pad);
-      ctx.lineTo(W-pad, H-pad);
-      ctx.stroke();
-
-      // grid + ticks
-      ctx.fillStyle = "rgba(7,22,42,.65)";
-      ctx.font = "12px system-ui";
-      for (let i=0;i<=4;i++){
-        const y = pad + (H-2*pad) * (i/4);
-        const v = Math.round(maxV * (1 - i/4));
-        ctx.strokeStyle = "rgba(7,22,42,.08)";
-        ctx.beginPath();
-        ctx.moveTo(pad, y);
-        ctx.lineTo(W-pad, y);
-        ctx.stroke();
-        ctx.fillText(String(v), 6, y+4);
-      }
-
-      if (labels.length === 0) return;
-
-      const xStep = (W-2*pad) / Math.max(1, labels.length-1);
-
-      // line
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      labels.forEach((lab, i) => {
-        const x = pad + xStep * i;
-        const y = (H-pad) - (H-2*pad) * ((values[i]-minV)/(maxV-minV));
-        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
-
-      // points + x labels (échantillonnage)
-      ctx.fillStyle = color;
-      labels.forEach((lab, i) => {
-        const x = pad + xStep * i;
-        const y = (H-pad) - (H-2*pad) * ((values[i]-minV)/(maxV-minV));
-        ctx.beginPath();
-        ctx.arc(x,y,4,0,Math.PI*2);
-        ctx.fill();
-
-        // n'affiche pas toutes les dates si trop nombreuses
-        if (labels.length <= 8 || i % Math.ceil(labels.length/8) === 0 || i === labels.length-1){
-          ctx.fillStyle = "rgba(7,22,42,.70)";
-          ctx.font = "11px system-ui";
-          ctx.fillText(lab.slice(5), x-14, H-pad+18);
-          ctx.fillStyle = color;
-        }
-      });
-    }
-
-    function drawPieChart(canvas, entries){
-      const ctx = clearCanvas(canvas);
-      const W = canvas.width, H = canvas.height;
-      const cx = W/2, cy = H/2;
-      const r = Math.min(W,H) * 0.32;
-
-      const total = entries.reduce((s,e)=>s+e.value,0) || 1;
-      let angle = -Math.PI/2;
-
-      const colors = [
-        "#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98",
-        "#1F77B4","#D35400","#2E4053","#16A085","#B03A2E"
-      ];
-
-      entries.forEach((e, idx) => {
-        const slice = (e.value/total) * Math.PI*2;
-        ctx.beginPath();
-        ctx.moveTo(cx,cy);
-        ctx.arc(cx,cy,r, angle, angle+slice);
-        ctx.closePath();
-        ctx.fillStyle = colors[idx % colors.length];
-        ctx.fill();
-        angle += slice;
-      });
-
-      // légende
-      ctx.font = "12px system-ui";
-      let y = 18;
-      entries.slice(0,10).forEach((e, idx) => {
-        ctx.fillStyle = colors[idx % colors.length];
-        ctx.fillRect(12, y-10, 12, 12);
-        ctx.fillStyle = "rgba(7,22,42,.88)";
-        ctx.fillText(`${e.label} (${e.value})`, 30, y);
-        y += 18;
-      });
-    }
-
-    function drawBarChart(canvas, entries, color){
-      const ctx = clearCanvas(canvas);
-      const W = canvas.width, H = canvas.height;
-      const pad = 40;
-      const maxV = Math.max(1, ...entries.map(e=>e.value));
-
-      // axes
-      ctx.strokeStyle = "rgba(7,22,42,.18)";
-      ctx.beginPath();
-      ctx.moveTo(pad, pad);
-      ctx.lineTo(pad, H-pad);
-      ctx.lineTo(W-pad, H-pad);
-      ctx.stroke();
-
-      const barW = (W-2*pad) / Math.max(1, entries.length) * 0.6;
-      const gap = (W-2*pad) / Math.max(1, entries.length) * 0.4;
-
-      entries.forEach((e, i) => {
-        const x = pad + i*(barW+gap) + gap/2;
-        const h = (H-2*pad) * (e.value/maxV);
-        const y = (H-pad) - h;
-
-        ctx.fillStyle = color;
-        ctx.fillRect(x, y, barW, h);
-
-        ctx.fillStyle = "rgba(7,22,42,.82)";
-        ctx.font = "12px system-ui";
-        ctx.fillText(String(e.value), x+barW/2-6, y-6);
-
-        ctx.font = "11px system-ui";
-        ctx.fillText(e.label, x-6, H-pad+18);
-      });
-    }
-
-    async function renderStats(allItems){
-      // ne dessine que si onglet stats visible, sinon ne fait rien
-      if ($("stats-section").hidden) return;
-
-      const from = $("statsFrom").value ? new Date($("statsFrom").value) : null;
-      const to = $("statsTo").value ? new Date($("statsTo").value) : null;
-      const mode = $("statsTimeMode").value; // reel/estime
-
-      const inRange = allItems.filter(it => {
-        const dk = dateKeyForItem(it);
-        const d = new Date(dk);
-        if (from && d < from) return false;
-        if (to && d > to) return false;
-        return true;
-      });
-
-      // Courbe : minutes par jour
-      const map = new Map();
-      inRange.forEach(it => {
-        const k = dateKeyForItem(it);
-        const t = (mode === "reel") ? parseTimeToMinutes(it.tempsReel) : parseTimeToMinutes(it.tempsEstime);
-        map.set(k, (map.get(k)||0) + t);
-      });
-
-      const labels = Array.from(map.keys()).sort();
-      const values = labels.map(k => map.get(k));
-
-      drawLineChart($("lineChart"), labels, values, "rgba(200,162,74,.95)");
-
-      // Camembert : par famille (compte)
-      const fam = new Map();
-      inRange.forEach(it => {
-        const k = it.famille || "(Sans famille)";
-        fam.set(k, (fam.get(k)||0) + 1);
-      });
-      const famEntries = Array.from(fam.entries())
-        .map(([label,value])=>({label,value}))
-        .sort((a,b)=>b.value-a.value)
-        .slice(0,10);
-
-      drawPieChart($("pieChart"), famEntries);
-
-      // Histogramme : statut
-      const st = new Map([["A faire",0],["En cours",0],["Terminé",0]]);
-      inRange.forEach(it => st.set(it.statut, (st.get(it.statut)||0)+1));
-      const stEntries = Array.from(st.entries()).map(([label,value])=>({label,value}));
-      drawBarChart($("barChart"), stEntries, "rgba(11,31,59,.85)");
-    }
-
-    /****************************************************************
-     * INIT
-     ****************************************************************/
     document.addEventListener("DOMContentLoaded", async () => {
-      // Si tu utilises app.jws comme service worker : si le hors-ligne ne marche pas,
-      // Safari peut refuser selon le type MIME. Dans ce cas, renommer en sw.js est la solution la plus fiable. gistration-error-unsupported-mime-type-text-html)[2](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("./app.jws").catch(()=>{});
-      }
-
       db = await openDb();
 
       fillSelect("famille", FAMILLES, FAMILLES[0]);
@@ -1262,9 +969,31 @@
 
       $("tab-todo").addEventListener("click", async () => { switchTab("todo"); await render(); });
       $("tab-archive").addEventListener("click", async () => { switchTab("archive"); await render(); });
-      $("tab-stats").addEventListener("click", async () => { switchTab("stats"); await render(); });
 
-      // Form ajout tâche
+      // Réunion : checkbox + bouton ouvrent le modal
+      $("meetingToggle").addEventListener("change", (e) => {
+        if (e.target.checked) openMeetingModal();
+      });
+      $("meetingQuick").addEventListener("click", () => {
+        $("meetingToggle").checked = true;
+        openMeetingModal();
+      });
+
+      $("closeMeeting").addEventListener("click", closeMeetingModal);
+      $("meetingCancel").addEventListener("click", closeMeetingModal);
+      $("meetingModal").addEventListener("click", (ev) => {
+        if (ev.target === $("meetingModal")) closeMeetingModal();
+      });
+
+      $("meeting-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await createMeetingTask();
+        closeMeetingModal();
+        switchTab("todo");
+        await render();
+      });
+
+      // Ajout tâche
       $("add-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -1293,12 +1022,11 @@
 
       $("reset-btn").addEventListener("click", () => $("add-form").reset());
 
-      // Import / Export
+      // Import/export
       $("export-btn").addEventListener("click", async () => {
         const items = await getAll(db);
         exportCSV(items);
       });
-
       $("import-btn").addEventListener("click", () => $("import-file").click());
       $("import-file").addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
@@ -1306,28 +1034,6 @@
         await importCSV(file);
         e.target.value = "";
         await render();
-      });
-
-      // Réunion modal
-      $("btn-meeting").addEventListener("click", openMeetingModal);
-      $("closeMeeting").addEventListener("click", closeMeetingModal);
-      $("meetingCancel").addEventListener("click", closeMeetingModal);
-      $("meetingModal").addEventListener("click", (ev) => {
-        if (ev.target === $("meetingModal")) closeMeetingModal();
-      });
-
-      $("meeting-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        await createMeetingTask();
-        closeMeetingModal();
-        switchTab("todo");
-        await render();
-      });
-
-      // Stats refresh
-      $("statsRefresh").addEventListener("click", async () => {
-        const items = await getAll(db);
-        await renderStats(items);
       });
 
       await render();
