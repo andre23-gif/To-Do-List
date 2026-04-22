@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
 
-  <!-- PWA : liens corrects (sinon ça s'affiche en texte) -->
+  <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -241,6 +241,8 @@
       color:rgba(226,201,120,.98);
       font-weight:1000;
       font-size:20px;
+      cursor:pointer;
+      user-select:none;
     }
     .meeting-text .top{
       color:rgba(226,201,120,.98);
@@ -349,7 +351,7 @@
       font-weight:1000;
       cursor:pointer;
     }
-    .modal-body{ padding:16px; background: var(--ivory); }
+    .modal-body{ padding:16px; background: #FFFDF7; }
 
     /* Archives papier */
     .archive{
@@ -636,7 +638,17 @@
         sel.add(o);
       });
     }
-    function esc(s){ return (s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
+
+    function esc(s){
+      return (s||"").replace(/[&<>"']/g, m => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "\"":"&quot;",
+        "'":"&#039;"
+      }[m]));
+    }
+
     async function updateStatus(id, statut){
       const items=await getAll();
       const it=items.find(x=>x.id===id);
@@ -714,7 +726,6 @@
       const todo=items.filter(x=>x.statut!=="Terminé");
       const arch=items.filter(x=>x.statut==="Terminé").sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
 
-      // todo list
       const ul=$("todo-list"); ul.innerHTML="";
       todo.forEach(it=>{
         const li=document.createElement("li");
@@ -738,7 +749,6 @@
         ul.appendChild(li);
       });
 
-      // archive list
       const ua=$("archive-list"); ua.innerHTML="";
       arch.forEach(it=>{
         const li=document.createElement("li");
@@ -798,7 +808,6 @@
       drawBars($("barChart"), stEntries);
     }
 
-    // Réunion modal
     function openMeeting(){
       $("meetingOverlay").classList.add("open");
       $("meetingOverlay").setAttribute("aria-hidden","false");
@@ -879,14 +888,10 @@
       });
 
       $("reset-btn").addEventListener("click", ()=> $("add-form").reset());
-      $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll(db)));
+      $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll()));
 
       await render();
     });
-
-    // CSV minimal (garde tes boutons mais tu peux les compléter ensuite)
-    $("export-btn")?.addEventListener("click", async()=>{});
-    $("import-btn")?.addEventListener("click", ()=> $("import-file").click());
   </script>
 </body>
 </html>
