@@ -5,65 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
 
-  <!-- PWA (compatible GitHub Pages racine ET repo grâce aux chemins ./ ) -->
+  <!-- PWA (chemins relatifs OK pour GitHub Pages en /To-Do-List/) -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <meta name="theme-color" content="#2D6CDF">
+  <meta name="theme-color" content="#0B1F3B">
 
   <style>
-    /* ========== THEME GLOBAL ========== */
+    /* =======================
+       THEME ART DÉCO (bleu nuit + doré)
+       ======================= */
     :root{
-      --blue:#2D6CDF;
-      --yellow:#FFE066;
+      --navy:#0B1F3B;
+      --navy2:#07162A;
+      --gold:#C8A24A;
+      --gold2:#E2C978;
+      --ink:#121316;
       --paper:#FBFAF6;
-      --ink:#1c1c1c;
-      --card:#ffffff;
-      --shadow: 0 10px 25px rgba(0,0,0,.08);
-      --radius: 18px;
+      --ivory:#FFFDF7;
+      --shadow: 0 18px 40px rgba(0,0,0,.14);
+      --radius: 14px;
     }
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      background:var(--paper);
+      background: radial-gradient(1200px 600px at 50% -200px, rgba(200,162,74,.18), transparent 55%),
+                  linear-gradient(180deg, rgba(11,31,59,.10), transparent 35%),
+                  var(--paper);
       color:var(--ink);
-      font-family: ui-rounded, "Noteworthy", system-ui, -apple-system, sans-serif;
+      font-family: ui-rounded, system-ui, -apple-system, sans-serif;
     }
 
-    /* ========== HEADER / TABS ========== */
+    /* =======================
+       HEADER + GROS BOUTONS
+       ======================= */
     header{
-      padding:18px 14px 12px;
-      background: linear-gradient(180deg, rgba(45,108,223,.14), transparent);
+      padding:18px 14px 10px;
+      background:
+        linear-gradient(180deg, rgba(11,31,59,.92), rgba(7,22,42,.92));
+      color: #fff;
+      border-bottom: 3px solid rgba(200,162,74,.55);
+      box-shadow: 0 10px 30px rgba(0,0,0,.22);
     }
     .wrap{ max-width: 980px; margin:0 auto; }
-    .title{ margin:0; font-size:30px; letter-spacing:.2px; }
-    .subtitle{ margin:6px 0 0; opacity:.7; font-size:13px; }
+    .title{
+      margin:0;
+      font-weight: 800;
+      letter-spacing:.6px;
+      font-size: 28px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .title-badge{
+      width:34px;height:34px;
+      border-radius:10px;
+      background: linear-gradient(135deg, rgba(200,162,74,.95), rgba(226,201,120,.95));
+      display:inline-flex;
+      align-items:center;justify-content:center;
+      color: var(--navy);
+      font-weight: 900;
+      box-shadow: inset 0 0 0 2px rgba(7,22,42,.18);
+    }
 
     .tabs{
-      display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;
+      margin-top:14px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
     }
     .tab{
-      border:0;
-      background:var(--yellow);
-      color:var(--blue);
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:15px;
+      border: 2px solid rgba(200,162,74,.75);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      color:#fff;
+      padding:14px 18px;             /* plus grands */
+      border-radius: 999px;
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.2px;
       cursor:pointer;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
     }
-    .tab.active{ background:var(--blue); color:#fff; }
-
-    /* ========== LAYOUT ========== */
-    main{ max-width:980px; margin:0 auto; padding:14px 10px 90px; }
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:16px;
+    .tab.active{
+      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
+      color: var(--navy2);
+      border-color: rgba(226,201,120,.9);
     }
-    .panel{ margin-top:12px; }
 
-    /* ========== FORM TODO (style manuscrit moderne) ========== */
-    .form-card{ margin-bottom:12px; }
+    /* =======================
+       LAYOUT
+       ======================= */
+    main{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px 10px 92px;
+    }
+    .panel{ margin-top: 12px; }
+
+    /* =======================
+       CADRES ART DÉCO (pur CSS)
+       Inspiré des techniques "art deco border" (outline + conic-gradient)
+       ======================= */
+    .deco-frame{
+      --c: var(--gold);
+      --b: 2px;     /* épaisseur lignes */
+      --o1: 16px;   /* marge cadre */
+      --o2: 10px;   /* offset rectangle interne */
+      position: relative;
+      border: var(--o1) solid transparent;
+      border-radius: var(--radius);
+      outline: var(--b) solid var(--c);
+      outline-offset: calc(-1 * var(--o2));
+      background:
+        conic-gradient(from 90deg at var(--b) var(--b),
+          transparent 25%,
+          rgba(200,162,74,.95) 0) 0 0 /
+        calc(100% - var(--b)) calc(100% - var(--b))
+        padding-box border-box;
+      background-color: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    } /* [3](https://stackoverflow.com/questions/65758024/art-deco-style-border-in-css)[4](https://codepen.io/angelagiese/pen/mdMBYaM) */
+
+    .card-inner{
+      padding: 16px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));
+    }
+
+    /* =======================
+       FORMULAIRE (To Do)
+       ======================= */
     .grid{
       display:grid;
       gap:12px;
@@ -75,200 +146,301 @@
     label span{
       display:block;
       font-size:12px;
-      opacity:.75;
+      opacity:.78;
       margin:0 0 6px;
+      color: rgba(11,31,59,.88);
+      font-weight: 700;
+      letter-spacing: .2px;
     }
     input, select{
       width:100%;
-      padding:11px 12px;
-      border-radius:14px;
-      border:1px solid rgba(0,0,0,.10);
-      background:#fff;
+      padding:12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(7,22,42,.18);
+      background: rgba(255,255,255,.98);
       font:inherit;
       outline:none;
     }
-    input:focus, select:focus{ border-color: rgba(45,108,223,.55); }
+    input:focus, select:focus{
+      border-color: rgba(200,162,74,.9);
+      box-shadow: 0 0 0 4px rgba(200,162,74,.18);
+    }
 
-    .actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
     .btn{
       border:0;
-      padding:11px 14px;
-      border-radius:14px;
+      padding:12px 16px;
+      border-radius: 999px;
       cursor:pointer;
-      background:#fff;
-      border:1px solid rgba(0,0,0,.10);
       font:inherit;
+      font-weight: 800;
+      letter-spacing:.2px;
     }
     .btn.primary{
-      background:var(--blue);
-      color:#fff;
-      border-color:transparent;
+      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
+      color: var(--navy2);
+      border: 2px solid rgba(7,22,42,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.16);
     }
-    .btn.ghost{ background:transparent; }
+    .btn.ghost{
+      background: transparent;
+      border: 2px solid rgba(11,31,59,.28);
+      color: var(--navy2);
+    }
 
-    /* ========== LISTES ========== */
+    /* =======================
+       LISTES
+       ======================= */
     .list-header{
       display:flex;
       align-items:baseline;
       justify-content:space-between;
       gap:10px;
-      margin-bottom:10px;
+      margin-bottom: 10px;
     }
-    .hint{ opacity:.65; font-size:12px; }
-    ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-
+    .list-title{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      color: var(--navy2);
+    }
+    ul{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
     .item{
       display:flex;
       align-items:flex-start;
       gap:10px;
       padding:12px;
-      border-radius:16px;
-      background: rgba(45,108,223,.08); /* pastel net */
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(11,31,59,.05), rgba(200,162,74,.06));
+      border: 1px solid rgba(7,22,42,.10);
     }
     .main{ flex:1; }
-    .line{ font-weight:700; font-size:16px; }
-    .meta{ font-size:12px; opacity:.75; margin-top:4px; }
+    .line{
+      font-weight: 900;
+      font-size: 16px;
+      color: var(--navy2);
+    }
+    .meta{
+      font-size:12px;
+      opacity:.82;
+      margin-top:4px;
+      color: rgba(7,22,42,.82);
+    }
 
-    /* boutons coche imitation stylo (simple et joli) */
     .icon-btn{
-      width:42px; height:42px;
-      border-radius:50%;
-      border:2px solid rgba(45,108,223,.35);
-      background: var(--yellow);
-      color: var(--blue);
-      font-size:20px;
+      width:46px;
+      height:46px;
+      border-radius: 50%;
       cursor:pointer;
       display:flex;
       align-items:center;
       justify-content:center;
       user-select:none;
+      font-size: 20px;
+      border: 2px solid rgba(200,162,74,.75);
+      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
+      color: var(--navy2);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
     }
     .icon-btn.trash{
-      background:#fff;
-      border:1px solid rgba(0,0,0,.12);
-      color:#444;
-      font-size:18px;
+      background: rgba(255,255,255,.92);
+      color: rgba(7,22,42,.88);
+      border: 1px solid rgba(7,22,42,.16);
+      font-size: 18px;
+    }
+    .icon-btn.back{
+      background: rgba(255,255,255,.92);
+      color: rgba(11,31,59,.92);
+      border: 2px solid rgba(200,162,74,.55);
+      font-size: 18px;
     }
 
-    /* ========== ARCHIVES (années 30 / fichier cartonné) ========== */
-    .archive-card{
-      background:#F6E7C9;
-      border:2px solid #BCA16B;
+    /* =======================
+       ARCHIVES : vieux papier + vieux classeur
+       ======================= */
+    .archive-wrapper{
+      position: relative;
+      padding-left: 18px; /* place pour le "dos de classeur" */
     }
-    .archive-card .item{
-      background: rgba(255,255,255,.55);
-      border: 1px dashed rgba(0,0,0,.25);
+
+    .archive-frame{
+      --c: rgba(123,95,42,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      background:
+        radial-gradient(700px 400px at 40% 0%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(900px 600px at 70% 40%, rgba(0,0,0,.06), transparent 65%),
+        /* "fibres papier" */
+        repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(255,255,255,.00) 2px 6px),
+        linear-gradient(180deg, #F4E7C9, #EAD7B1);
+      border: 2px solid rgba(123,95,42,.45);
+      position: relative;
+    }
+
+    /* dos de classeur */
+    .archive-frame::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width: 20px;
+      background: linear-gradient(180deg, rgba(123,95,42,.55), rgba(123,95,42,.25));
+      border-right: 2px solid rgba(0,0,0,.12);
+      box-shadow: inset -6px 0 10px rgba(0,0,0,.12);
+    }
+
+    .archive-inner{
+      padding: 16px;
+      padding-left: 24px;
+    }
+
+    .archive-item{
+      background: rgba(255,255,255,.40);
+      border: 1px dashed rgba(0,0,0,.28);
       font-family: "American Typewriter", ui-monospace, Menlo, Monaco, "Courier New", monospace;
     }
     .stamp{
       font-size:12px;
-      opacity:.78;
-      color:#7b5f2a;
+      opacity:.8;
+      color: rgba(123,95,42,.95);
       margin-top:6px;
     }
 
-    /* ========== FOOTER ========== */
+    /* =======================
+       FOOTER
+       ======================= */
     footer{
-      position:fixed; left:0; right:0; bottom:0;
-      display:flex; gap:10px;
+      position:fixed;
+      left:0; right:0; bottom:0;
+      display:flex;
+      gap:10px;
       justify-content:center;
       padding:10px;
       background: rgba(251,250,246,.92);
       backdrop-filter: blur(8px);
       border-top: 1px solid rgba(0,0,0,.08);
     }
-    .small{ font-size:12px; opacity:.7; text-align:center; padding:8px 14px 0; }
   </style>
 </head>
 
 <body>
   <header>
     <div class="wrap">
-      <h1 class="title">To Do List</h1>
-      <p class="subtitle">Local • Simple • Installable depuis Safari</p>
+      <h1 class="title">
+        <span class="title-badge">✓</span>
+        To Do List
+      </h1>
 
       <div class="tabs" role="tablist" aria-label="Onglets">
         <button id="tab-todo" class="tab active" type="button" role="tab">À faire</button>
         <button id="tab-archive" class="tab" type="button" role="tab">Archives</button>
       </div>
-      <div class="small">Astuce : coche ✓ → passe automatiquement en Archives</div>
     </div>
   </header>
 
   <main>
     <!-- ONGLET TODO -->
     <section id="todo-section" class="panel">
-      <div class="card form-card">
-        <form id="add-form">
-          <div class="grid">
-            <label>
-              <span>Action précise</span>
-              <input id="actionPrecise" placeholder="Ex : Appeler Charlotte" required>
-            </label>
+      <div class="deco-frame">
+        <div class="card-inner">
+          <form id="add-form">
+            <div class="grid">
+              <label>
+                <span>Action précise</span>
+                <input id="actionPrecise" placeholder="Ex : Appeler Charlotte" required>
+              </label>
 
-            <label>
-              <span>Famille de tâches</span>
-              <select id="famille"></select>
-            </label>
+              <label>
+                <span>Famille de tâches</span>
+                <select id="famille"></select>
+              </label>
 
-            <label>
-              <span>Catégorie d’interlocuteur</span>
-              <select id="categorie"></select>
-            </label>
+              <label>
+                <span>Catégorie d’interlocuteur</span>
+                <select id="categorie"></select>
+              </label>
 
-            <label>
-              <span>Nom</span>
-              <input id="nom" placeholder="Optionnel">
-            </label>
+              <label>
+                <span>Nom</span>
+                <input id="nom" placeholder="Optionnel">
+              </label>
 
-            <label>
-              <span>Date limite</span>
-              <input id="dateLimite" type="date">
-            </label>
+              <label>
+                <span>Temps estimé</span>
+                <input id="tempsEstime" type="time" step="60">
+              </label>
 
-            <label>
-              <span>Statut</span>
-              <select id="statut"></select>
-            </label>
-          </div>
+              <label>
+                <span>Temps réel</span>
+                <input id="tempsReel" type="time" step="60">
+              </label>
 
-          <div class="actions">
-            <button class="btn primary" type="submit">Ajouter</button>
-            <button class="btn ghost" id="reset-btn" type="button">Vider</button>
-          </div>
-        </form>
+              <label>
+                <span>Date limite</span>
+                <input id="dateLimite" type="date">
+              </label>
+
+              <label>
+                <span>Statut</span>
+                <select id="statut"></select>
+              </label>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" type="submit">Ajouter</button>
+              <button class="btn ghost" id="reset-btn" type="button">Vider</button>
+            </div>
+          </form>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="list-header">
-          <h2 style="margin:0;">To Do</h2>
-          <div class="hint">Bleu/Jaune pastel • écriture manuscrite moderne</div>
+      <div class="deco-frame" style="margin-top:12px;">
+        <div class="card-inner">
+          <div class="list-header">
+            <h2 class="list-title">To Do</h2>
+          </div>
+          <ul id="todo-list"></ul>
         </div>
-        <ul id="todo-list"></ul>
       </div>
     </section>
 
     <!-- ONGLET ARCHIVES -->
     <section id="archive-section" class="panel" hidden>
-      <div class="card archive-card">
-        <div class="list-header">
-          <h2 style="margin:0;">Archives</h2>
-          <div class="hint">Machine à écrire • dossier cartonné années 30</div>
+      <div class="archive-wrapper">
+        <div class="archive-frame">
+          <div class="archive-inner">
+            <div class="list-header">
+              <h2 class="list-title">Archives</h2>
+            </div>
+            <ul id="archive-list"></ul>
+          </div>
         </div>
-        <ul id="archive-list"></ul>
       </div>
     </section>
   </main>
 
   <footer>
-    <button class="btn" id="export-btn" type="button">Exporter CSV</button>
-    <button class="btn" id="import-btn" type="button">Importer CSV</button>
+    <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
+    <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
     <input id="import-file" type="file" accept=".csv,text/csv" hidden>
   </footer>
 
   <script>
     /****************************************************************
-     * 1) MENUS déroulants (issus de ta feuille "Macros")
+     * MENUS déroulants (Macros) + ajout "Moi-même"
      ****************************************************************/
     const FAMILLES = [
       "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
@@ -277,16 +449,16 @@
     ];
 
     const CATEGORIES = [
-      "Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"
+      "Moi-même","Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"
     ];
 
     const STATUTS = ["A faire","En cours","Terminé"];
 
     /****************************************************************
-     * 2) STOCKAGE LOCAL (IndexedDB) — nécessaire pour une vraie app
+     * STOCKAGE LOCAL IndexedDB (persistant)
      ****************************************************************/
     const DB_NAME = "todo_local_db";
-    const DB_VERSION = 1;
+    const DB_VERSION = 2; // <-- incrémenté (ajout champs temps)
     const STORE = "items";
 
     function openDb(){
@@ -299,6 +471,8 @@
             const store = db.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
             store.createIndex("by_statut", "statut");
             store.createIndex("by_archivedAt", "archivedAt");
+          } else {
+            // rien à faire : les nouveaux champs sont juste ajoutés dans les objets
           }
         };
 
@@ -344,6 +518,15 @@
       await putItem(db, item);
     }
 
+    async function unarchiveToTodo(db, id){
+      const items = await getAll(db);
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+      item.statut = "A faire";
+      item.archivedAt = null;
+      await putItem(db, item);
+    }
+
     function deleteItem(db, id){
       return new Promise((resolve, reject) => {
         const req = os(db, "readwrite").delete(id);
@@ -353,10 +536,9 @@
     }
 
     /****************************************************************
-     * 3) UI + LOGIQUE : Terminé -> Archives (automatique)
+     * UI
      ****************************************************************/
     let db = null;
-
     const $ = (id) => document.getElementById(id);
 
     function fillSelect(id, values, selected=null){
@@ -394,6 +576,10 @@
       }[m]));
     }
 
+    function formatTime(t){
+      return t ? `⏱ ${t}` : "";
+    }
+
     async function render(){
       const items = await getAll(db);
 
@@ -401,17 +587,27 @@
       const archItems = items.filter(x => x.statut === "Terminé")
                              .sort((a,b) => (b.archivedAt||0) - (a.archivedAt||0));
 
-      // TODO list
+      // TODO
       const ulTodo = $("todo-list");
       ulTodo.innerHTML = "";
       todoItems.forEach(item => {
         const li = document.createElement("li");
         li.className = "item";
+        const temps = [
+          item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
+          item.tempsReel ? `✅ réel ${esc(item.tempsReel)}` : ""
+        ].filter(Boolean).join(" • ");
+
         li.innerHTML = `
           <button class="icon-btn" title="Marquer Terminé">✓</button>
           <div class="main">
             <div class="line">${esc(item.actionPrecise)}</div>
-            <div class="meta">${esc(item.famille||"")} • ${esc(item.categorie||"")}${item.nom ? " • " + esc(item.nom) : ""}${item.dateLimite ? " • ⏰ " + esc(item.dateLimite) : ""}</div>
+            <div class="meta">
+              ${esc(item.famille||"")} • ${esc(item.categorie||"")}
+              ${item.nom ? " • " + esc(item.nom) : ""}
+              ${item.dateLimite ? " • 📅 " + esc(item.dateLimite) : ""}
+              ${temps ? " • " + temps : ""}
+            </div>
           </div>
           <button class="icon-btn trash" title="Supprimer">🗑</button>
         `;
@@ -429,26 +625,44 @@
         ulTodo.appendChild(li);
       });
 
-      // Archive list
+      // ARCHIVES
       const ulArch = $("archive-list");
       ulArch.innerHTML = "";
       archItems.forEach(item => {
         const li = document.createElement("li");
-        li.className = "item";
+        li.className = "item archive-item";
         const stamp = item.archivedAt ? new Date(item.archivedAt).toLocaleDateString("fr-FR") : "";
+        const temps = [
+          item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
+          item.tempsReel ? `✅ réel ${esc(item.tempsReel)}` : ""
+        ].filter(Boolean).join(" • ");
+
         li.innerHTML = `
+          <button class="icon-btn back" title="Reprendre (retour à À faire)">↩︎</button>
           <div class="main">
             <div class="line">${esc(item.actionPrecise)}</div>
-            <div class="meta">${esc(item.famille||"")} • ${esc(item.categorie||"")}${item.nom ? " • " + esc(item.nom) : ""}${item.dateLimite ? " • ⏰ " + esc(item.dateLimite) : ""}</div>
+            <div class="meta">
+              ${esc(item.famille||"")} • ${esc(item.categorie||"")}
+              ${item.nom ? " • " + esc(item.nom) : ""}
+              ${item.dateLimite ? " • 📅 " + esc(item.dateLimite) : ""}
+              ${temps ? " • " + temps : ""}
+            </div>
             <div class="stamp">Archivé le ${esc(stamp)}</div>
           </div>
         `;
+
+        li.querySelector(".back").addEventListener("click", async () => {
+          await unarchiveToTodo(db, item.id);
+          switchTab("todo");
+          await render();
+        });
+
         ulArch.appendChild(li);
       });
     }
 
     /****************************************************************
-     * 4) Import / Export CSV (format Numbers ; )
+     * Import / Export CSV (format Numbers ; ) + temps estimé/réel
      ****************************************************************/
     function exportCSV(items){
       const headers = [
@@ -457,6 +671,8 @@
         "Action précise",
         "Catégorie d'interlocuteur",
         "Nom",
+        "Temps estimé",
+        "Temps réel",
         "Date limite",
         "Statut"
       ];
@@ -467,6 +683,8 @@
         item.actionPrecise || "",
         item.categorie || "",
         item.nom || "",
+        item.tempsEstime || "",
+        item.tempsReel || "",
         item.dateLimite || "",
         item.statut || ""
       ].join(";")));
@@ -491,10 +709,12 @@
       const headers = lines[0].split(";").map(h => h.trim());
       const idx = (name) => headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
 
-      const iFam = idx("Famille de tâches");
-      const iAct = idx("Action précise");
-      const iCat = idx("Catégorie d'interlocuteur");
-      const iNom = idx("Nom");
+      const iFam  = idx("Famille de tâches");
+      const iAct  = idx("Action précise");
+      const iCat  = idx("Catégorie d'interlocuteur");
+      const iNom  = idx("Nom");
+      const iTEst = idx("Temps estimé");
+      const iTRe  = idx("Temps réel");
       const iDate = idx("Date limite");
       const iStat = idx("Statut");
 
@@ -509,6 +729,8 @@
           famille: (vals[iFam] || "").trim(),
           categorie: (vals[iCat] || "").trim(),
           nom: (vals[iNom] || "").trim(),
+          tempsEstime: (iTEst >= 0 ? (vals[iTEst] || "").trim() : ""),
+          tempsReel:   (iTRe  >= 0 ? (vals[iTRe]  || "").trim() : ""),
           dateLimite: (vals[iDate] || "").trim(),
           statut,
           archivedAt: (statut === "Terminé") ? Date.now() : null
@@ -518,27 +740,24 @@
     }
 
     /****************************************************************
-     * 5) INITIALISATION
+     * INIT
      ****************************************************************/
     document.addEventListener("DOMContentLoaded", async () => {
-      // Service worker (ton fichier app.jws)
+      // Service worker (ton fichier app.jws) : si tu ne vois pas les changements,
+      // c'est souvent le cache du service workerker_API/Using_Service_Workers)
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("./app.jws");
       }
 
-      // DB
       db = await openDb();
 
-      // Menus
       fillSelect("famille", FAMILLES, FAMILLES[0]);
-      fillSelect("categorie", CATEGORIES, CATEGORIES[0]);
+      fillSelect("categorie", CATEGORIES, "Moi-même");
       fillSelect("statut", STATUTS, "A faire");
 
-      // Tabs
       $("tab-todo").addEventListener("click", () => switchTab("todo"));
       $("tab-archive").addEventListener("click", () => switchTab("archive"));
 
-      // Form
       $("add-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -548,6 +767,8 @@
           famille: $("famille").value,
           categorie: $("categorie").value,
           nom: $("nom").value.trim(),
+          tempsEstime: $("tempsEstime").value,
+          tempsReel: $("tempsReel").value,
           dateLimite: $("dateLimite").value,
           statut,
           archivedAt: (statut === "Terminé") ? Date.now() : null
@@ -556,12 +777,12 @@
         await addItem(db, item);
         e.target.reset();
         fillSelect("statut", STATUTS, "A faire");
+        fillSelect("categorie", CATEGORIES, "Moi-même");
         await render();
       });
 
       $("reset-btn").addEventListener("click", () => $("add-form").reset());
 
-      // Import / Export
       $("export-btn").addEventListener("click", async () => {
         const items = await getAll(db);
         exportCSV(items);
@@ -577,7 +798,6 @@
         await render();
       });
 
-      // Premier rendu
       await render();
     });
   </script>
