@@ -5,125 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
 
-  <!-- ✅ PWA : NE PAS ÉCRIRE LES CHEMINS EN TEXTE, MAIS EN <link> -->
+  <!-- PWA (chemins ./ => OK GitHub Pages racine OU repo) -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
-  <meta name="theme-color" content="#0B1F3B">
+  <link rel="icon" href="./icon-192.png">
+  <meta name="theme-color" content="#2D6CDF">
 
   <style>
     :root{
-      --navy:#0B1F3B;
-      --navy2:#07162A;
-      --gold:#C8A24A;
-      --gold2:#E2C978;
-      --ink:#121316;
+      --blue:#2D6CDF;
+      --yellow:#FFE066;
       --paper:#FBFAF6;
-      --ivory:#FFFDF7;
-      --shadow: 0 18px 40px rgba(0,0,0,.14);
-      --radius: 14px;
-
-      --green:#1F7A4C;
-      --green2:#2CA768;
+      --ink:#1c1c1c;
+      --card:#ffffff;
+      --shadow: 0 10px 25px rgba(0,0,0,.08);
+      --radius: 18px;
+      --line: rgba(0,0,0,.10);
+      --muted: rgba(0,0,0,.60);
+      --danger:#D64545;
+      --ok:#1E8E5A;
+      --archivePaper:#F6E7C9;
+      --archiveBorder:#BCA16B;
     }
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      background: radial-gradient(1200px 600px at 50% -200px, rgba(200,162,74,.18), transparent 55%),
-                  linear-gradient(180deg, rgba(11,31,59,.10), transparent 35%),
-                  var(--paper);
+      background:var(--paper);
       color:var(--ink);
-      font-family: ui-rounded, system-ui, -apple-system, sans-serif;
+      font-family: ui-rounded, "Noteworthy", system-ui, -apple-system, sans-serif;
     }
-
     header{
       padding:18px 14px 12px;
-      background: linear-gradient(180deg, rgba(11,31,59,.92), rgba(7,22,42,.92));
-      color:#fff;
-      border-bottom: 3px solid rgba(200,162,74,.55);
-      box-shadow: 0 10px 30px rgba(0,0,0,.22);
+      background: linear-gradient(180deg, rgba(45,108,223,.14), transparent);
     }
     .wrap{ max-width: 980px; margin:0 auto; }
-    .title{
-      margin:0;
-      font-weight: 900;
-      letter-spacing:.6px;
-      font-size: 28px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .title-badge{
-      width:34px;height:34px;
-      border-radius:10px;
-      background: linear-gradient(135deg, rgba(200,162,74,.95), rgba(226,201,120,.95));
-      display:inline-flex;
-      align-items:center;justify-content:center;
-      color: var(--navy2);
-      font-weight: 900;
-      box-shadow: inset 0 0 0 2px rgba(7,22,42,.18);
-    }
+    .title{ margin:0; font-size:30px; letter-spacing:.2px; }
+    .subtitle{ margin:6px 0 0; opacity:.7; font-size:13px; }
 
-    .tabs{
-      margin-top:14px;
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+    .tabs{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
     .tab{
-      border: 2px solid rgba(200,162,74,.75);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      color:#fff;
-      padding:14px 18px;
-      border-radius: 999px;
-      font-size:16px;
-      font-weight:900;
-      cursor:pointer;
-      box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
+      border:0; cursor:pointer;
+      background:var(--yellow);
+      color:var(--blue);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:15px;
     }
-    .tab.active{
-      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
-      color: var(--navy2);
-      border-color: rgba(226,201,120,.9);
-    }
+    .tab.active{ background:var(--blue); color:#fff; }
 
-    main{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 16px 10px 92px;
-    }
-    .panel{ margin-top: 12px; }
+    main{ max-width:980px; margin:0 auto; padding:14px 10px 120px; }
+    .panel{ margin-top:12px; }
 
-    /* Cadre art déco */
-    .deco-frame{
-      --c: var(--gold);
-      --b: 2px;
-      --o1: 16px;
-      --o2: 10px;
-      position: relative;
-      border: var(--o1) solid transparent;
-      border-radius: var(--radius);
-      outline: var(--b) solid var(--c);
-      outline-offset: calc(-1 * var(--o2));
-      background:
-        conic-gradient(from 90deg at var(--b) var(--b),
-          transparent 25%,
-          rgba(200,162,74,.95) 0) 0 0 /
-        calc(100% - var(--b)) calc(100% - var(--b))
-        padding-box border-box;
-      background-color: rgba(255,255,255,.86);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
     }
-    .card-inner{
-      padding: 16px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));
-    }
+    .card + .card{ margin-top:12px; }
 
-    /* FORM */
     .grid{
       display:grid;
       gap:12px;
@@ -133,267 +73,222 @@
       .grid{ grid-template-columns: 1fr; }
     }
 
-    /* ✅ 2 lignes / 2 colonnes (pas de chevauchement) */
-    .grid-mini{
-      margin-top: 10px;
-      display:grid;
-      gap:10px;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-    }
-    .grid-mini > label{ min-width:0; } /* ✅ empêche le chevauchement */
-    @media (max-width: 760px){
-      .grid-mini{ grid-template-columns: 1fr; }
-    }
-
     label span{
       display:block;
       font-size:12px;
-      opacity:.82;
+      opacity:.75;
       margin:0 0 6px;
-      color: rgba(11,31,59,.88);
-      font-weight: 900;
-      letter-spacing: .2px;
     }
     input, select, textarea{
       width:100%;
-      padding:12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(7,22,42,.18);
-      background: rgba(255,255,255,.98);
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
       font:inherit;
       outline:none;
-      min-width:0;
     }
+    textarea{ min-height:44px; resize:vertical; }
+    input:focus, select:focus, textarea:focus{ border-color: rgba(45,108,223,.55); }
 
-    /* Petits encarts */
-    .mini-field input,
-    .mini-field select{
-      padding: 10px 12px;
-      border-radius: 999px;
-      font-weight: 900;
-    }
-
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(200,162,74,.9);
-      box-shadow: 0 0 0 4px rgba(200,162,74,.18);
-    }
-    textarea{ min-height: 92px; resize: vertical; }
-
-    .actions{
+    .row{
       display:flex;
-      gap:10px;
-      margin-top:14px;
-      flex-wrap:wrap;
+      gap:12px;
       align-items:center;
+      flex-wrap:wrap;
     }
+    .actions{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
     .btn{
-      border:0;
-      padding:12px 16px;
-      border-radius: 999px;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:11px 14px;
+      border-radius:14px;
       cursor:pointer;
       font:inherit;
-      font-weight: 950;
-      letter-spacing:.2px;
     }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
-      color: var(--navy2);
-      border: 2px solid rgba(7,22,42,.12);
-      box-shadow: 0 10px 22px rgba(0,0,0,.16);
-    }
-    .btn.ghost{
-      background: transparent;
-      border: 2px solid rgba(11,31,59,.28);
-      color: var(--navy2);
-    }
-    .btn.green{
-      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
+      background:var(--blue);
       color:#fff;
-      border: 2px solid rgba(255,255,255,.12);
-      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      border-color:transparent;
+    }
+    .btn.ghost{ background:transparent; }
+    .btn.danger{
+      border-color: rgba(214,69,69,.35);
+      color: var(--danger);
+      background: rgba(214,69,69,.06);
     }
 
-    /* LISTES : ✅ pas de chevauchement => layout en GRID */
-    ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-
-    .item{
-      display:grid;
-      grid-template-columns: 46px 1fr 140px 46px; /* ✓ | contenu | statut petit | poubelle */
+    .list-header{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
       gap:10px;
-      align-items:start;
-      padding:12px;
-      border-radius: 14px;
-      background: linear-gradient(180deg, rgba(11,31,59,.05), rgba(200,162,74,.06));
-      border: 1px solid rgba(7,22,42,.10);
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .hint{ opacity:.65; font-size:12px; }
+
+    .stats{
+      display:grid;
+      gap:10px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      margin-top:10px;
     }
     @media (max-width: 760px){
-      .item{
-        grid-template-columns: 46px 1fr;
-        grid-template-areas:
-          "done main"
-          "status trash";
-      }
-      .item .donebtn{ grid-area: done; }
-      .item .main{ grid-area: main; }
-      .item .status-small{ grid-area: status; width: 100%; }
-      .item .trashbtn{ grid-area: trash; justify-self:end; }
+      .stats{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
-    .item.meeting{
-      background: linear-gradient(180deg, rgba(31,122,76,.10), rgba(44,167,104,.16));
-      border-color: rgba(31,122,76,.20);
+    .stat{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background: rgba(45,108,223,.04);
     }
-    .main{ min-width:0; }
-    .line{ font-weight: 950; font-size: 16px; color: var(--navy2); }
-    .meta{ font-size:12px; opacity:.86; margin-top:4px; color: rgba(7,22,42,.82); line-height: 1.35; }
+    .stat b{ font-size:18px; }
+    .stat small{ display:block; opacity:.7; margin-top:4px; }
+
+    .twoCols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 760px){
+      .twoCols{ grid-template-columns: 1fr; }
+    }
+    .miniList{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#fff;
+    }
+    .miniList h3{
+      margin:0 0 8px;
+      font-size:14px;
+      opacity:.85;
+    }
+    .miniList ol{
+      margin:0;
+      padding-left:18px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .miniList li{
+      font-size:13px;
+      opacity:.9;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .miniList li span:last-child{
+      opacity:.65;
+      white-space:nowrap;
+    }
+
+    .filters{
+      display:grid;
+      gap:10px;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      align-items:end;
+    }
+    @media (max-width: 760px){
+      .filters{ grid-template-columns: 1fr; }
+    }
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .chip{
+      display:flex; gap:8px; align-items:center;
+      border:1px solid var(--line);
+      padding:8px 10px;
+      border-radius:999px;
+      background:#fff;
+      font-size:13px;
+    }
+
+    ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+    .item{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:12px;
+      border-radius:16px;
+      background: rgba(45,108,223,.08); /* pastel net */
+    }
+    .item.overdue{
+      outline:2px solid rgba(214,69,69,.18);
+      background: rgba(214,69,69,.06);
+    }
+    .main{ flex:1; min-width:0; }
+    .line{
+      font-weight:700;
+      font-size:16px;
+      word-break:break-word;
+    }
+    .meta{
+      font-size:12px;
+      opacity:.76;
+      margin-top:4px;
+      word-break:break-word;
+    }
+    .badges{
+      display:flex; gap:6px; flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .badge{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      opacity:.9;
+    }
+    .badge.blue{ border-color: rgba(45,108,223,.25); background: rgba(45,108,223,.07); }
+    .badge.yellow{ border-color: rgba(255,224,102,.55); background: rgba(255,224,102,.22); }
+    .badge.red{ border-color: rgba(214,69,69,.35); background: rgba(214,69,69,.10); color: var(--danger); }
+    .badge.green{ border-color: rgba(30,142,90,.35); background: rgba(30,142,90,.10); color: var(--ok); }
 
     .icon-btn{
-      width:46px;height:46px;border-radius:50%;
-      cursor:pointer; display:flex; align-items:center; justify-content:center;
-      user-select:none; font-size: 20px;
-      border: 2px solid rgba(200,162,74,.75);
-      background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
-      color: var(--navy2);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
-    }
-    .icon-btn.trash{
-      background: rgba(255,255,255,.92);
-      color: rgba(7,22,42,.88);
-      border: 1px solid rgba(7,22,42,.16);
-      font-size: 18px;
-    }
-    .donebtn{ }
-    .trashbtn{ }
-
-    /* ✅ Statut petit à droite */
-    .status-small{
-      width: 140px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(200,162,74,.45);
-      background: rgba(255,255,255,.92);
-      font-weight: 950;
-      color: rgba(7,22,42,.92);
-      height: 42px;
-      align-self:center;
-    }
-
-    /* BANNIÈRE RÉUNION : ✅ enlever "(pop up)" */
-    .meeting-banner{ margin-bottom: 12px; }
-    .meeting-banner .card-inner{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      background: linear-gradient(135deg, rgba(31,122,76,.10), rgba(44,167,104,.10));
-    }
-    .meeting-check{
-      display:flex; align-items:center; gap:12px;
-      cursor:pointer; user-select:none;
-      font-weight: 950; color: var(--navy2);
-    }
-    .meeting-check input{ display:none; }
-    .check-box{
-      width: 44px; height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
-      border: 2px solid rgba(226,201,120,.55);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.10);
-      position: relative;
-      flex: 0 0 auto;
-    }
-    .meeting-check input:checked + .check-box::after{
-      content:"✓";
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      color: var(--gold2);
-      font-size: 24px; font-weight: 1000;
-      text-shadow: 0 1px 0 rgba(0,0,0,.25);
-    }
-    .meeting-label{ display:flex; flex-direction:column; gap:2px; }
-    .meeting-label .top{
-      color: var(--gold2);
-      font-weight: 1000;
-      font-size: 16px;
-      letter-spacing: .6px;
-      text-transform: uppercase;
-    }
-    .meeting-label .sub{
-      color: rgba(7,22,42,.70);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    /* ARCHIVES */
-    .archive-wrapper{ position: relative; padding-left: 18px; }
-    .archive-frame{
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      background:
-        radial-gradient(700px 400px at 40% 0%, rgba(255,255,255,.35), transparent 60%),
-        radial-gradient(900px 600px at 70% 40%, rgba(0,0,0,.06), transparent 65%),
-        repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(255,255,255,.00) 2px 6px),
-        linear-gradient(180deg, #F4E7C9, #EAD7B1);
-      border: 2px solid rgba(123,95,42,.45);
-      position: relative;
-    }
-    .archive-frame::before{
-      content:""; position:absolute; left:0; top:0; bottom:0;
-      width: 20px;
-      background: linear-gradient(180deg, rgba(123,95,42,.55), rgba(123,95,42,.25));
-      border-right: 2px solid rgba(0,0,0,.12);
-      box-shadow: inset -6px 0 10px rgba(0,0,0,.12);
-    }
-    .archive-inner{ padding: 16px; padding-left: 24px; }
-    .archive-item{
-      background: rgba(255,255,255,.40);
-      border: 1px dashed rgba(0,0,0,.28);
-      font-family: "American Typewriter", ui-monospace, Menlo, Monaco, "Courier New", monospace;
-    }
-    .stamp{ font-size:12px; opacity:.85; color: rgba(123,95,42,.95); margin-top:6px; }
-
-    /* STATS */
-    .stats-grid{ display:grid; gap:12px; grid-template-columns: 1fr; }
-    .stats-controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
-    .canvas-wrap{
-      background: rgba(255,255,255,.88);
-      border: 1px solid rgba(7,22,42,.12);
-      border-radius: 14px;
-      padding: 10px;
-      overflow:hidden;
-    }
-    canvas{ width:100%; height: 280px; }
-
-    /* MODAL */
-    .modal-overlay{
-      position: fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding: 14px;
-      z-index: 9999;
-    }
-    .modal-overlay.open{ display:flex; }
-    .modal{ width: min(920px, 100%); border-radius: 16px; overflow:hidden; }
-    .modal-head{
-      background: linear-gradient(180deg, rgba(11,31,59,.96), rgba(7,22,42,.96));
-      color:#fff;
-      padding: 14px 16px;
+      width:42px; height:42px;
+      border-radius:50%;
+      border:2px solid rgba(45,108,223,.35);
+      background: var(--yellow);
+      color: var(--blue);
+      font-size:20px;
+      cursor:pointer;
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      border-bottom: 3px solid rgba(200,162,74,.55);
+      justify-content:center;
+      user-select:none;
+      flex: 0 0 auto;
     }
-    .modal-title{ margin:0; font-weight: 950; letter-spacing:.4px; display:flex; align-items:center; gap:10px; font-size: 18px; }
-    .close-x{
-      background: transparent;
-      color:#fff;
-      border: 2px solid rgba(255,255,255,.20);
-      border-radius: 12px;
-      padding: 8px 10px;
-      cursor:pointer;
-      font-weight: 900;
+    .icon-btn.progress{
+      background: rgba(45,108,223,.12);
+      border:2px solid rgba(45,108,223,.35);
+      color: var(--blue);
+      font-size:18px;
     }
-    .modal-body{ background: var(--ivory); padding: 14px; }
+    .icon-btn.trash{
+      background:#fff;
+      border:1px solid var(--line);
+      color:#444;
+      font-size:18px;
+    }
+
+    /* ARCHIVES style (années 30) */
+    .archive-card{
+      background:var(--archivePaper);
+      border:2px solid var(--archiveBorder);
+    }
+    .archive-card .item{
+      background: rgba(255,255,255,.55);
+      border: 1px dashed rgba(0,0,0,.25);
+      font-family: "American Typewriter", ui-monospace, Menlo, Monaco, "Courier New", monospace;
+    }
+    .stamp{
+      font-size:12px;
+      opacity:.78;
+      color:#7b5f2a;
+      margin-top:6px;
+    }
 
     footer{
       position:fixed; left:0; right:0; bottom:0;
@@ -403,720 +298,910 @@
       background: rgba(251,250,246,.92);
       backdrop-filter: blur(8px);
       border-top: 1px solid rgba(0,0,0,.08);
+      flex-wrap:wrap;
+      z-index:10;
+    }
+
+    /* Modal Réunion */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff;
+      border-radius:20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    .modal header{
+      background: rgba(45,108,223,.10);
+      padding:14px 16px;
+    }
+    .modal header h3{ margin:0; font-size:18px; }
+    .modal .content{ padding:16px; }
+    .modal .content .grid{ grid-template-columns: 1fr 1fr; }
+    .modal .footer{
+      display:flex; gap:10px; justify-content:flex-end;
+      padding:14px 16px;
+      border-top:1px solid var(--line);
+      background: rgba(0,0,0,.02);
+      flex-wrap:wrap;
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap">
-      <h1 class="title">
-        <span class="title-badge">✓</span>
-        To Do List
-      </h1>
-
-      <div class="tabs" role="tablist" aria-label="Onglets">
-        <button id="tab-todo" class="tab active" type="button" role="tab">À faire</button>
-        <button id="tab-archive" class="tab" type="button" role="tab">Archives</button>
-        <button id="tab-stats" class="tab" type="button" role="tab">Statistiques</button>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <!-- TODO -->
-    <section id="todo-section" class="panel">
-
-      <!-- Réunion : checkbox -->
-      <div class="deco-frame meeting-banner" style="--c: rgba(44,167,104,.80);">
-        <div class="card-inner">
-          <label class="meeting-check" for="meetingToggle">
-            <input id="meetingToggle" type="checkbox">
-            <span class="check-box"></span>
-            <span class="meeting-label">
-              <span class="top">Réunion</span>
-              <span class="sub">Créer un rendez-vous</span>
-            </span>
-          </label>
-
-          <button class="btn green" id="meetingQuick" type="button">Ouvrir</button>
-        </div>
-      </div>
-
-      <div class="deco-frame">
-        <div class="card-inner">
-          <form id="add-form">
-            <div class="grid">
-              <label>
-                <span>Action précise</span>
-                <input id="actionPrecise" placeholder="Ex : Appeler Charlotte" required>
-              </label>
-
-              <label>
-                <span>Famille de tâches</span>
-                <select id="famille"></select>
-              </label>
-
-              <label>
-                <span>Catégorie d’interlocuteur</span>
-                <select id="categorie"></select>
-              </label>
-
-              <label>
-                <span>Nom</span>
-                <input id="nom" placeholder="Optionnel">
-              </label>
-            </div>
-
-            <!-- 2 lignes / petits encarts -->
-            <div class="grid-mini">
-              <label class="mini-field">
-                <span>Temps estimé</span>
-                <input id="tempsEstime" type="time" step="60">
-              </label>
-              <label class="mini-field">
-                <span>Temps réel</span>
-                <input id="tempsReel" type="time" step="60">
-              </label>
-            </div>
-
-            <div class="grid-mini">
-              <label class="mini-field">
-                <span>Date limite</span>
-                <input id="dateLimite" type="date">
-              </label>
-              <label class="mini-field">
-                <span>Statut</span>
-                <select id="statut"></select>
-              </label>
-            </div>
-
-            <div class="actions">
-              <button class="btn primary" type="submit">Ajouter</button>
-              <button class="btn ghost" id="reset-btn" type="button">Vider</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="deco-frame" style="margin-top:12px;">
-        <div class="card-inner">
-          <div class="list-header">
-            <h2 style="margin:0;font-weight:950;color:var(--navy2);">To Do</h2>
-          </div>
-          <ul id="todo-list"></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARCHIVES -->
-    <section id="archive-section" class="panel" hidden>
-      <div class="archive-wrapper">
-        <div class="archive-frame">
-          <div class="archive-inner">
-            <div class="list-header">
-              <h2 style="margin:0;font-weight:950;color:var(--navy2);">Archives</h2>
-            </div>
-            <ul id="archive-list"></ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATS (rétablie) -->
-    <section id="stats-section" class="panel" hidden>
-      <div class="deco-frame">
-        <div class="card-inner">
-          <div class="list-header">
-            <h2 style="margin:0;font-weight:950;color:var(--navy2);">Statistiques</h2>
-          </div>
-
-          <div class="stats-controls">
-            <label style="min-width:180px;">
-              <span>Du</span>
-              <input id="statsFrom" type="date">
-            </label>
-            <label style="min-width:180px;">
-              <span>Au</span>
-              <input id="statsTo" type="date">
-            </label>
-            <label style="min-width:220px;">
-              <span>Temps</span>
-              <select id="statsTimeMode">
-                <option value="reel">Temps réel</option>
-                <option value="estime">Temps estimé</option>
-              </select>
-            </label>
-            <button class="btn primary" id="statsRefresh" type="button">Mettre à jour</button>
-          </div>
-
-          <div class="stats-grid" style="margin-top:12px;">
-            <div class="canvas-wrap">
-              <div style="font-weight:950;color:rgba(7,22,42,.92);margin-bottom:6px;">Courbe : minutes par jour</div>
-              <canvas id="lineChart" width="1000" height="280"></canvas>
-            </div>
-            <div class="canvas-wrap">
-              <div style="font-weight:950;color:rgba(7,22,42,.92);margin-bottom:6px;">Camembert : par famille</div>
-              <canvas id="pieChart" width="1000" height="280"></canvas>
-            </div>
-            <div class="canvas-wrap">
-              <div style="font-weight:950;color:rgba(7,22,42,.92);margin-bottom:6px;">Histogramme : par statut</div>
-              <canvas id="barChart" width="1000" height="280"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
-    <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
-    <input id="import-file" type="file" accept=".csv,text/csv" hidden>
-  </footer>
-
-  <!-- MODAL RÉUNION -->
-  <div id="meetingModal" class="modal-overlay" aria-hidden="true">
-    <div class="modal deco-frame" style="--c: var(--green2);">
-      <div class="modal-head">
-        <h3 class="modal-title">
-          <span class="title-badge" style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));color:#fff;">R</span>
-          Réunion
-        </h3>
-        <button class="close-x" id="closeMeeting" type="button">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="meeting-form">
-
-          <!-- ✅ 2 colonnes, responsive, PAS DE CHEVAUCHEMENT -->
-          <div class="grid-mini">
-            <label class="mini-field">
-              <span>Date</span>
-              <input id="m_date" type="date" required>
-            </label>
-            <label class="mini-field">
-              <span>Heure</span>
-              <input id="m_time" type="time" step="60" required>
-            </label>
-          </div>
-
-          <div class="grid-mini" style="margin-top:10px;">
-            <label class="mini-field">
-              <span>Lieu</span>
-              <input id="m_place" placeholder="Ex : Salle 12 / Visio">
-            </label>
-            <label class="mini-field">
-              <span>Personnes invitées</span>
-              <input id="m_people" placeholder="Ex : Nom1, Nom2...">
-            </label>
-          </div>
-
-          <div class="grid" style="margin-top:10px;">
-            <label>
-              <span>Besoins particuliers</span>
-              <textarea id="m_needs" placeholder="Ex : vidéoprojecteur, documents..."></textarea>
-            </label>
-            <label>
-              <span>Compte rendu</span>
-              <textarea id="m_minutes" placeholder="Notes / décisions / actions..."></textarea>
-            </label>
-          </div>
-
-          <div class="actions">
-            <button class="btn green" type="submit">Le rendez-vous est pris</button>
-            <button class="btn ghost" id="meetingCancel" type="button">Annuler</button>
-          </div>
-
-        </form>
-      </div>
+<header>
+  <div class="wrap">
+    <h1 class="title">To Do List</h1>
+    <p class="subtitle">Local • Installable Safari • To Do → Archives • Filtres, Réunion & Stats</p>
+    <div class="tabs" role="tablist">
+      <button id="tab-todo" class="tab active" type="button">À faire</button>
+      <button id="tab-archive" class="tab" type="button">Archives</button>
     </div>
   </div>
+</header>
 
-  <script>
-    // Menus
-    const FAMILLES = [
-      "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
-      "Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir",
-      "Pépinières","Photocopies","Préparation","Réunion"
-    ];
-    const CATEGORIES = [
-      "Moi-même","Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"
-    ];
-    const STATUTS = ["A faire","En cours","Terminé"];
+<main>
+  <!-- ONGLET TODO -->
+  <section id="todo-section" class="panel">
 
-    // IndexedDB
-    const DB_NAME = "todo_local_db";
-    const DB_VERSION = 6;
-    const STORE = "items";
+    <!-- FORMULAIRE (harmonisé Numbers) -->
+    <div class="card">
+      <div class="list-header">
+        <h2 style="margin:0;">Nouvelle tâche</h2>
+        <div class="hint">Formulaire complet (Temps, Réunion, Action supp, Statut) [1](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=027363ad-fd75-42e7-a97f-bde4be419ab5&cid=53edf03465ddcc82)</div>
+      </div>
 
-    function openDb(){
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = () => {
-          const db = req.result;
-          if (!db.objectStoreNames.contains(STORE)) {
-            const store = db.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
-            store.createIndex("by_statut", "statut");
-            store.createIndex("by_archivedAt", "archivedAt");
-          }
-        };
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    }
-    function os(db, mode="readonly"){ return db.transaction(STORE, mode).objectStore(STORE); }
-    function addItem(db, item){
-      return new Promise((resolve, reject) => {
-        const req = os(db, "readwrite").add(item);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    }
-    function putItem(db, item){
-      return new Promise((resolve, reject) => {
-        const req = os(db, "readwrite").put(item);
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => reject(req.error);
-      });
-    }
-    function getAll(db){
-      return new Promise((resolve, reject) => {
-        const req = os(db).getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-      });
-    }
-    async function updateStatus(db, id, statut){
-      const items = await getAll(db);
-      const item = items.find(x => x.id === id);
-      if (!item) return;
-      item.statut = statut;
-      if (statut === "Terminé") item.archivedAt = Date.now();
-      if (statut !== "Terminé") item.archivedAt = null;
-      await putItem(db, item);
-    }
-    function deleteItem(db, id){
-      return new Promise((resolve, reject) => {
-        const req = os(db, "readwrite").delete(id);
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => reject(req.error);
-      });
-    }
+      <form id="add-form">
+        <div class="grid">
+          <label>
+            <span>Action précise</span>
+            <input id="actionPrecise" placeholder="Ex : Appeler Charlotte" required>
+          </label>
 
-    // Helpers UI
-    let db = null;
-    const $ = (id) => document.getElementById(id);
-    function fillSelect(id, values, selected=null){
-      const sel = $(id);
-      sel.innerHTML = "";
-      values.forEach(v => {
-        const opt = new Option(v, v);
-        if (selected && v === selected) opt.selected = true;
-        sel.add(opt);
-      });
-    }
-    function switchTab(tab){
-      $("todo-section").hidden = (tab !== "todo");
-      $("archive-section").hidden = (tab !== "archive");
-      $("stats-section").hidden = (tab !== "stats");
-      $("tab-todo").classList.toggle("active", tab==="todo");
-      $("tab-archive").classList.toggle("active", tab==="archive");
-      $("tab-stats").classList.toggle("active", tab==="stats");
-    }
-    function esc(str){
-      return (str || "").replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
-      }[m]));
-    }
-    function parseTimeToMinutes(t){
-      if (!t || !t.includes(":")) return 0;
-      const [hh, mm] = t.split(":").map(n => parseInt(n,10));
-      if (Number.isNaN(hh)||Number.isNaN(mm)) return 0;
-      return hh*60+mm;
-    }
-    function dateKeyForItem(item){
-      if (item.dateLimite) return item.dateLimite;
-      if (item.isMeeting && item.meeting?.date) return item.meeting.date;
-      return new Date(item.createdAt || Date.now()).toISOString().slice(0,10);
-    }
+          <label>
+            <span>Famille de tâches</span>
+            <select id="famille"></select>
+          </label>
 
-    // Modal réunion
-    function openMeetingModal(){
-      $("meetingModal").classList.add("open");
-      $("meetingModal").setAttribute("aria-hidden","false");
-    }
-    function closeMeetingModal(){
-      $("meetingModal").classList.remove("open");
-      $("meetingModal").setAttribute("aria-hidden","true");
-      $("meeting-form").reset();
-      $("meetingToggle").checked = false;
-    }
-    async function createMeetingTask(){
-      const meeting = {
-        date: $("m_date").value,
-        time: $("m_time").value,
-        place: $("m_place").value.trim(),
-        people: $("m_people").value.trim(),
-        needs: $("m_needs").value.trim(),
-        minutes: $("m_minutes").value.trim()
-      };
-      const label = `Réunion ${meeting.date || ""} ${meeting.time || ""}`.trim();
+          <label>
+            <span>Catégorie d’interlocuteur</span>
+            <select id="categorie"></select>
+          </label>
 
-      const item = {
-        createdAt: Date.now(),
-        actionPrecise: label || "Réunion",
-        famille: "Réunion",
-        categorie: "Moi-même",
-        nom: meeting.people || "",
-        tempsEstime: "",
-        tempsReel: "",
-        dateLimite: meeting.date || "",
-        statut: "A faire",
-        archivedAt: null,
-        isMeeting: true,
-        meeting
-      };
-      await addItem(db, item);
-    }
+          <label>
+            <span>Nom</span>
+            <input id="nom" placeholder="Optionnel">
+          </label>
 
-    // Render
-    async function render(){
-      const items = await getAll(db);
-      const todoItems = items.filter(x => x.statut !== "Terminé");
-      const archItems = items.filter(x => x.statut === "Terminé").sort((a,b) => (b.archivedAt||0)-(a.archivedAt||0));
-      renderTodo(todoItems);
-      renderArchive(archItems);
-      if (!$("stats-section").hidden) renderStats(items);
-    }
+          <label>
+            <span>Temps estimé</span>
+            <input id="tempsEstime" type="time" step="60" value="00:30">
+          </label>
 
-    function renderTodo(list){
-      const ul = $("todo-list");
-      ul.innerHTML = "";
+          <label>
+            <span>Temps consacré</span>
+            <input id="tempsConsacre" type="time" step="60" value="00:00">
+          </label>
 
-      list.forEach(item => {
-        const li = document.createElement("li");
-        li.className = "item" + (item.isMeeting ? " meeting" : "");
+          <label>
+            <span>Date limite</span>
+            <input id="dateLimite" type="date">
+          </label>
 
-        const temps = [
-          item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
-          item.tempsReel ? `✅ réel ${esc(item.tempsReel)}` : ""
-        ].filter(Boolean).join(" • ");
+          <label>
+            <span>Statut</span>
+            <select id="statut"></select>
+          </label>
 
-        const meetingInfo = item.isMeeting && item.meeting
-          ? `📍 ${esc(item.meeting.place || "")} • 🗓 ${esc(item.meeting.date || "")} ${esc(item.meeting.time || "")}`
-          : "";
+          <label style="grid-column:1/-1;">
+            <span>Action supplémentaire</span>
+            <textarea id="actionSupp" placeholder="Ex : Mail + relance, pièces à préparer..."></textarea>
+          </label>
+        </div>
 
-        li.innerHTML = `
-          <button class="icon-btn donebtn" title="Terminé">✓</button>
-          <div class="main">
-            <div class="line">${esc(item.actionPrecise)}</div>
-            <div class="meta">
-              ${esc(item.famille||"")} • ${esc(item.categorie||"")}
-              ${item.nom ? " • " + esc(item.nom) : ""}
-              ${item.dateLimite ? " • 📅 " + esc(item.dateLimite) : ""}
-              ${temps ? " • " + temps : ""}
-              ${meetingInfo ? " • " + meetingInfo : ""}
-            </div>
-          </div>
+        <div class="row" style="margin-top:10px;">
+          <label class="chip" style="cursor:pointer;">
+            <input id="reunionToggle" type="checkbox" style="width:auto; margin:0;">
+            <span>Réunion</span>
+          </label>
+          <span class="hint">Cocher = pop‑up “Détails Réunion”. [1](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=027363ad-fd75-42e7-a97f-bde4be419ab5&cid=53edf03465ddcc82)</span>
+        </div>
 
-          <select class="status-small" aria-label="Statut">
-            ${STATUTS.map(s => `<option value="${s}" ${item.statut===s?"selected":""}>${s}</option>`).join("")}
+        <div class="actions">
+          <button class="btn primary" type="submit">Ajouter</button>
+          <button class="btn ghost" id="reset-btn" type="button">Vider</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- FILTRES -->
+    <div class="card">
+      <div class="list-header">
+        <h2 style="margin:0;">Filtres</h2>
+        <div class="hint">Recherche • Famille • Interlocuteur • Statut • Réunion • Retard • Date limite</div>
+      </div>
+
+      <div class="filters">
+        <label>
+          <span>Recherche</span>
+          <input id="f_search" placeholder="Ex : Charlotte, ELEA, PePitO...">
+        </label>
+
+        <label>
+          <span>Famille</span>
+          <select id="f_famille"></select>
+        </label>
+
+        <label>
+          <span>Interlocuteur</span>
+          <select id="f_categorie"></select>
+        </label>
+
+        <label>
+          <span>Statut</span>
+          <select id="f_statut"></select>
+        </label>
+      </div>
+
+      <div class="chips">
+        <label class="chip" style="cursor:pointer;">
+          <input id="f_reunionOnly" type="checkbox" style="width:auto; margin:0;">
+          <span>Réunions seulement</span>
+        </label>
+
+        <label class="chip" style="cursor:pointer;">
+          <input id="f_overdueOnly" type="checkbox" style="width:auto; margin:0;">
+          <span>En retard seulement</span>
+        </label>
+
+        <label class="chip">
+          <span>Date limite</span>
+          <select id="f_due" style="width:auto; padding:6px 10px; border-radius:999px;">
+            <option value="all">Toutes</option>
+            <option value="today">Aujourd’hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="nodate">Sans date</option>
           </select>
+        </label>
 
-          <button class="icon-btn trash trashbtn" title="Supprimer">🗑</button>
-        `;
+        <label class="chip">
+          <span>Tri</span>
+          <select id="f_sort" style="width:auto; padding:6px 10px; border-radius:999px;">
+            <option value="dateAsc">Date limite ↑</option>
+            <option value="dateDesc">Date limite ↓</option>
+            <option value="recent">Plus récent</option>
+            <option value="oldest">Plus ancien</option>
+          </select>
+        </label>
 
-        li.querySelector(".donebtn").addEventListener("click", async () => {
-          await updateStatus(db, item.id, "Terminé");
-          await render();
-        });
-        li.querySelector(".trashbtn").addEventListener("click", async () => {
-          await deleteItem(db, item.id);
-          await render();
-        });
-        li.querySelector(".status-small").addEventListener("change", async (e) => {
-          await updateStatus(db, item.id, e.target.value);
-          await render();
-        });
+        <button class="btn" id="filters-reset" type="button">Réinitialiser filtres</button>
+      </div>
+    </div>
 
-        ul.appendChild(li);
-      });
-    }
+    <!-- STATS (ToDo + Archives) -->
+    <div class="card">
+      <div class="list-header">
+        <h2 style="margin:0;">Stats (global)</h2>
+        <div class="hint">To Do + Archives • Temps • Retard • Réunions</div>
+      </div>
 
-    function renderArchive(list){
-      const ul = $("archive-list");
-      ul.innerHTML = "";
+      <div class="stats">
+        <div class="stat"><b id="s_totalTodo">0</b><small>Total (To Do)</small></div>
+        <div class="stat"><b id="s_afaire">0</b><small>A faire</small></div>
+        <div class="stat"><b id="s_encours">0</b><small>En cours</small></div>
+        <div class="stat"><b id="s_retard">0</b><small>En retard</small></div>
+        <div class="stat"><b id="s_reunions">0</b><small>Réunions (To Do)</small></div>
+        <div class="stat"><b id="s_estime">0h00</b><small>Temps estimé (To Do)</small></div>
+        <div class="stat"><b id="s_consacre">0h00</b><small>Temps consacré (To Do)</small></div>
+        <div class="stat"><b id="s_termites">0</b><small>Terminé (Archives)</small></div>
+      </div>
 
-      list.forEach(item => {
-        const li = document.createElement("li");
-        li.className = "item archive-item";
+      <div class="twoCols">
+        <div class="miniList">
+          <h3>Top 5 familles (To Do)</h3>
+          <ol id="top_todo"></ol>
+        </div>
+        <div class="miniList">
+          <h3>Top 5 familles (Archives)</h3>
+          <ol id="top_arch"></ol>
+        </div>
+      </div>
+    </div>
 
-        const stamp = item.archivedAt ? new Date(item.archivedAt).toLocaleDateString("fr-FR") : "";
-        const temps = [
-          item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
-          item.tempsReel ? `✅ réel ${esc(item.tempsReel)}` : ""
-        ].filter(Boolean).join(" • ");
+    <!-- LISTE TODO -->
+    <div class="card">
+      <div class="list-header">
+        <h2 style="margin:0;">To Do</h2>
+        <div class="hint">Boutons : ✓ Terminé • ▶︎ En cours • 🗑 Supprimer</div>
+      </div>
+      <ul id="todo-list"></ul>
+    </div>
 
-        li.innerHTML = `
-          <button class="icon-btn back donebtn" title="Reprendre">↩︎</button>
-          <div class="main">
-            <div class="line">${esc(item.actionPrecise)}</div>
-            <div class="meta">
-              ${esc(item.famille||"")} • ${esc(item.categorie||"")}
-              ${item.nom ? " • " + esc(item.nom) : ""}
-              ${item.dateLimite ? " • 📅 " + esc(item.dateLimite) : ""}
-              ${temps ? " • " + temps : ""}
-            </div>
-            <div class="stamp">Archivé le ${esc(stamp)}</div>
-          </div>
-          <div></div>
-          <div></div>
-        `;
-        li.querySelector(".back").addEventListener("click", async () => {
-          await updateStatus(db, item.id, "A faire");
-          switchTab("todo");
-          await render();
-        });
+  </section>
 
-        ul.appendChild(li);
-      });
-    }
+  <!-- ONGLET ARCHIVES -->
+  <section id="archive-section" class="panel" hidden>
+    <div class="card archive-card">
+      <div class="list-header">
+        <h2 style="margin:0;">Archives</h2>
+        <div class="hint">Machine à écrire • Dossier cartonné</div>
+      </div>
 
-    // CSV
-    function exportCSV(items){
-      const headers = [
-        "Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur",
-        "Nom","Temps estimé","Temps réel","Date limite","Statut"
-      ];
-      const rows = items.map((item, idx) => ([
-        idx + 1,
-        item.famille || "",
-        item.actionPrecise || "",
-        item.categorie || "",
-        item.nom || "",
-        item.tempsEstime || "",
-        item.tempsReel || "",
-        item.dateLimite || "",
-        item.statut || ""
-      ].join(";")));
+      <div class="filters" style="margin-bottom:10px;">
+        <label>
+          <span>Recherche</span>
+          <input id="a_search" placeholder="Rechercher dans les archives...">
+        </label>
+        <label>
+          <span>Famille</span>
+          <select id="a_famille"></select>
+        </label>
+        <label>
+          <span>Interlocuteur</span>
+          <select id="a_categorie"></select>
+        </label>
+        <label>
+          <span>Tri</span>
+          <select id="a_sort">
+            <option value="recent">Plus récent</option>
+            <option value="oldest">Plus ancien</option>
+          </select>
+        </label>
+      </div>
 
-      const csv = [headers.join(";"), ...rows].join("\n");
-      const blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "todo-export.csv";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
+      <ul id="archive-list"></ul>
+    </div>
+  </section>
+</main>
 
-    async function importCSV(file){
-      const text = await file.text();
-      const lines = text.split(/\r?\n/).filter(l => l.trim().length);
-      if (lines.length < 2) return;
+<footer>
+  <button class="btn" id="export-btn" type="button">Exporter CSV</button>
+  <button class="btn" id="import-btn" type="button">Importer CSV</button>
+  <input id="import-file" type="file" accept=".csv,text/csv" hidden>
+</footer>
 
-      const headers = lines[0].split(";").map(h => h.trim());
-      const idx = (name) => headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
+<!-- MODAL Réunion -->
+<div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal">
+    <header>
+      <h3>Réunion — Détails</h3>
+      <div class="hint">Ces infos restent locales et s’affichent sur la tâche. [1](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=027363ad-fd75-42e7-a97f-bde4be419ab5&cid=53edf03465ddcc82)</div>
+    </header>
+    <div class="content">
+      <div class="grid">
+        <label>
+          <span>Titre de réunion</span>
+          <input id="m_titre" placeholder="Ex : Réunion équipe / Conseil / Parents...">
+        </label>
+        <label>
+          <span>Date & heure</span>
+          <input id="m_datetime" type="datetime-local">
+        </label>
+        <label style="grid-column:1/-1;">
+          <span>Lieu / visio</span>
+          <input id="m_lieu" placeholder="Ex : Salle 12 / Teams / Téléphone...">
+        </label>
+        <label style="grid-column:1/-1;">
+          <span>Notes</span>
+          <textarea id="m_notes" placeholder="Ordre du jour, points à préparer..."></textarea>
+        </label>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="btn" id="m_cancel" type="button">Annuler</button>
+      <button class="btn primary" id="m_ok" type="button">Valider</button>
+    </div>
+  </div>
+</div>
 
-      const iFam  = idx("Famille de tâches");
-      const iAct  = idx("Action précise");
-      const iCat  = idx("Catégorie d'interlocuteur");
-      const iNom  = idx("Nom");
-      const iTEst = idx("Temps estimé");
-      const iTRe  = idx("Temps réel");
-      const iDate = idx("Date limite");
-      const iStat = idx("Statut");
+<script>
+/* ===== Menus (Macros) =====
+   Famille/Public/Statut viennent de ta feuille Macros. [2](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=9d2ac86f-727f-4cb4-a0ff-d84fbf698442&cid=53edf03465ddcc82) */
+const FAMILLES = [
+  "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
+  "Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir",
+  "Pépinières","Photocopies","Préparation","Réunion"
+];
+const CATEGORIES = [
+  "Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"
+];
+const STATUTS = ["A faire","En cours","Terminé"];
 
-      for (let i = 1; i < lines.length; i++){
-        const vals = lines[i].split(";");
-        const action = (vals[iAct] || "").trim();
-        if (!action) continue;
+/* ===== IndexedDB (local) ===== */
+const DB_NAME = "todo_local_db";
+const DB_VERSION = 3;
+const STORE = "items";
 
-        const statut = (vals[iStat] || "A faire").trim();
-        const item = {
-          createdAt: Date.now(),
-          actionPrecise: action,
-          famille: (vals[iFam] || "").trim(),
-          categorie: (vals[iCat] || "").trim(),
-          nom: (vals[iNom] || "").trim(),
-          tempsEstime: (iTEst >= 0 ? (vals[iTEst] || "").trim() : ""),
-          tempsReel:   (iTRe  >= 0 ? (vals[iTRe]  || "").trim() : ""),
-          dateLimite: (vals[iDate] || "").trim(),
-          statut,
-          archivedAt: (statut === "Terminé") ? Date.now() : null,
-          isMeeting: false,
-          meeting: null
-        };
-        await addItem(db, item);
+function openDb(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        const store = db.createObjectStore(STORE, { keyPath:"id", autoIncrement:true });
+        store.createIndex("by_statut","statut");
+        store.createIndex("by_archivedAt","archivedAt");
       }
-    }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function os(db, mode="readonly"){ return db.transaction(STORE, mode).objectStore(STORE); }
+function addItem(db, item){
+  return new Promise((resolve, reject) => {
+    const req = os(db, "readwrite").add(item);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function putItem(db, item){
+  return new Promise((resolve, reject) => {
+    const req = os(db, "readwrite").put(item);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+function getAll(db){
+  return new Promise((resolve, reject) => {
+    const req = os(db).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function markDone(db, id){
+  const items = await getAll(db);
+  const item = items.find(x => x.id === id);
+  if (!item) return;
+  item.statut = "Terminé";
+  item.archivedAt = Date.now();
+  item.aAfficher = 1; // cohérent avec l'exemple où Terminé -> 1 [1](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=027363ad-fd75-42e7-a97f-bde4be419ab5&cid=53edf03465ddcc82)
+  await putItem(db, item);
+}
+async function markInProgress(db, id){
+  const items = await getAll(db);
+  const item = items.find(x => x.id === id);
+  if (!item) return;
+  item.statut = "En cours";
+  item.aAfficher = 0;
+  await putItem(db, item);
+}
+function deleteItem(db, id){
+  return new Promise((resolve, reject) => {
+    const req = os(db, "readwrite").delete(id);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
 
-    // ====== STATS (canvas simple) ======
-    function clearCanvas(c){
-      const ctx = c.getContext("2d");
-      ctx.clearRect(0,0,c.width,c.height);
-      return ctx;
-    }
-    function drawLineChart(canvas, labels, values, color){
-      const ctx = clearCanvas(canvas);
-      const W = canvas.width, H = canvas.height, pad = 40;
-      const maxV = Math.max(10, ...values);
-      ctx.strokeStyle = "rgba(7,22,42,.18)";
-      ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+/* ===== Helpers ===== */
+const $ = (id) => document.getElementById(id);
+function esc(str){
+  return (str || "").replace(/[&<>"']/g, (m) => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;", "\"":"&quot;","'":"&#039;"
+  }[m]));
+}
+function fillSelect(id, values, withAll=false, selected=null, allLabel="(Tout)"){
+  const sel = $(id);
+  sel.innerHTML = "";
+  if (withAll) sel.add(new Option(allLabel, "__ALL__"));
+  values.forEach(v => sel.add(new Option(v, v)));
+  if (selected !== null) sel.value = selected;
+}
+function todayYMD(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function startOfWeekYMD(){
+  const d = new Date();
+  const day = (d.getDay()+6)%7; // lundi=0
+  d.setDate(d.getDate()-day);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function endOfWeekYMD(){
+  const d = new Date();
+  const day = (d.getDay()+6)%7;
+  d.setDate(d.getDate() + (6-day));
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+function parseTimeToMinutes(hhmm){
+  if (!hhmm || !/^\d{2}:\d{2}$/.test(hhmm)) return 0;
+  const [h,m] = hhmm.split(":").map(Number);
+  return h*60 + m;
+}
+function fmtMinutes(min){
+  const h = Math.floor(min/60);
+  const m = min%60;
+  return `${h}h${String(m).padStart(2,"0")}`;
+}
+function isOverdue(item){
+  if (!item.dateLimite) return false;
+  if (item.statut === "Terminé") return false;
+  return item.dateLimite < todayYMD();
+}
+function topFamilies(items, topN=5){
+  const map = new Map();
+  items.forEach(x => map.set(x.famille || "(Sans famille)", (map.get(x.famille || "(Sans famille)")||0) + 1));
+  return [...map.entries()].sort((a,b)=>b[1]-a[1]).slice(0, topN);
+}
 
-      if (!labels.length) return;
-      const xStep = (W-2*pad) / Math.max(1, labels.length-1);
+/* ===== Modal Réunion ===== */
+let meetingDraft = { titre:"", datetime:"", lieu:"", notes:"" };
 
-      ctx.strokeStyle = color; ctx.lineWidth = 3;
-      ctx.beginPath();
-      labels.forEach((lab,i)=>{
-        const x = pad + xStep*i;
-        const y = (H-pad) - (H-2*pad) * ((values[i])/(maxV));
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-      });
-      ctx.stroke();
-    }
-    function drawPieChart(canvas, entries){
-      const ctx = clearCanvas(canvas);
-      const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=Math.min(W,H)*0.32;
-      const total = entries.reduce((s,e)=>s+e.value,0) || 1;
-      let a = -Math.PI/2;
-      const colors=["#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98","#1F77B4","#D35400","#2E4053"];
-      entries.forEach((e,i)=>{
-        const slice = (e.value/total)*Math.PI*2;
-        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a,a+slice); ctx.closePath();
-        ctx.fillStyle = colors[i%colors.length]; ctx.fill();
-        a += slice;
-      });
-    }
-    function drawBarChart(canvas, entries, color){
-      const ctx = clearCanvas(canvas);
-      const W=canvas.width,H=canvas.height,pad=40;
-      const maxV = Math.max(1, ...entries.map(e=>e.value));
-      ctx.strokeStyle = "rgba(7,22,42,.18)";
-      ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+function openMeetingModal(){
+  $("m_titre").value = meetingDraft.titre || "";
+  $("m_datetime").value = meetingDraft.datetime || "";
+  $("m_lieu").value = meetingDraft.lieu || "";
+  $("m_notes").value = meetingDraft.notes || "";
+  $("modal-backdrop").style.display = "flex";
+  $("modal-backdrop").setAttribute("aria-hidden", "false");
+}
+function closeMeetingModal(){
+  $("modal-backdrop").style.display = "none";
+  $("modal-backdrop").setAttribute("aria-hidden", "true");
+}
+$("m_cancel").addEventListener("click", () => {
+  $("reunionToggle").checked = false;
+  meetingDraft = { titre:"", datetime:"", lieu:"", notes:"" };
+  closeMeetingModal();
+});
+$("m_ok").addEventListener("click", () => {
+  meetingDraft = {
+    titre: $("m_titre").value.trim(),
+    datetime: $("m_datetime").value,
+    lieu: $("m_lieu").value.trim(),
+    notes: $("m_notes").value.trim()
+  };
+  closeMeetingModal();
+});
+$("modal-backdrop").addEventListener("click", (e) => {
+  if (e.target === $("modal-backdrop")) closeMeetingModal();
+});
 
-      const slot = (W-2*pad)/Math.max(1,entries.length);
-      const barW = slot*0.6;
-      entries.forEach((e,i)=>{
-        const x = pad + i*slot + slot*0.2;
-        const h = (H-2*pad)*(e.value/maxV);
-        const y = (H-pad)-h;
-        ctx.fillStyle = color;
-        ctx.fillRect(x,y,barW,h);
-      });
-    }
+/* ===== Tabs ===== */
+function switchTab(tab){
+  const todo = $("todo-section");
+  const arch = $("archive-section");
+  const bTodo = $("tab-todo");
+  const bArch = $("tab-archive");
+  if (tab === "todo"){
+    todo.hidden = false; arch.hidden = true;
+    bTodo.classList.add("active"); bArch.classList.remove("active");
+  } else {
+    todo.hidden = true; arch.hidden = false;
+    bTodo.classList.remove("active"); bArch.classList.add("active");
+  }
+}
 
-    async function renderStats(items){
-      const from = $("statsFrom").value ? new Date($("statsFrom").value) : null;
-      const to = $("statsTo").value ? new Date($("statsTo").value) : null;
-      const mode = $("statsTimeMode").value;
+/* ===== Filtres ===== */
+function getFilters(){
+  return {
+    search: $("f_search").value.trim().toLowerCase(),
+    famille: $("f_famille").value,
+    categorie: $("f_categorie").value,
+    statut: $("f_statut").value,
+    reunionOnly: $("f_reunionOnly").checked,
+    overdueOnly: $("f_overdueOnly").checked,
+    due: $("f_due").value,
+    sort: $("f_sort").value
+  };
+}
+function applyFilters(items, f){
+  let out = items.slice();
 
-      const filtered = items.filter(it=>{
-        const d = new Date(dateKeyForItem(it));
-        if (from && d < from) return false;
-        if (to && d > to) return false;
-        return true;
-      });
+  if (f.search){
+    out = out.filter(x =>
+      (x.actionPrecise||"").toLowerCase().includes(f.search) ||
+      (x.nom||"").toLowerCase().includes(f.search) ||
+      (x.actionSupp||"").toLowerCase().includes(f.search) ||
+      (x.meeting?.titre||"").toLowerCase().includes(f.search)
+    );
+  }
+  if (f.famille !== "__ALL__") out = out.filter(x => x.famille === f.famille);
+  if (f.categorie !== "__ALL__") out = out.filter(x => x.categorie === f.categorie);
+  if (f.statut !== "__ALL__") out = out.filter(x => x.statut === f.statut);
 
-      // line
-      const map = new Map();
-      filtered.forEach(it=>{
-        const k = dateKeyForItem(it);
-        const mins = (mode==="reel") ? parseTimeToMinutes(it.tempsReel) : parseTimeToMinutes(it.tempsEstime);
-        map.set(k,(map.get(k)||0)+mins);
-      });
-      const labels = Array.from(map.keys()).sort();
-      const values = labels.map(k=>map.get(k));
-      drawLineChart($("lineChart"), labels, values, "rgba(200,162,74,.95)");
+  if (f.reunionOnly) out = out.filter(x => x.reunion === true);
+  if (f.overdueOnly) out = out.filter(x => isOverdue(x));
 
-      // pie by famille
-      const fam = new Map();
-      filtered.forEach(it=>{
-        const k = it.famille || "(Sans famille)";
-        fam.set(k,(fam.get(k)||0)+1);
-      });
-      const famEntries = Array.from(fam.entries()).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0,8);
-      drawPieChart($("pieChart"), famEntries);
+  // filtre date limite
+  if (f.due === "nodate") out = out.filter(x => !x.dateLimite);
+  if (f.due === "today") out = out.filter(x => x.dateLimite === todayYMD());
+  if (f.due === "week"){
+    const s = startOfWeekYMD();
+    const e = endOfWeekYMD();
+    out = out.filter(x => x.dateLimite && x.dateLimite >= s && x.dateLimite <= e);
+  }
 
-      // bar by statut
-      const st = new Map([["A faire",0],["En cours",0],["Terminé",0]]);
-      filtered.forEach(it=> st.set(it.statut,(st.get(it.statut)||0)+1));
-      const stEntries = Array.from(st.entries()).map(([label,value])=>({label,value}));
-      drawBarChart($("barChart"), stEntries, "rgba(11,31,59,.85)");
-    }
+  // tri
+  const byDate = (a,b) => (a.dateLimite||"9999-99-99").localeCompare(b.dateLimite||"9999-99-99");
+  if (f.sort === "dateAsc") out.sort(byDate);
+  else if (f.sort === "dateDesc") out.sort((a,b)=>byDate(b,a));
+  else if (f.sort === "recent") out.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  else if (f.sort === "oldest") out.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    // ===== INIT =====
-    document.addEventListener("DOMContentLoaded", async () => {
-      db = await openDb();
+  return out;
+}
 
-      fillSelect("famille", FAMILLES, FAMILLES[0]);
-      fillSelect("categorie", CATEGORIES, "Moi-même");
-      fillSelect("statut", STATUTS, "A faire");
+/* ===== Stats ===== */
+function updateStats(allItems){
+  const todo = allItems.filter(x => x.statut !== "Terminé");
+  const arch = allItems.filter(x => x.statut === "Terminé");
 
-      $("tab-todo").addEventListener("click", async () => { switchTab("todo"); await render(); });
-      $("tab-archive").addEventListener("click", async () => { switchTab("archive"); await render(); });
-      $("tab-stats").addEventListener("click", async () => { switchTab("stats"); await render(); });
+  $("s_totalTodo").textContent = todo.length;
+  $("s_afaire").textContent = todo.filter(x => x.statut === "A faire").length;
+  $("s_encours").textContent = todo.filter(x => x.statut === "En cours").length;
+  $("s_retard").textContent = todo.filter(x => isOverdue(x)).length;
+  $("s_reunions").textContent = todo.filter(x => x.reunion === true).length;
 
-      // Meeting banner
-      $("meetingToggle").addEventListener("change", (e) => { if (e.target.checked) openMeetingModal(); });
-      $("meetingQuick").addEventListener("click", () => { $("meetingToggle").checked = true; openMeetingModal(); });
+  const est = todo.reduce((sum,x)=>sum + parseTimeToMinutes(x.tempsEstime), 0);
+  const con = todo.reduce((sum,x)=>sum + parseTimeToMinutes(x.tempsConsacre), 0);
+  $("s_estime").textContent = fmtMinutes(est);
+  $("s_consacre").textContent = fmtMinutes(con);
 
-      $("closeMeeting").addEventListener("click", closeMeetingModal);
-      $("meetingCancel").addEventListener("click", closeMeetingModal);
-      $("meetingModal").addEventListener("click", (ev)=>{ if(ev.target===$("meetingModal")) closeMeetingModal(); });
+  $("s_termites").textContent = arch.length;
 
-      $("meeting-form").addEventListener("submit", async (e)=>{
-        e.preventDefault();
-        await createMeetingTask();
-        closeMeetingModal();
-        switchTab("todo");
-        await render();
-      });
+  // top 5 familles
+  const t1 = topFamilies(todo, 5);
+  const t2 = topFamilies(arch, 5);
 
-      // Add task
-      $("add-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const statut = $("statut").value;
-        const item = {
-          createdAt: Date.now(),
-          actionPrecise: $("actionPrecise").value.trim(),
-          famille: $("famille").value,
-          categorie: $("categorie").value,
-          nom: $("nom").value.trim(),
-          tempsEstime: $("tempsEstime").value,
-          tempsReel: $("tempsReel").value,
-          dateLimite: $("dateLimite").value,
-          statut,
-          archivedAt: (statut === "Terminé") ? Date.now() : null,
-          isMeeting: false,
-          meeting: null
-        };
-        await addItem(db, item);
-        e.target.reset();
-        fillSelect("statut", STATUTS, "A faire");
-        fillSelect("categorie", CATEGORIES, "Moi-même");
-        await render();
-      });
+  $("top_todo").innerHTML = t1.map(([fam, n]) => `<li><span>${esc(fam)}</span><span>${n}</span></li>`).join("");
+  $("top_arch").innerHTML = t2.map(([fam, n]) => `<li><span>${esc(fam)}</span><span>${n}</span></li>`).join("");
+}
 
-      $("reset-btn").addEventListener("click", () => $("add-form").reset());
+/* ===== Rendu ===== */
+let db = null;
 
-      // CSV
-      $("export-btn").addEventListener("click", async ()=> exportCSV(await getAll(db)));
-      $("import-btn").addEventListener("click", ()=> $("import-file").click());
-      $("import-file").addEventListener("change", async (e)=>{
-        const file = e.target.files?.[0];
-        if(!file) return;
-        await importCSV(file);
-        e.target.value="";
-        await render();
-      });
+function renderTodo(list){
+  const ul = $("todo-list");
+  ul.innerHTML = "";
+  list.forEach(item => {
+    const li = document.createElement("li");
+    li.className = "item" + (isOverdue(item) ? " overdue" : "");
 
-      // stats refresh
-      $("statsRefresh").addEventListener("click", async ()=> renderStats(await getAll(db)));
+    const badges = [];
+    if (item.statut === "A faire") badges.push(`<span class="badge yellow">A faire</span>`);
+    if (item.statut === "En cours") badges.push(`<span class="badge blue">En cours</span>`);
+    if (isOverdue(item)) badges.push(`<span class="badge red">En retard</span>`);
+    if (item.reunion) badges.push(`<span class="badge green">Réunion</span>`);
+    if (item.tempsEstime) badges.push(`<span class="badge">⏳ ${esc(item.tempsEstime)}</span>`);
+    if (item.tempsConsacre && item.tempsConsacre !== "00:00") badges.push(`<span class="badge">✅ ${esc(item.tempsConsacre)}</span>`);
 
-      await render();
+    const meetingLine = item.reunion && item.meeting
+      ? `<div class="meta">📌 ${esc(item.meeting.titre||"Réunion")} ${item.meeting.datetime ? "• " + esc(item.meeting.datetime.replace("T"," ")) : ""} ${item.meeting.lieu ? "• " + esc(item.meeting.lieu) : ""}</div>`
+      : "";
+
+    const extra = item.actionSupp ? `<div class="meta">➕ ${esc(item.actionSupp)}</div>` : "";
+
+    li.innerHTML = `
+      <button class="icon-btn" title="Terminé">✓</button>
+      <button class="icon-btn progress" title="Passer en En cours">▶︎</button>
+      <div class="main">
+        <div class="line">${esc(item.actionPrecise)}</div>
+        <div class="meta">${esc(item.famille||"")} • ${esc(item.categorie||"")}${item.nom ? " • " + esc(item.nom) : ""}${item.dateLimite ? " • ⏰ " + esc(item.dateLimite) : ""}</div>
+        ${meetingLine}
+        ${extra}
+        <div class="badges">${badges.join("")}</div>
+      </div>
+      <button class="icon-btn trash" title="Supprimer">🗑</button>
+    `;
+
+    const btnDone = li.querySelectorAll(".icon-btn")[0];
+    const btnProg = li.querySelectorAll(".icon-btn")[1];
+    const btnDel  = li.querySelectorAll(".icon-btn")[2];
+
+    btnDone.addEventListener("click", async () => { await markDone(db, item.id); await renderAll(); });
+    btnProg.addEventListener("click", async () => { await markInProgress(db, item.id); await renderAll(); });
+    btnDel.addEventListener("click", async () => { await deleteItem(db, item.id); await renderAll(); });
+
+    ul.appendChild(li);
+  });
+}
+
+function renderArchive(list){
+  const ul = $("archive-list");
+  ul.innerHTML = "";
+  list.forEach(item => {
+    const li = document.createElement("li");
+    li.className = "item";
+
+    const stamp = item.archivedAt ? new Date(item.archivedAt).toLocaleDateString("fr-FR") : "";
+    const meetingLine = item.reunion && item.meeting
+      ? `<div class="meta">📌 ${esc(item.meeting.titre||"Réunion")} ${item.meeting.datetime ? "• " + esc(item.meeting.datetime.replace("T"," ")) : ""} ${item.meeting.lieu ? "• " + esc(item.meeting.lieu) : ""}</div>`
+      : "";
+    const extra = item.actionSupp ? `<div class="meta">➕ ${esc(item.actionSupp)}</div>` : "";
+
+    li.innerHTML = `
+      <div class="main">
+        <div class="line">${esc(item.actionPrecise)}</div>
+        <div class="meta">${esc(item.famille||"")} • ${esc(item.categorie||"")}${item.nom ? " • " + esc(item.nom) : ""}${item.dateLimite ? " • ⏰ " + esc(item.dateLimite) : ""}</div>
+        ${meetingLine}
+        ${extra}
+        <div class="stamp">Archivé le ${esc(stamp)}</div>
+      </div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+async function renderAll(){
+  const all = await getAll(db);
+  updateStats(all);
+
+  // TODO
+  const todo = all.filter(x => x.statut !== "Terminé");
+  const filteredTodo = applyFilters(todo, getFilters());
+  renderTodo(filteredTodo);
+
+  // Archives (filtres simples)
+  const aSearch = $("a_search").value.trim().toLowerCase();
+  const aFam = $("a_famille").value;
+  const aCat = $("a_categorie").value;
+  const aSort = $("a_sort").value;
+
+  let arch = all.filter(x => x.statut === "Terminé");
+
+  if (aSearch){
+    arch = arch.filter(x =>
+      (x.actionPrecise||"").toLowerCase().includes(aSearch) ||
+      (x.nom||"").toLowerCase().includes(aSearch) ||
+      (x.actionSupp||"").toLowerCase().includes(aSearch) ||
+      (x.meeting?.titre||"").toLowerCase().includes(aSearch)
+    );
+  }
+  if (aFam !== "__ALL__") arch = arch.filter(x => x.famille === aFam);
+  if (aCat !== "__ALL__") arch = arch.filter(x => x.categorie === aCat);
+
+  arch.sort((a,b)=> (aSort==="oldest" ? (a.archivedAt||0)-(b.archivedAt||0) : (b.archivedAt||0)-(a.archivedAt||0)));
+  renderArchive(arch);
+}
+
+/* ===== CSV Import/Export (aligné Numbers) =====
+   Colonnes: Numéro;Famille;Action;Catégorie;Nom;Temps estimé;Temps consacré;Date limite;Réunion;Action supplémentaire;Statut;À afficher [1](https://onedrive.live.com/personal/53edf03465ddcc82/_layouts/15/doc.aspx?resid=027363ad-fd75-42e7-a97f-bde4be419ab5&cid=53edf03465ddcc82) */
+function ymdToNumbers(ymd){
+  // "2026-04-15" -> "15/04/2026 00:00"
+  if (!ymd || !/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return "";
+  const [y,m,d] = ymd.split("-");
+  return `${d}/${m}/${y} 00:00`;
+}
+function numbersToYmd(s){
+  // "15/04/2026 00:00" -> "2026-04-15"
+  if (!s) return "";
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+  if (!m) return s.slice(0,10);
+  return `${m[3]}-${m[2]}-${m[1]}`;
+}
+
+function exportCSV(items){
+  const headers = [
+    "Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur","Nom",
+    "Temps estimé","Temps consacré","Date limite","Réunion","Action supplémentaire","Statut","À afficher",
+    "Réunion - Titre","Réunion - DateHeure","Réunion - Lieu","Réunion - Notes"
+  ];
+
+  const rows = items.map((x,i)=>[
+    i+1,
+    x.famille||"",
+    x.actionPrecise||"",
+    x.categorie||"",
+    x.nom||"",
+    x.tempsEstime||"",
+    x.tempsConsacre||"",
+    ymdToNumbers(x.dateLimite||""),
+    x.reunion ? "VRAI" : "FAUX",
+    x.actionSupp||"",
+    x.statut||"",
+    (x.statut==="Terminé" ? 1 : 0),
+    x.meeting?.titre||"",
+    x.meeting?.datetime||"",
+    x.meeting?.lieu||"",
+    x.meeting?.notes||""
+  ].join(";"));
+
+  const csv = [headers.join(";"), ...rows].join("\n");
+  const blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "todo-export.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importCSV(file){
+  const text = await file.text();
+  const lines = text.split(/\r?\n/).filter(l => l.trim().length);
+  if (lines.length < 2) return;
+
+  const headers = lines[0].split(";").map(h=>h.trim());
+  const idx = (name) => headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+  const iFam = idx("Famille de tâches");
+  const iAct = idx("Action précise");
+  const iCat = idx("Catégorie d'interlocuteur");
+  const iNom = idx("Nom");
+  const iTE  = idx("Temps estimé");
+  const iTC  = idx("Temps consacré");
+  const iDate = idx("Date limite");
+  const iReu = idx("Réunion");
+  const iSupp = idx("Action supplémentaire");
+  const iStat = idx("Statut");
+
+  // colonnes réunion étendues (si présentes)
+  const iMT = idx("Réunion - Titre");
+  const iMD = idx("Réunion - DateHeure");
+  const iML = idx("Réunion - Lieu");
+  const iMN = idx("Réunion - Notes");
+
+  for (let i=1;i<lines.length;i++){
+    const v = lines[i].split(";");
+    const action = (v[iAct]||"").trim();
+    if (!action) continue;
+
+    const statut = (v[iStat]||"A faire").trim();
+    const reu = (v[iReu]||"").trim().toUpperCase() === "VRAI";
+
+    const meeting = reu ? {
+      titre: iMT>=0 ? (v[iMT]||"").trim() : "",
+      datetime: iMD>=0 ? (v[iMD]||"").trim() : "",
+      lieu: iML>=0 ? (v[iML]||"").trim() : "",
+      notes: iMN>=0 ? (v[iMN]||"").trim() : ""
+    } : null;
+
+    await addItem(db,{
+      actionPrecise: action,
+      famille: (v[iFam]||"").trim(),
+      categorie: (v[iCat]||"").trim(),
+      nom: (v[iNom]||"").trim(),
+      tempsEstime: (v[iTE]||"").trim(),
+      tempsConsacre: (v[iTC]||"").trim(),
+      dateLimite: numbersToYmd((v[iDate]||"").trim()),
+      reunion: reu,
+      meeting,
+      actionSupp: (v[iSupp]||"").trim(),
+      statut,
+      createdAt: Date.now(),
+      archivedAt: (statut==="Terminé") ? Date.now() : null,
+      aAfficher: (statut==="Terminé") ? 1 : 0
     });
-  </script>
+  }
+}
+
+/* ===== Init ===== */
+document.addEventListener("DOMContentLoaded", async () => {
+  // Service worker (sw.js)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js");
+  }
+
+  db = await openDb();
+
+  // Menus (form)
+  fillSelect("famille", FAMILLES, false, FAMILLES[0]);
+  fillSelect("categorie", CATEGORIES, false, CATEGORIES[0]);
+  fillSelect("statut", STATUTS, false, "A faire");
+
+  // Menus (filtres TODO)
+  fillSelect("f_famille", FAMILLES, true, "__ALL__");
+  fillSelect("f_categorie", CATEGORIES, true, "__ALL__");
+  fillSelect("f_statut", ["A faire","En cours"], true, "__ALL__", "(Tous sauf Terminé)");
+
+  // Menus (filtres Archives)
+  fillSelect("a_famille", FAMILLES, true, "__ALL__");
+  fillSelect("a_categorie", CATEGORIES, true, "__ALL__");
+
+  // Tabs
+  $("tab-todo").addEventListener("click", () => switchTab("todo"));
+  $("tab-archive").addEventListener("click", () => switchTab("archive"));
+
+  // Pop-up Réunion
+  $("reunionToggle").addEventListener("change", (e) => {
+    if (e.target.checked) openMeetingModal();
+    else meetingDraft = { titre:"", datetime:"", lieu:"", notes:"" };
+  });
+
+  // Form submit
+  $("add-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const statut = $("statut").value;
+    const reunion = $("reunionToggle").checked;
+
+    const item = {
+      actionPrecise: $("actionPrecise").value.trim(),
+      famille: $("famille").value,
+      categorie: $("categorie").value,
+      nom: $("nom").value.trim(),
+      tempsEstime: $("tempsEstime").value,
+      tempsConsacre: $("tempsConsacre").value,
+      dateLimite: $("dateLimite").value,
+      reunion,
+      meeting: reunion ? { ...meetingDraft } : null,
+      actionSupp: $("actionSupp").value.trim(),
+      statut,
+      createdAt: Date.now(),
+      archivedAt: (statut === "Terminé") ? Date.now() : null,
+      aAfficher: (statut === "Terminé") ? 1 : 0
+    };
+
+    await addItem(db, item);
+
+    // reset
+    e.target.reset();
+    fillSelect("statut", STATUTS, false, "A faire");
+    $("tempsEstime").value = "00:30";
+    $("tempsConsacre").value = "00:00";
+    $("reunionToggle").checked = false;
+    meetingDraft = { titre:"", datetime:"", lieu:"", notes:"" };
+
+    await renderAll();
+  });
+
+  $("reset-btn").addEventListener("click", () => {
+    $("add-form").reset();
+    $("tempsEstime").value = "00:30";
+    $("tempsConsacre").value = "00:00";
+    $("reunionToggle").checked = false;
+    meetingDraft = { titre:"", datetime:"", lieu:"", notes:"" };
+  });
+
+  // Filtres events (TODO)
+  ["f_search","f_famille","f_categorie","f_statut","f_reunionOnly","f_overdueOnly","f_due","f_sort"]
+    .forEach(id => $(id).addEventListener("input", renderAll));
+  ["f_famille","f_categorie","f_statut","f_reunionOnly","f_overdueOnly","f_due","f_sort"]
+    .forEach(id => $(id).addEventListener("change", renderAll));
+
+  $("filters-reset").addEventListener("click", () => {
+    $("f_search").value = "";
+    $("f_famille").value = "__ALL__";
+    $("f_categorie").value = "__ALL__";
+    $("f_statut").value = "__ALL__";
+    $("f_reunionOnly").checked = false;
+    $("f_overdueOnly").checked = false;
+    $("f_due").value = "all";
+    $("f_sort").value = "dateAsc";
+    renderAll();
+  });
+
+  // Archives filters
+  ["a_search","a_famille","a_categorie","a_sort"]
+    .forEach(id => $(id).addEventListener("input", renderAll));
+  ["a_famille","a_categorie","a_sort"]
+    .forEach(id => $(id).addEventListener("change", renderAll));
+
+  // Import / Export
+  $("export-btn").addEventListener("click", async () => {
+    const items = await getAll(db);
+    exportCSV(items);
+  });
+  $("import-btn").addEventListener("click", () => $("import-file").click());
+  $("import-file").addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await importCSV(file);
+    e.target.value = "";
+    await renderAll();
+  });
+
+  await renderAll();
+});
+</script>
 </body>
 </html>
