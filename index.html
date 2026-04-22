@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
 
-  <!-- PWA (chemins relatifs OK pour GitHub Pages en /To-Do-List/) -->
+  <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <meta name="theme-color" content="#0B1F3B">
@@ -24,6 +24,10 @@
       --ivory:#FFFDF7;
       --shadow: 0 18px 40px rgba(0,0,0,.14);
       --radius: 14px;
+
+      --green:#1F7A4C;
+      --green2:#2CA768;
+      --greenSoft: rgba(46, 168, 104, .16);
     }
     *{ box-sizing:border-box; }
     body{
@@ -39,17 +43,16 @@
        HEADER + GROS BOUTONS
        ======================= */
     header{
-      padding:18px 14px 10px;
-      background:
-        linear-gradient(180deg, rgba(11,31,59,.92), rgba(7,22,42,.92));
-      color: #fff;
+      padding:18px 14px 12px;
+      background: linear-gradient(180deg, rgba(11,31,59,.92), rgba(7,22,42,.92));
+      color:#fff;
       border-bottom: 3px solid rgba(200,162,74,.55);
       box-shadow: 0 10px 30px rgba(0,0,0,.22);
     }
     .wrap{ max-width: 980px; margin:0 auto; }
     .title{
       margin:0;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.6px;
       font-size: 28px;
       display:flex;
@@ -62,7 +65,7 @@
       background: linear-gradient(135deg, rgba(200,162,74,.95), rgba(226,201,120,.95));
       display:inline-flex;
       align-items:center;justify-content:center;
-      color: var(--navy);
+      color: var(--navy2);
       font-weight: 900;
       box-shadow: inset 0 0 0 2px rgba(7,22,42,.18);
     }
@@ -72,16 +75,16 @@
       display:flex;
       gap:12px;
       flex-wrap:wrap;
+      align-items:center;
     }
     .tab{
       border: 2px solid rgba(200,162,74,.75);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
       color:#fff;
-      padding:14px 18px;             /* plus grands */
+      padding:14px 18px;
       border-radius: 999px;
       font-size:16px;
-      font-weight:700;
-      letter-spacing:.2px;
+      font-weight:800;
       cursor:pointer;
       box-shadow: inset 0 0 0 2px rgba(0,0,0,.08);
     }
@@ -90,6 +93,13 @@
       color: var(--navy2);
       border-color: rgba(226,201,120,.9);
     }
+
+    .tab.green{
+      border-color: rgba(44,167,104,.75);
+      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
+      color:#fff;
+    }
+    .tab.green:hover{ filter: brightness(1.05); }
 
     /* =======================
        LAYOUT
@@ -103,13 +113,12 @@
 
     /* =======================
        CADRES ART DÉCO (pur CSS)
-       Inspiré des techniques "art deco border" (outline + conic-gradient)
        ======================= */
     .deco-frame{
       --c: var(--gold);
-      --b: 2px;     /* épaisseur lignes */
-      --o1: 16px;   /* marge cadre */
-      --o2: 10px;   /* offset rectangle interne */
+      --b: 2px;
+      --o1: 16px;
+      --o2: 10px;
       position: relative;
       border: var(--o1) solid transparent;
       border-radius: var(--radius);
@@ -124,7 +133,7 @@
       background-color: rgba(255,255,255,.86);
       box-shadow: var(--shadow);
       overflow: hidden;
-    } /* [3](https://stackoverflow.com/questions/65758024/art-deco-style-border-in-css)[4](https://codepen.io/angelagiese/pen/mdMBYaM) */
+    }
 
     .card-inner{
       padding: 16px;
@@ -133,26 +142,37 @@
     }
 
     /* =======================
-       FORMULAIRE (To Do)
+       FORM (To Do)
        ======================= */
     .grid{
       display:grid;
       gap:12px;
       grid-template-columns: repeat(2, minmax(0,1fr));
     }
+    .grid-compact{
+      margin-top: 10px;
+      display:grid;
+      gap:12px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+    @media (max-width: 860px){
+      .grid-compact{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
     @media (max-width: 760px){
       .grid{ grid-template-columns: 1fr; }
+      .grid-compact{ grid-template-columns: 1fr; }
     }
+
     label span{
       display:block;
       font-size:12px;
-      opacity:.78;
+      opacity:.8;
       margin:0 0 6px;
       color: rgba(11,31,59,.88);
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: .2px;
     }
-    input, select{
+    input, select, textarea{
       width:100%;
       padding:12px 12px;
       border-radius: 12px;
@@ -161,7 +181,8 @@
       font:inherit;
       outline:none;
     }
-    input:focus, select:focus{
+    textarea{ min-height: 90px; resize: vertical; }
+    input:focus, select:focus, textarea:focus{
       border-color: rgba(200,162,74,.9);
       box-shadow: 0 0 0 4px rgba(200,162,74,.18);
     }
@@ -171,6 +192,7 @@
       gap:10px;
       margin-top:14px;
       flex-wrap:wrap;
+      align-items:center;
     }
     .btn{
       border:0;
@@ -178,7 +200,7 @@
       border-radius: 999px;
       cursor:pointer;
       font:inherit;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.2px;
     }
     .btn.primary{
@@ -192,13 +214,20 @@
       border: 2px solid rgba(11,31,59,.28);
       color: var(--navy2);
     }
+    .btn.green{
+      background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
+      color:#fff;
+      border: 2px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+    }
+    .btn.green:active{ transform: translateY(1px); }
 
     /* =======================
        LISTES
        ======================= */
     .list-header{
       display:flex;
-      align-items:baseline;
+      align-items:center;
       justify-content:space-between;
       gap:10px;
       margin-bottom: 10px;
@@ -208,6 +237,7 @@
       font-size:18px;
       letter-spacing:.2px;
       color: var(--navy2);
+      font-weight: 900;
     }
     ul{
       list-style:none;
@@ -227,17 +257,43 @@
         linear-gradient(180deg, rgba(11,31,59,.05), rgba(200,162,74,.06));
       border: 1px solid rgba(7,22,42,.10);
     }
+    .item.meeting{
+      background: linear-gradient(180deg, rgba(31,122,76,.10), rgba(44,167,104,.16));
+      border-color: rgba(31,122,76,.20);
+    }
     .main{ flex:1; }
     .line{
-      font-weight: 900;
+      font-weight: 950;
       font-size: 16px;
       color: var(--navy2);
     }
     .meta{
       font-size:12px;
-      opacity:.82;
+      opacity:.86;
       margin-top:4px;
       color: rgba(7,22,42,.82);
+      line-height: 1.35;
+    }
+
+    .pill-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .mini{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(7,22,42,.14);
+      background: rgba(255,255,255,.85);
+      color: rgba(7,22,42,.92);
+      font-weight: 800;
+    }
+    .mini.status{
+      border-color: rgba(200,162,74,.45);
+      background: rgba(255,255,255,.92);
     }
 
     .icon-btn{
@@ -273,25 +329,20 @@
        ======================= */
     .archive-wrapper{
       position: relative;
-      padding-left: 18px; /* place pour le "dos de classeur" */
+      padding-left: 18px;
     }
-
     .archive-frame{
-      --c: rgba(123,95,42,.55);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
       background:
         radial-gradient(700px 400px at 40% 0%, rgba(255,255,255,.35), transparent 60%),
         radial-gradient(900px 600px at 70% 40%, rgba(0,0,0,.06), transparent 65%),
-        /* "fibres papier" */
         repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 2px, rgba(255,255,255,.00) 2px 6px),
         linear-gradient(180deg, #F4E7C9, #EAD7B1);
       border: 2px solid rgba(123,95,42,.45);
       position: relative;
     }
-
-    /* dos de classeur */
     .archive-frame::before{
       content:"";
       position:absolute;
@@ -301,12 +352,10 @@
       border-right: 2px solid rgba(0,0,0,.12);
       box-shadow: inset -6px 0 10px rgba(0,0,0,.12);
     }
-
     .archive-inner{
       padding: 16px;
       padding-left: 24px;
     }
-
     .archive-item{
       background: rgba(255,255,255,.40);
       border: 1px dashed rgba(0,0,0,.28);
@@ -314,9 +363,88 @@
     }
     .stamp{
       font-size:12px;
-      opacity:.8;
+      opacity:.85;
       color: rgba(123,95,42,.95);
       margin-top:6px;
+    }
+
+    /* =======================
+       MODAL (Réunion)
+       ======================= */
+    .modal-overlay{
+      position: fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+      z-index: 9999;
+    }
+    .modal-overlay.open{ display:flex; }
+    .modal{
+      width: min(920px, 100%);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+    .modal-head{
+      background: linear-gradient(180deg, rgba(11,31,59,.96), rgba(7,22,42,.96));
+      color:#fff;
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom: 3px solid rgba(200,162,74,.55);
+    }
+    .modal-title{
+      margin:0;
+      font-weight: 950;
+      letter-spacing:.4px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size: 18px;
+    }
+    .close-x{
+      background: transparent;
+      color:#fff;
+      border: 2px solid rgba(255,255,255,.20);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .modal-body{
+      background: var(--ivory);
+      padding: 14px;
+    }
+
+    /* =======================
+       STATS
+       ======================= */
+    .stats-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns: 1fr;
+    }
+    .stats-controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    .canvas-wrap{
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(7,22,42,.12);
+      border-radius: 14px;
+      padding: 10px;
+      overflow:hidden;
+    }
+    canvas{ width:100%; height: 280px; }
+    .small-note{
+      font-size:12px;
+      opacity:.7;
+      margin-top:8px;
     }
 
     /* =======================
@@ -347,6 +475,8 @@
       <div class="tabs" role="tablist" aria-label="Onglets">
         <button id="tab-todo" class="tab active" type="button" role="tab">À faire</button>
         <button id="tab-archive" class="tab" type="button" role="tab">Archives</button>
+        <button id="tab-stats" class="tab" type="button" role="tab">Statistiques</button>
+        <button id="btn-meeting" class="tab green" type="button">Réunion</button>
       </div>
     </div>
   </header>
@@ -377,7 +507,10 @@
                 <span>Nom</span>
                 <input id="nom" placeholder="Optionnel">
               </label>
+            </div>
 
+            <!-- LIGNE COMPACTE (moins large visuellement) -->
+            <div class="grid-compact">
               <label>
                 <span>Temps estimé</span>
                 <input id="tempsEstime" type="time" step="60">
@@ -430,6 +563,54 @@
         </div>
       </div>
     </section>
+
+    <!-- ONGLET STATISTIQUES -->
+    <section id="stats-section" class="panel" hidden>
+      <div class="deco-frame">
+        <div class="card-inner">
+          <div class="list-header">
+            <h2 class="list-title">Statistiques</h2>
+          </div>
+
+          <div class="stats-controls">
+            <label style="min-width:180px;">
+              <span>Du</span>
+              <input id="statsFrom" type="date">
+            </label>
+            <label style="min-width:180px;">
+              <span>Au</span>
+              <input id="statsTo" type="date">
+            </label>
+            <label style="min-width:220px;">
+              <span>Temps à analyser</span>
+              <select id="statsTimeMode">
+                <option value="reel">Temps réel</option>
+                <option value="estime">Temps estimé</option>
+              </select>
+            </label>
+            <button class="btn primary" id="statsRefresh" type="button">Mettre à jour</button>
+          </div>
+
+          <div class="stats-grid" style="margin-top:12px;">
+            <div class="canvas-wrap">
+              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Courbe : minutes par jour</div>
+              <canvas id="lineChart" width="1000" height="280"></canvas>
+              <div class="small-note">Source : dates limite (ou date de création si vide).</div>
+            </div>
+
+            <div class="canvas-wrap">
+              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Camembert : répartition par famille</div>
+              <canvas id="pieChart" width="1000" height="280"></canvas>
+            </div>
+
+            <div class="canvas-wrap">
+              <div class="meta" style="font-weight:900;color:rgba(7,22,42,.92);">Histogramme : par statut</div>
+              <canvas id="barChart" width="1000" height="280"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -438,9 +619,57 @@
     <input id="import-file" type="file" accept=".csv,text/csv" hidden>
   </footer>
 
+  <!-- MODAL RÉUNION -->
+  <div id="meetingModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal deco-frame" style="--c: var(--green2);">
+      <div class="modal-head">
+        <h3 class="modal-title"><span class="title-badge" style="width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));color:#fff;">R</span> Réunion</h3>
+        <button class="close-x" id="closeMeeting" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="meeting-form">
+          <div class="grid-compact">
+            <label>
+              <span>Date</span>
+              <input id="m_date" type="date" required>
+            </label>
+            <label>
+              <span>Heure</span>
+              <input id="m_time" type="time" step="60" required>
+            </label>
+            <label>
+              <span>Lieu</span>
+              <input id="m_place" placeholder="Ex : Salle 12 / Visio">
+            </label>
+            <label>
+              <span>Personnes invitées</span>
+              <input id="m_people" placeholder="Ex : Nom1, Nom2...">
+            </label>
+          </div>
+
+          <div class="grid" style="margin-top:10px;">
+            <label>
+              <span>Besoins particuliers</span>
+              <textarea id="m_needs" placeholder="Ex : vidéoprojecteur, documents, etc."></textarea>
+            </label>
+            <label>
+              <span>Compte rendu</span>
+              <textarea id="m_minutes" placeholder="Notes / décisions / actions..."></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="btn green" id="meetingConfirm" type="submit">Le rendez-vous est pris</button>
+            <button class="btn ghost" id="meetingCancel" type="button">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script>
     /****************************************************************
-     * MENUS déroulants (Macros) + ajout "Moi-même"
+     * MENUS déroulants (Macros) + "Moi-même"
      ****************************************************************/
     const FAMILLES = [
       "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
@@ -455,10 +684,10 @@
     const STATUTS = ["A faire","En cours","Terminé"];
 
     /****************************************************************
-     * STOCKAGE LOCAL IndexedDB (persistant)
+     * STOCKAGE LOCAL IndexedDB
      ****************************************************************/
     const DB_NAME = "todo_local_db";
-    const DB_VERSION = 2; // <-- incrémenté (ajout champs temps)
+    const DB_VERSION = 4; // (statut dynamique + réunions + stats)
     const STORE = "items";
 
     function openDb(){
@@ -471,8 +700,7 @@
             const store = db.createObjectStore(STORE, { keyPath: "id", autoIncrement: true });
             store.createIndex("by_statut", "statut");
             store.createIndex("by_archivedAt", "archivedAt");
-          } else {
-            // rien à faire : les nouveaux champs sont juste ajoutés dans les objets
+            store.createIndex("by_createdAt", "createdAt");
           }
         };
 
@@ -509,22 +737,18 @@
       });
     }
 
-    async function markDone(db, id){
+    async function updateStatus(db, id, statut){
       const items = await getAll(db);
       const item = items.find(x => x.id === id);
       if (!item) return;
-      item.statut = "Terminé";
-      item.archivedAt = Date.now();
+      item.statut = statut;
+      if (statut === "Terminé") item.archivedAt = Date.now();
+      if (statut !== "Terminé") item.archivedAt = null;
       await putItem(db, item);
     }
 
     async function unarchiveToTodo(db, id){
-      const items = await getAll(db);
-      const item = items.find(x => x.id === id);
-      if (!item) return;
-      item.statut = "A faire";
-      item.archivedAt = null;
-      await putItem(db, item);
+      await updateStatus(db, id, "A faire");
     }
 
     function deleteItem(db, id){
@@ -536,7 +760,7 @@
     }
 
     /****************************************************************
-     * UI
+     * UI helpers
      ****************************************************************/
     let db = null;
     const $ = (id) => document.getElementById(id);
@@ -554,20 +778,19 @@
     function switchTab(tab){
       const todo = $("todo-section");
       const arch = $("archive-section");
+      const stats = $("stats-section");
+
       const bTodo = $("tab-todo");
       const bArch = $("tab-archive");
+      const bStats = $("tab-stats");
 
-      if (tab === "todo"){
-        todo.hidden = false;
-        arch.hidden = true;
-        bTodo.classList.add("active");
-        bArch.classList.remove("active");
-      } else {
-        todo.hidden = true;
-        arch.hidden = false;
-        bTodo.classList.remove("active");
-        bArch.classList.add("active");
-      }
+      todo.hidden = tab !== "todo";
+      arch.hidden = tab !== "archive";
+      stats.hidden = tab !== "stats";
+
+      bTodo.classList.toggle("active", tab === "todo");
+      bArch.classList.toggle("active", tab === "archive");
+      bStats.classList.toggle("active", tab === "stats");
     }
 
     function esc(str){
@@ -576,10 +799,24 @@
       }[m]));
     }
 
-    function formatTime(t){
-      return t ? `⏱ ${t}` : "";
+    function parseTimeToMinutes(t){
+      if (!t || typeof t !== "string" || !t.includes(":")) return 0;
+      const [hh, mm] = t.split(":").map(n => parseInt(n,10));
+      if (Number.isNaN(hh) || Number.isNaN(mm)) return 0;
+      return hh * 60 + mm;
     }
 
+    function dateKeyForItem(item){
+      // Priorité : date limite, sinon date réunion, sinon date création
+      if (item.dateLimite) return item.dateLimite;
+      if (item.meeting && item.meeting.date) return item.meeting.date;
+      const d = new Date(item.createdAt || Date.now());
+      return d.toISOString().slice(0,10);
+    }
+
+    /****************************************************************
+     * RENDER
+     ****************************************************************/
     async function render(){
       const items = await getAll(db);
 
@@ -587,16 +824,27 @@
       const archItems = items.filter(x => x.statut === "Terminé")
                              .sort((a,b) => (b.archivedAt||0) - (a.archivedAt||0));
 
-      // TODO
-      const ulTodo = $("todo-list");
-      ulTodo.innerHTML = "";
-      todoItems.forEach(item => {
+      renderTodo(todoItems);
+      renderArchive(archItems);
+      renderStats(items); // stats se met à jour en arrière-plan
+    }
+
+    function renderTodo(list){
+      const ul = $("todo-list");
+      ul.innerHTML = "";
+
+      list.forEach(item => {
         const li = document.createElement("li");
-        li.className = "item";
+        li.className = "item" + (item.isMeeting ? " meeting" : "");
+
         const temps = [
           item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
           item.tempsReel ? `✅ réel ${esc(item.tempsReel)}` : ""
         ].filter(Boolean).join(" • ");
+
+        const meetingInfo = item.isMeeting && item.meeting
+          ? `📍 ${esc(item.meeting.place || "")} • 🗓 ${esc(item.meeting.date || "")} ${esc(item.meeting.time || "")}`
+          : "";
 
         li.innerHTML = `
           <button class="icon-btn" title="Marquer Terminé">✓</button>
@@ -607,30 +855,50 @@
               ${item.nom ? " • " + esc(item.nom) : ""}
               ${item.dateLimite ? " • 📅 " + esc(item.dateLimite) : ""}
               ${temps ? " • " + temps : ""}
+              ${meetingInfo ? " • " + meetingInfo : ""}
+            </div>
+            <div class="pill-row">
+              <select class="mini status" aria-label="Statut">
+                ${STATUTS.filter(s => s !== "Terminé").map(s => `<option value="${s}" ${item.statut===s?"selected":""}>${s}</option>`).join("")}
+                <option value="Terminé">Terminé</option>
+              </select>
+              ${item.isMeeting ? `<span class="mini" style="border-color:rgba(31,122,76,.35);background:rgba(31,122,76,.06);color:rgba(11,31,59,.92);">Réunion</span>` : ""}
             </div>
           </div>
           <button class="icon-btn trash" title="Supprimer">🗑</button>
         `;
 
-        li.querySelector(".icon-btn").addEventListener("click", async () => {
-          await markDone(db, item.id);
+        const btnDone = li.querySelector(".icon-btn");
+        const btnDel = li.querySelector(".trash");
+        const statusSel = li.querySelector("select.status");
+
+        btnDone.addEventListener("click", async () => {
+          await updateStatus(db, item.id, "Terminé");
           await render();
         });
 
-        li.querySelector(".trash").addEventListener("click", async () => {
+        btnDel.addEventListener("click", async () => {
           await deleteItem(db, item.id);
           await render();
         });
 
-        ulTodo.appendChild(li);
-      });
+        statusSel.addEventListener("change", async (e) => {
+          await updateStatus(db, item.id, e.target.value);
+          await render();
+        });
 
-      // ARCHIVES
-      const ulArch = $("archive-list");
-      ulArch.innerHTML = "";
-      archItems.forEach(item => {
+        ul.appendChild(li);
+      });
+    }
+
+    function renderArchive(list){
+      const ul = $("archive-list");
+      ul.innerHTML = "";
+
+      list.forEach(item => {
         const li = document.createElement("li");
         li.className = "item archive-item";
+
         const stamp = item.archivedAt ? new Date(item.archivedAt).toLocaleDateString("fr-FR") : "";
         const temps = [
           item.tempsEstime ? `⏳ estimé ${esc(item.tempsEstime)}` : "",
@@ -657,24 +925,17 @@
           await render();
         });
 
-        ulArch.appendChild(li);
+        ul.appendChild(li);
       });
     }
 
     /****************************************************************
-     * Import / Export CSV (format Numbers ; ) + temps estimé/réel
+     * IMPORT / EXPORT CSV (format Numbers ; )
      ****************************************************************/
     function exportCSV(items){
       const headers = [
-        "Numéro",
-        "Famille de tâches",
-        "Action précise",
-        "Catégorie d'interlocuteur",
-        "Nom",
-        "Temps estimé",
-        "Temps réel",
-        "Date limite",
-        "Statut"
+        "Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur",
+        "Nom","Temps estimé","Temps réel","Date limite","Statut"
       ];
 
       const rows = items.map((item, idx) => ([
@@ -725,6 +986,7 @@
 
         const statut = (vals[iStat] || "A faire").trim();
         const item = {
+          createdAt: Date.now(),
           actionPrecise: action,
           famille: (vals[iFam] || "").trim(),
           categorie: (vals[iCat] || "").trim(),
@@ -733,20 +995,263 @@
           tempsReel:   (iTRe  >= 0 ? (vals[iTRe]  || "").trim() : ""),
           dateLimite: (vals[iDate] || "").trim(),
           statut,
-          archivedAt: (statut === "Terminé") ? Date.now() : null
+          archivedAt: (statut === "Terminé") ? Date.now() : null,
+          isMeeting: false,
+          meeting: null
         };
         await addItem(db, item);
       }
     }
 
     /****************************************************************
+     * MODAL RÉUNION -> crée une activité verte
+     ****************************************************************/
+    function openMeetingModal(){
+      $("meetingModal").classList.add("open");
+      $("meetingModal").setAttribute("aria-hidden","false");
+    }
+    function closeMeetingModal(){
+      $("meetingModal").classList.remove("open");
+      $("meetingModal").setAttribute("aria-hidden","true");
+      $("meeting-form").reset();
+    }
+
+    async function createMeetingTask(){
+      const meeting = {
+        date: $("m_date").value,
+        time: $("m_time").value,
+        place: $("m_place").value.trim(),
+        people: $("m_people").value.trim(),
+        needs: $("m_needs").value.trim(),
+        minutes: $("m_minutes").value.trim()
+      };
+
+      const action = `Réunion ${meeting.date || ""} ${meeting.time || ""}`.trim();
+
+      const item = {
+        createdAt: Date.now(),
+        actionPrecise: action || "Réunion",
+        famille: "Réunion",
+        categorie: "Moi-même",
+        nom: meeting.people || "",
+        tempsEstime: "",
+        tempsReel: "",
+        dateLimite: meeting.date || "",
+        statut: "A faire",
+        archivedAt: null,
+        isMeeting: true,
+        meeting
+      };
+
+      await addItem(db, item);
+    }
+
+    /****************************************************************
+     * STATS (Canvas pur JS)
+     ****************************************************************/
+    function clearCanvas(c){
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0,0,c.width,c.height);
+      return ctx;
+    }
+
+    function drawLineChart(canvas, labels, values, color){
+      const ctx = clearCanvas(canvas);
+      const W = canvas.width, H = canvas.height;
+      const pad = 40;
+
+      ctx.fillStyle = "rgba(7,22,42,.92)";
+      ctx.font = "14px system-ui";
+      ctx.fillText("Minutes", 8, 18);
+
+      const maxV = Math.max(10, ...values);
+      const minV = 0;
+
+      // axes
+      ctx.strokeStyle = "rgba(7,22,42,.18)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, H-pad);
+      ctx.lineTo(W-pad, H-pad);
+      ctx.stroke();
+
+      // grid + ticks
+      ctx.fillStyle = "rgba(7,22,42,.65)";
+      ctx.font = "12px system-ui";
+      for (let i=0;i<=4;i++){
+        const y = pad + (H-2*pad) * (i/4);
+        const v = Math.round(maxV * (1 - i/4));
+        ctx.strokeStyle = "rgba(7,22,42,.08)";
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(W-pad, y);
+        ctx.stroke();
+        ctx.fillText(String(v), 6, y+4);
+      }
+
+      if (labels.length === 0) return;
+
+      const xStep = (W-2*pad) / Math.max(1, labels.length-1);
+
+      // line
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      labels.forEach((lab, i) => {
+        const x = pad + xStep * i;
+        const y = (H-pad) - (H-2*pad) * ((values[i]-minV)/(maxV-minV));
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+
+      // points + x labels (échantillonnage)
+      ctx.fillStyle = color;
+      labels.forEach((lab, i) => {
+        const x = pad + xStep * i;
+        const y = (H-pad) - (H-2*pad) * ((values[i]-minV)/(maxV-minV));
+        ctx.beginPath();
+        ctx.arc(x,y,4,0,Math.PI*2);
+        ctx.fill();
+
+        // n'affiche pas toutes les dates si trop nombreuses
+        if (labels.length <= 8 || i % Math.ceil(labels.length/8) === 0 || i === labels.length-1){
+          ctx.fillStyle = "rgba(7,22,42,.70)";
+          ctx.font = "11px system-ui";
+          ctx.fillText(lab.slice(5), x-14, H-pad+18);
+          ctx.fillStyle = color;
+        }
+      });
+    }
+
+    function drawPieChart(canvas, entries){
+      const ctx = clearCanvas(canvas);
+      const W = canvas.width, H = canvas.height;
+      const cx = W/2, cy = H/2;
+      const r = Math.min(W,H) * 0.32;
+
+      const total = entries.reduce((s,e)=>s+e.value,0) || 1;
+      let angle = -Math.PI/2;
+
+      const colors = [
+        "#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98",
+        "#1F77B4","#D35400","#2E4053","#16A085","#B03A2E"
+      ];
+
+      entries.forEach((e, idx) => {
+        const slice = (e.value/total) * Math.PI*2;
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.arc(cx,cy,r, angle, angle+slice);
+        ctx.closePath();
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.fill();
+        angle += slice;
+      });
+
+      // légende
+      ctx.font = "12px system-ui";
+      let y = 18;
+      entries.slice(0,10).forEach((e, idx) => {
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.fillRect(12, y-10, 12, 12);
+        ctx.fillStyle = "rgba(7,22,42,.88)";
+        ctx.fillText(`${e.label} (${e.value})`, 30, y);
+        y += 18;
+      });
+    }
+
+    function drawBarChart(canvas, entries, color){
+      const ctx = clearCanvas(canvas);
+      const W = canvas.width, H = canvas.height;
+      const pad = 40;
+      const maxV = Math.max(1, ...entries.map(e=>e.value));
+
+      // axes
+      ctx.strokeStyle = "rgba(7,22,42,.18)";
+      ctx.beginPath();
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, H-pad);
+      ctx.lineTo(W-pad, H-pad);
+      ctx.stroke();
+
+      const barW = (W-2*pad) / Math.max(1, entries.length) * 0.6;
+      const gap = (W-2*pad) / Math.max(1, entries.length) * 0.4;
+
+      entries.forEach((e, i) => {
+        const x = pad + i*(barW+gap) + gap/2;
+        const h = (H-2*pad) * (e.value/maxV);
+        const y = (H-pad) - h;
+
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, barW, h);
+
+        ctx.fillStyle = "rgba(7,22,42,.82)";
+        ctx.font = "12px system-ui";
+        ctx.fillText(String(e.value), x+barW/2-6, y-6);
+
+        ctx.font = "11px system-ui";
+        ctx.fillText(e.label, x-6, H-pad+18);
+      });
+    }
+
+    async function renderStats(allItems){
+      // ne dessine que si onglet stats visible, sinon ne fait rien
+      if ($("stats-section").hidden) return;
+
+      const from = $("statsFrom").value ? new Date($("statsFrom").value) : null;
+      const to = $("statsTo").value ? new Date($("statsTo").value) : null;
+      const mode = $("statsTimeMode").value; // reel/estime
+
+      const inRange = allItems.filter(it => {
+        const dk = dateKeyForItem(it);
+        const d = new Date(dk);
+        if (from && d < from) return false;
+        if (to && d > to) return false;
+        return true;
+      });
+
+      // Courbe : minutes par jour
+      const map = new Map();
+      inRange.forEach(it => {
+        const k = dateKeyForItem(it);
+        const t = (mode === "reel") ? parseTimeToMinutes(it.tempsReel) : parseTimeToMinutes(it.tempsEstime);
+        map.set(k, (map.get(k)||0) + t);
+      });
+
+      const labels = Array.from(map.keys()).sort();
+      const values = labels.map(k => map.get(k));
+
+      drawLineChart($("lineChart"), labels, values, "rgba(200,162,74,.95)");
+
+      // Camembert : par famille (compte)
+      const fam = new Map();
+      inRange.forEach(it => {
+        const k = it.famille || "(Sans famille)";
+        fam.set(k, (fam.get(k)||0) + 1);
+      });
+      const famEntries = Array.from(fam.entries())
+        .map(([label,value])=>({label,value}))
+        .sort((a,b)=>b.value-a.value)
+        .slice(0,10);
+
+      drawPieChart($("pieChart"), famEntries);
+
+      // Histogramme : statut
+      const st = new Map([["A faire",0],["En cours",0],["Terminé",0]]);
+      inRange.forEach(it => st.set(it.statut, (st.get(it.statut)||0)+1));
+      const stEntries = Array.from(st.entries()).map(([label,value])=>({label,value}));
+      drawBarChart($("barChart"), stEntries, "rgba(11,31,59,.85)");
+    }
+
+    /****************************************************************
      * INIT
      ****************************************************************/
     document.addEventListener("DOMContentLoaded", async () => {
-      // Service worker (ton fichier app.jws) : si tu ne vois pas les changements,
-      // c'est souvent le cache du service workerker_API/Using_Service_Workers)
+      // Si tu utilises app.jws comme service worker : si le hors-ligne ne marche pas,
+      // Safari peut refuser selon le type MIME. Dans ce cas, renommer en sw.js est la solution la plus fiable. gistration-error-unsupported-mime-type-text-html)[2](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("./app.jws");
+        navigator.serviceWorker.register("./app.jws").catch(()=>{});
       }
 
       db = await openDb();
@@ -755,14 +1260,17 @@
       fillSelect("categorie", CATEGORIES, "Moi-même");
       fillSelect("statut", STATUTS, "A faire");
 
-      $("tab-todo").addEventListener("click", () => switchTab("todo"));
-      $("tab-archive").addEventListener("click", () => switchTab("archive"));
+      $("tab-todo").addEventListener("click", async () => { switchTab("todo"); await render(); });
+      $("tab-archive").addEventListener("click", async () => { switchTab("archive"); await render(); });
+      $("tab-stats").addEventListener("click", async () => { switchTab("stats"); await render(); });
 
+      // Form ajout tâche
       $("add-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const statut = $("statut").value;
         const item = {
+          createdAt: Date.now(),
           actionPrecise: $("actionPrecise").value.trim(),
           famille: $("famille").value,
           categorie: $("categorie").value,
@@ -771,7 +1279,9 @@
           tempsReel: $("tempsReel").value,
           dateLimite: $("dateLimite").value,
           statut,
-          archivedAt: (statut === "Terminé") ? Date.now() : null
+          archivedAt: (statut === "Terminé") ? Date.now() : null,
+          isMeeting: false,
+          meeting: null
         };
 
         await addItem(db, item);
@@ -783,19 +1293,41 @@
 
       $("reset-btn").addEventListener("click", () => $("add-form").reset());
 
+      // Import / Export
       $("export-btn").addEventListener("click", async () => {
         const items = await getAll(db);
         exportCSV(items);
       });
 
       $("import-btn").addEventListener("click", () => $("import-file").click());
-
       $("import-file").addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
         await importCSV(file);
         e.target.value = "";
         await render();
+      });
+
+      // Réunion modal
+      $("btn-meeting").addEventListener("click", openMeetingModal);
+      $("closeMeeting").addEventListener("click", closeMeetingModal);
+      $("meetingCancel").addEventListener("click", closeMeetingModal);
+      $("meetingModal").addEventListener("click", (ev) => {
+        if (ev.target === $("meetingModal")) closeMeetingModal();
+      });
+
+      $("meeting-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await createMeetingTask();
+        closeMeetingModal();
+        switchTab("todo");
+        await render();
+      });
+
+      // Stats refresh
+      $("statsRefresh").addEventListener("click", async () => {
+        const items = await getAll(db);
+        await renderStats(items);
       });
 
       await render();
