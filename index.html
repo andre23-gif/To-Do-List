@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
+  <meta name="app-build" content="2026-04-22.3">
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
@@ -1261,6 +1262,55 @@ body{
     });
   }
 </script>
+<script>
+/*
+  Auto-update anti cache GitHub Pages/Safari
+  - Ne laisse pas ?v=... dans l’URL (on le retire)
+  - Ne boucle pas (sessionStorage)
+*/
+(function(){
+  const build = document.querySelector('meta[name="app-build"]')?.content || "0";
+  const key = "todoupdated:" + build;
 
+  // Si on a déjà tenté une mise à jour pour cette version, on ne recommence pas
+  if (sessionStorage.getItem(key)) {
+    // Nettoie l’URL si elle a un ?v=
+    if (location.search.includes("v=")) {
+      history.replaceState(null, "", location.pathname);
+    }
+    return;
+  }
+
+  // 1) On force une requête "fresh" de index.html via une URL unique
+  const bustUrl = location.pathname.replace(/\/?$/, "/") + "index.html?__=" + Date.now();
+
+  fetch(bustUrl, { cache: "no-store" })
+    .then(r => r.text())
+    .then(html => {
+      // 2) On lit le build distant (meta app-build)
+      const m = html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i);
+      const remoteBuild = m ? m[1] : build;
+
+      // 3) Si la version distante est différente, on recharge une seule fois
+      if (remoteBuild !== build) {
+        sessionStorage.setItem(key, "1");
+        // Recharge avec un cache-bust, puis l’URL sera nettoyée au prochain chargement
+        location.replace(location.pathname + "?v=" + Date.now());
+      } else {
+        // Pas de nouvelle version → on marque comme fait et on nettoie l’URL si besoin
+        sessionStorage.setItem(key, "1");
+        if (location.search.includes("v=")) {
+          history.replaceState(null, "", location.pathname);
+        }
+      }
+    })
+    .catch(() => {
+      // En cas d’échec réseau, on ne casse rien.
+      if (location.search.includes("v=")) {
+        history.replaceState(null, "", location.pathname);
+      }
+    });
+})();
+</script>
 </body>
 </html>
