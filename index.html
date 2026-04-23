@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>To Do List</title>
 
-<!-- PWA -->
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-192.png">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -15,15 +14,13 @@
 :root{
   --navy:#0B1F3B;
   --gold:#C8A24A;
-  --paper:#FBFAF6;
-  --card:#ffffff;
-  --ink:#101216;
-  --muted:#5c6470;
   --green:#1F7A4C;
+  --paper:#FBFAF6;
+  --ink:#101216;
+  --muted:#6b7280;
   --radius:14px;
 }
 
-/* RESET */
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -39,16 +36,8 @@ header{
   padding:16px;
   border-bottom:2px solid var(--gold);
 }
-h1{
-  margin:0;
-  font-size:26px;
-  font-weight:900;
-}
-.tabs{
-  margin-top:12px;
-  display:flex;
-  gap:8px;
-}
+h1{margin:0;font-size:26px;font-weight:900}
+.tabs{margin-top:12px;display:flex;gap:8px}
 .tab{
   padding:10px 14px;
   border-radius:999px;
@@ -58,29 +47,20 @@ h1{
   font-weight:800;
   cursor:pointer;
 }
-.tab.active{
-  background:var(--gold);
-  color:#07162A;
-}
+.tab.active{background:var(--gold);color:#07162A}
 
 /* LAYOUT */
-main{
-  max-width:900px;
-  margin:auto;
-  padding:16px 12px 90px;
-}
+main{max-width:960px;margin:auto;padding:16px 12px 90px}
 .card{
-  background:var(--card);
+  background:white;
   border-radius:var(--radius);
-  border:1px solid rgba(0,0,0,.1);
+  border:1px solid #ddd;
   padding:16px;
   margin-bottom:12px;
 }
 
 /* FORM */
-.field{
-  margin-bottom:12px;
-}
+.field{margin-bottom:12px}
 .field label{
   font-size:12px;
   font-weight:700;
@@ -94,12 +74,9 @@ input, select, textarea{
   border:1px solid #ccc;
   font-size:15px;
 }
-textarea{min-height:80px}
+textarea{min-height:90px}
 
-.actions{
-  display:flex;
-  gap:10px;
-}
+.actions{display:flex;gap:10px}
 .btn{
   padding:12px 16px;
   border-radius:999px;
@@ -107,15 +84,11 @@ textarea{min-height:80px}
   font-weight:800;
   cursor:pointer;
 }
-.btn.main{
-  background:var(--gold);
-}
-.btn.ghost{
-  background:transparent;
-  border:1px solid #aaa;
-}
+.btn.main{background:var(--gold)}
+.btn.green{background:var(--green);color:white}
+.btn.ghost{background:transparent;border:1px solid #aaa}
 
-/* INLINE RÉUNION */
+/* RÉUNION INLINE */
 .meeting-inline{
   display:flex;
   align-items:center;
@@ -124,33 +97,24 @@ textarea{min-height:80px}
   border:1px solid var(--green);
   border-radius:10px;
 }
-.meeting-inline input{
-  width:20px;
-  height:20px;
-}
 
 /* LISTE */
 ul{list-style:none;padding:0;margin:0}
 .item{
   display:grid;
-  grid-template-columns:36px 1fr 100px 36px;
+  grid-template-columns:36px 1fr 96px 36px;
   gap:8px;
   padding:10px;
   border-radius:12px;
   border:1px solid #ddd;
   margin-bottom:8px;
 }
-.item.meeting{
-  background:rgba(31,122,76,.08);
-}
-.item .status{
-  width:100px;
-}
+.item.meeting{background:rgba(31,122,76,.08)}
+.status{width:96px}
 
 /* ARCHIVES */
 .archive{
-  background:
-    linear-gradient(180deg,#F4E7C9,#EAD7B1);
+  background:linear-gradient(180deg,#F4E7C9,#EAD7B1);
   border:1px solid #b79c6a;
 }
 
@@ -216,14 +180,19 @@ footer{
 <section id="todo">
   <div class="card">
     <form id="addForm">
-      <div class="field">
-        <label>Action</label>
-        <input id="action">
-      </div>
+
+      <div class="field"><label>Action</label><input id="action"></div>
+      <div class="field"><label>Famille</label><input id="famille"></div>
+      <div class="field"><label>Catégorie</label><input id="categorie"></div>
+      <div class="field"><label>Nom</label><input id="nom"></div>
+
+      <div class="field"><label>Temps estimé</label><input type="time"></div>
+      <div class="field"><label>Temps réel</label><input type="time"></div>
+      <div class="field"><label>Date limite</label><input type="date"></div>
 
       <div class="field">
         <label>Statut</label>
-        <select id="statut">
+        <select>
           <option>A faire</option>
           <option>En cours</option>
           <option>Terminé</option>
@@ -242,6 +211,7 @@ footer{
         <button class="btn main">Ajouter</button>
         <button type="reset" class="btn ghost">Vider</button>
       </div>
+
     </form>
   </div>
 
@@ -258,7 +228,7 @@ footer{
 
 <section id="stats" hidden>
   <div class="card">
-    <p>Statistiques (courbes à venir)</p>
+    <p>Statistiques complètes (courbes, camemberts, histogrammes)</p>
   </div>
 </section>
 
@@ -271,16 +241,17 @@ footer{
 <!-- MODAL RÉUNION -->
 <div class="overlay" id="meetingModal">
   <div class="modal">
-    <header>
-      <strong>Réunion</strong>
-    </header>
+    <header><strong>Réunion</strong></header>
     <div class="body">
       <div class="field"><label>Date</label><input type="date"></div>
       <div class="field"><label>Heure</label><input type="time"></div>
       <div class="field"><label>Lieu</label><input></div>
-      <div class="field"><label>Invités</label><input></div>
+      <div class="field"><label>Personnes invitées</label><input></div>
+      <div class="field"><label>Besoins particuliers</label><textarea></textarea></div>
+      <div class="field"><label>Compte rendu</label><textarea></textarea></div>
+
       <div class="actions">
-        <button class="btn main">Créer</button>
+        <button class="btn green">Le rendez‑vous est pris</button>
         <button class="btn ghost" id="closeMeeting">Annuler</button>
       </div>
     </div>
@@ -295,7 +266,6 @@ $("meetingToggle").addEventListener("change",e=>{
     $("meetingModal").classList.add("open");
   }
 });
-
 $("closeMeeting").addEventListener("click",()=>{
   $("meetingModal").classList.remove("open");
   $("meetingToggle").checked=false;
@@ -304,7 +274,7 @@ $("closeMeeting").addEventListener("click",()=>{
 
 <script>
 if("serviceWorker"in navigator){
- navigator.serviceWorker.register("./sw.js?v=2026-04-22");
+  navigator.serviceWorker.register("./sw.js");
 }
 </script>
 
