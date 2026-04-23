@@ -17,12 +17,14 @@
       --navy2:#07162A;
       --gold:#C8A24A;
       --gold2:#E2C978;
+
       --paper:#FBFAF6;
       --card:rgba(255,255,255,.92);
       --ink:#101216;
       --muted:rgba(7,22,42,.70);
 
       --green:#1F7A4C;
+      --green2:#2CA768;
 
       --radius:14px;
       --shadow:0 14px 34px rgba(0,0,0,.12);
@@ -88,10 +90,10 @@
     main{
       max-width:980px;
       margin:0 auto;
-      padding:14px 10px 90px;
+      padding:14px 10px 92px;
     }
 
-    /* Cartes Art déco sobres (rectangulaire + double filet) */
+    /* Cartes sobres (double filet) */
     .card{
       background:var(--card);
       border-radius:var(--radius);
@@ -110,7 +112,7 @@
     }
     .card-body{ padding:16px; position:relative; }
 
-    /* Sections + séparateurs Art déco */
+    /* Sections */
     .section{ margin-top:14px; }
     .section-title{
       display:flex;
@@ -143,7 +145,7 @@
       font-weight:800;
     }
 
-    /* Formulaire : 1 champ = 1 ligne (anti-chevauchement) */
+    /* Form : 1 champ = 1 ligne */
     .stack{
       display:flex;
       flex-direction:column;
@@ -157,7 +159,7 @@
       color:rgba(11,31,59,.90);
     }
 
-
+    /* Encarts rectangulaires */
     .box{
       border:1px solid rgba(200,162,74,.55);
       border-radius:10px;
@@ -218,7 +220,7 @@
       box-shadow:0 10px 20px rgba(0,0,0,.12);
     }
 
-    /* Bande Réunion */
+    /* Bande Réunion (sans gros bouton) */
     .meeting-banner{
       display:flex;
       align-items:center;
@@ -233,6 +235,18 @@
       position:relative;
     }
     .meeting-left{ display:flex; align-items:center; gap:12px; }
+    .meeting-toggle{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .meeting-toggle input{
+      position:absolute;
+      opacity:0;
+      pointer-events:none;
+    }
     .check{
       width:42px;height:42px;border-radius:12px;
       background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
@@ -241,8 +255,9 @@
       color:rgba(226,201,120,.98);
       font-weight:1000;
       font-size:20px;
-      cursor:pointer;
-      user-select:none;
+    }
+    .meeting-toggle input:checked + .check::after{
+      content:"";
     }
     .meeting-text .top{
       color:rgba(226,201,120,.98);
@@ -271,7 +286,10 @@
       background: rgba(255,255,255,.92);
       border:1px solid rgba(7,22,42,.10);
     }
-    .item.meeting{ background: rgba(31,122,76,.10); border-color: rgba(31,122,76,.22); }
+    .item.meeting{
+      background: rgba(31,122,76,.10);
+      border-color: rgba(31,122,76,.22);
+    }
     .done, .trash{
       width:46px;height:46px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;
@@ -315,21 +333,23 @@
       .trash{ grid-area:trash; justify-self:end; }
     }
 
-    /* Modal */
+    /* Modal : ne dépasse pas iPad (scroll interne) */
     .overlay{
       position:fixed; inset:0;
       display:none;
-      align-items:center;
+      align-items:flex-start;
       justify-content:center;
       background: rgba(0,0,0,.55);
-      padding:14px;
+      padding:12px;
       z-index:9999;
     }
     .overlay.open{ display:flex; }
+
     .modal{
       width:min(920px, 100%);
-      border-radius:16px;
+      max-height: calc(100vh - 24px);
       overflow:hidden;
+      border-radius:16px;
       background: rgba(255,255,255,.96);
       border:1px solid rgba(200,162,74,.55);
       box-shadow:var(--shadow);
@@ -351,9 +371,15 @@
       font-weight:1000;
       cursor:pointer;
     }
-    .modal-body{ padding:16px; background: #FFFDF7; }
+    .modal-body{
+      padding:16px;
+      background: #FFFDF7;
+      max-height: calc(100vh - 24px - 62px);
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-    /* Archives papier */
+    /* Archives papier ancien */
     .archive{
       background:
         radial-gradient(700px 400px at 40% 0%, rgba(255,255,255,.35), transparent 60%),
@@ -402,19 +428,20 @@
     <section id="todo-section">
       <div class="meeting-banner">
         <div class="meeting-left">
-          <div class="check" id="meetingCheck">✓</div>
+          <label class="meeting-toggle">
+            <input id="meetingToggle" type="checkbox">
+            <span class="check">✓</span>
+          </label>
           <div class="meeting-text">
             <p class="top">Réunion</p>
-            <p class="sub">Créer un rendez-vous</p>
+            <p class="sub">Cocher pour planifier un rendez-vous</p>
           </div>
         </div>
-        <button class="btn green" id="openMeeting" type="button">Ouvrir</button>
       </div>
 
       <div class="card">
         <div class="card-body">
           <form id="add-form" class="stack">
-
             <div class="section">
               <div class="section-title"><span class="tag">I</span> Informations</div>
 
@@ -441,7 +468,6 @@
 
             <div class="section">
               <div class="section-title"><span class="tag">T</span> Temps</div>
-  
 
               <div class="field">
                 <span>Temps estimé</span>
@@ -472,7 +498,6 @@
               <button class="btn gold" type="submit">Ajouter</button>
               <button class="btn ghost" id="reset-btn" type="button">Vider</button>
             </div>
-
           </form>
         </div>
       </div>
@@ -601,11 +626,13 @@
   </div>
 
   <script>
+    // ---- Données listes ----
     const FAMILLES = ["Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction","Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir","Pépinières","Photocopies","Préparation","Réunion"];
     const CATEGORIES = ["Moi-même","Parents","Partenaires","Collègues","Administration","Elèves","Professeurs principaux","Public"];
     const STATUTS = ["A faire","En cours","Terminé"];
 
-    const DB_NAME="todo_local_db", DB_VERSION=7, STORE="items";
+    // ---- IndexedDB ----
+    const DB_NAME="todo_local_db", DB_VERSION=8, STORE="items";
     let db=null;
     const $=id=>document.getElementById(id);
 
@@ -678,6 +705,7 @@
       return new Date(it.createdAt||Date.now()).toISOString().slice(0,10);
     }
 
+    // ---- Stats (canvas simple) ----
     function clearCanvas(c){ const ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height); return ctx; }
     function drawLine(canvas, labels, values){
       const ctx=clearCanvas(canvas), W=canvas.width, H=canvas.height, pad=40;
@@ -721,57 +749,6 @@
       });
     }
 
-    async function render(){
-      const items=await getAll();
-      const todo=items.filter(x=>x.statut!=="Terminé");
-      const arch=items.filter(x=>x.statut==="Terminé").sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
-
-      const ul=$("todo-list"); ul.innerHTML="";
-      todo.forEach(it=>{
-        const li=document.createElement("li");
-        li.className="item"+(it.isMeeting?" meeting":"");
-        const temps=[it.tempsEstime?`⏳ ${esc(it.tempsEstime)}`:"",it.tempsReel?`✅ ${esc(it.tempsReel)}`:""].filter(Boolean).join(" • ");
-        const meetingInfo=it.isMeeting && it.meeting ? `📍 ${esc(it.meeting.place||"")} • 🗓 ${esc(it.meeting.date||"")} ${esc(it.meeting.time||"")}`:"";
-        li.innerHTML=`
-          <div class="done" title="Terminé">✓</div>
-          <div class="main">
-            <div class="line">${esc(it.actionPrecise)}</div>
-            <div class="meta">${esc(it.famille||"")} • ${esc(it.categorie||"")}${it.nom?` • ${esc(it.nom)}`:""}${it.dateLimite?` • 📅 ${esc(it.dateLimite)}`:""}${temps?` • ${temps}`:""}${meetingInfo?` • ${meetingInfo}`:""}</div>
-          </div>
-          <select class="status">
-            ${STATUTS.map(s=>`<option value="${s}" ${it.statut===s?"selected":""}>${s}</option>`).join("")}
-          </select>
-          <div class="trash" title="Supprimer">🗑</div>
-        `;
-        li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"Terminé"); await render(); });
-        li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); await render(); });
-        li.querySelector(".status").addEventListener("change", async(e)=>{ await updateStatus(it.id,e.target.value); await render(); });
-        ul.appendChild(li);
-      });
-
-      const ua=$("archive-list"); ua.innerHTML="";
-      arch.forEach(it=>{
-        const li=document.createElement("li");
-        li.className="item archive-item";
-        const stamp=it.archivedAt?new Date(it.archivedAt).toLocaleDateString("fr-FR"):"";
-        li.innerHTML=`
-          <div class="done" title="Reprendre">↩︎</div>
-          <div class="main">
-            <div class="line">${esc(it.actionPrecise)}</div>
-            <div class="meta">${esc(it.famille||"")} • ${esc(it.categorie||"")}</div>
-            <div class="meta">Archivé le ${esc(stamp)}</div>
-          </div>
-          <div></div><div></div>
-        `;
-        li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"A faire"); switchTab("todo"); await render(); });
-        ua.appendChild(li);
-      });
-
-      if(!$("stats-section").hidden){
-        await renderStats(items);
-      }
-    }
-
     async function renderStats(items){
       const from=$("statsFrom").value?new Date($("statsFrom").value):null;
       const to=$("statsTo").value?new Date($("statsTo").value):null;
@@ -799,7 +776,8 @@
         const k=it.famille||"(Sans famille)";
         fam.set(k,(fam.get(k)||0)+1);
       });
-      const famEntries=Array.from(fam.entries()).map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value).slice(0,8);
+      const famEntries=Array.from(fam.entries()).map(([label,value])=>({label,value}))
+        .sort((a,b)=>b.value-a.value).slice(0,8);
       drawPie($("pieChart"), famEntries);
 
       const st=new Map([["A faire",0],["En cours",0],["Terminé",0]]);
@@ -808,6 +786,7 @@
       drawBars($("barChart"), stEntries);
     }
 
+    // ---- Réunion modal ----
     function openMeeting(){
       $("meetingOverlay").classList.add("open");
       $("meetingOverlay").setAttribute("aria-hidden","false");
@@ -816,10 +795,134 @@
       $("meetingOverlay").classList.remove("open");
       $("meetingOverlay").setAttribute("aria-hidden","true");
       $("meeting-form").reset();
+      $("meetingToggle").checked = false;
+    }
+
+    // ---- CSV (simple) ----
+    async function exportCSV(){
+      const items = await getAll();
+      const headers = ["Numéro","Famille","Action","Catégorie","Nom","Temps estimé","Temps réel","Date limite","Statut"];
+      const rows = items.map((it, idx)=>[
+        idx+1,
+        it.famille||"",
+        it.actionPrecise||"",
+        it.categorie||"",
+        it.nom||"",
+        it.tempsEstime||"",
+        it.tempsReel||"",
+        it.dateLimite||"",
+        it.statut||""
+      ].join(";"));
+      const csv = [headers.join(";"), ...rows].join("\n");
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href=url; a.download="todo-export.csv"; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function importCSV(file){
+      const text = await file.text();
+      const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
+      if(lines.length<2) return;
+
+      const headers = lines[0].split(";").map(h=>h.trim().toLowerCase());
+      const col = (name)=> headers.indexOf(name.toLowerCase());
+
+      const iFam = col("Famille");
+      const iAct = col("Action");
+      const iCat = col("Catégorie");
+      const iNom = col("Nom");
+      const iTE  = col("Temps estimé");
+      const iTR  = col("Temps réel");
+      const iDL  = col("Date limite");
+      const iSt  = col("Statut");
+
+      for(let i=1;i<lines.length;i++){
+        const v = lines[i].split(";");
+        const action = (v[iAct]||"").trim();
+        if(!action) continue;
+        const statut = (v[iSt]||"A faire").trim();
+        await addItem({
+          createdAt: Date.now(),
+          actionPrecise: action,
+          famille: (v[iFam]||"").trim(),
+          categorie: (v[iCat]||"").trim(),
+          nom: (v[iNom]||"").trim(),
+          tempsEstime: (iTE>=0 ? (v[iTE]||"").trim() : ""),
+          tempsReel: (iTR>=0 ? (v[iTR]||"").trim() : ""),
+          dateLimite: (iDL>=0 ? (v[iDL]||"").trim() : ""),
+          statut,
+          archivedAt: statut==="Terminé" ? Date.now() : null,
+          isMeeting:false,
+          meeting:null
+        });
+      }
+    }
+
+    // ---- Render ----
+    async function render(){
+      const items=await getAll();
+      const todo=items.filter(x=>x.statut!=="Terminé");
+      const arch=items.filter(x=>x.statut==="Terminé").sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
+
+      // TODO
+      const ul=$("todo-list"); ul.innerHTML="";
+      todo.forEach(it=>{
+        const li=document.createElement("li");
+        li.className="item"+(it.isMeeting?" meeting":"");
+        const temps=[it.tempsEstime?`⏳ ${esc(it.tempsEstime)}`:"",it.tempsReel?`✅ ${esc(it.tempsReel)}`:""].filter(Boolean).join(" • ");
+        const meetingInfo=it.isMeeting && it.meeting ? `📍 ${esc(it.meeting.place||"")} • 🗓 ${esc(it.meeting.date||"")} ${esc(it.meeting.time||"")}`:"";
+        li.innerHTML=`
+          <div class="done" title="Terminé">✓</div>
+          <div class="main">
+            <div class="line">${esc(it.actionPrecise)}</div>
+            <div class="meta">
+              ${esc(it.famille||"")} • ${esc(it.categorie||"")}
+              ${it.nom?` • ${esc(it.nom)}`:""}
+              ${it.dateLimite?` • 📅 ${esc(it.dateLimite)}`:""}
+              ${temps?` • ${temps}`:""}
+              ${meetingInfo?` • ${meetingInfo}`:""}
+            </div>
+          </div>
+          <select class="status">
+            ${STATUTS.map(s=>`<option value="${s}" ${it.statut===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+          <div class="trash" title="Supprimer">🗑</div>
+        `;
+        li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"Terminé"); await render(); });
+        li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); await render(); });
+        li.querySelector(".status").addEventListener("change", async(e)=>{ await updateStatus(it.id,e.target.value); await render(); });
+        ul.appendChild(li);
+      });
+
+      // ARCHIVES
+      const ua=$("archive-list"); ua.innerHTML="";
+      arch.forEach(it=>{
+        const li=document.createElement("li");
+        li.className="item archive-item";
+        const stamp=it.archivedAt?new Date(it.archivedAt).toLocaleDateString("fr-FR"):"";
+        li.innerHTML=`
+          <div class="done" title="Reprendre">↩︎</div>
+          <div class="main">
+            <div class="line">${esc(it.actionPrecise)}</div>
+            <div class="meta">${esc(it.famille||"")} • ${esc(it.categorie||"")}</div>
+            <div class="meta">Archivé le ${esc(stamp)}</div>
+          </div>
+          <div></div><div></div>
+        `;
+        li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"A faire"); switchTab("todo"); await render(); });
+        ua.appendChild(li);
+      });
+
+      if(!$("stats-section").hidden){
+        await renderStats(items);
+      }
     }
 
     document.addEventListener("DOMContentLoaded", async()=>{
       db=await openDb();
+
       fillSelect("famille",FAMILLES,FAMILLES[0]);
       fillSelect("categorie",CATEGORIES,"Moi-même");
       fillSelect("statut",STATUTS,"A faire");
@@ -828,8 +931,11 @@
       $("tab-archive").addEventListener("click", async()=>{ switchTab("archive"); await render(); });
       $("tab-stats").addEventListener("click", async()=>{ switchTab("stats"); await render(); });
 
-      $("openMeeting").addEventListener("click", openMeeting);
-      $("meetingCheck").addEventListener("click", openMeeting);
+      // Réunion : ouverture uniquement à la coche
+      $("meetingToggle").addEventListener("change", (e)=>{
+        if(e.target.checked) openMeeting();
+      });
+
       $("closeMeeting").addEventListener("click", closeMeeting);
       $("meetingCancel").addEventListener("click", closeMeeting);
       $("meetingOverlay").addEventListener("click",(e)=>{ if(e.target===$("meetingOverlay")) closeMeeting(); });
@@ -888,23 +994,37 @@
       });
 
       $("reset-btn").addEventListener("click", ()=> $("add-form").reset());
+
       $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll()));
+
+      $("export-btn").addEventListener("click", exportCSV);
+      $("import-btn").addEventListener("click", ()=> $("import-file").click());
+      $("import-file").addEventListener("change", async(e)=>{
+        const file=e.target.files?.[0];
+        if(!file) return;
+        await importCSV(file);
+        e.target.value="";
+        await render();
+      });
 
       await render();
     });
   </script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").then((reg) => {
-      reg.update(); // force la recherche d'une nouvelle version
-    });
 
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      // Recharge automatiquement quand un nouveau SW prend le contrôle
-      window.location.reload();
-    });
-  });
-}
-</script>
+  <!-- Service Worker : force update + reload quand nouveau contrôleur -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          const reg = await navigator.serviceWorker.register("./sw.js");
+          await reg.update(); // force une vérification de mise à jour [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
+        } catch(e) {}
+
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          window.location.reload();
+        });
+      });
+    }
+  </script>
 </body>
 </html>
