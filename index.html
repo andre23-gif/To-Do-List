@@ -893,5 +893,18 @@
       await render();
     });
   </script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").then((reg) => {
+      reg.update(); // force la recherche d'une nouvelle version
+    });
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      // Recharge automatiquement quand un nouveau SW prend le contrôle
+      window.location.reload();
+    });
+  });
+}
+</script>
 </body>
 </html>
