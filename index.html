@@ -672,6 +672,33 @@ body{
 </main>
 
 <footer>
+  <!-- POPUP NUAGE (Nextcloud) -->
+<div class="overlay" id="cloudOverlay" aria-hidden="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Nuage</h3>
+      <button class="x" id="cloudClose" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="stack">
+        <div class="field">
+          <span>Mot de passe du partage</span>
+          <div class="box">
+            <input id="cloudPass" type="password" autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn green" id="cloudSave" type="button">Enregistrer</button>
+          <button class="btn ghost" id="cloudCancel" type="button">Annuler</button>
+        </div>
+
+        <div class="note">Le mot de passe reste sur cet appareil (iPhone/iPad) et n’est pas écrit dans le code.</div>
+      </div>
+    </div>
+  </div>
+</div>
+  <button class="btn ghost" id="cloud-btn" type="button">Nuage</button>
   <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
   <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
   <input id="import-file" type="file" accept=".csv,text/csv" hidden>
@@ -1311,6 +1338,69 @@ body{
       }
     });
 })();
+  // =========================
+// NUAGE NEXTCLOUD (simple)
+// =========================
+
+// 1) URL de TON fichier todo.json (déjà calculée)
+const NC_FILE_URL = "https://nuage03.apps.education.fr/public.php/dav/files/EbxSNijiQN5zxtj/todo.json";
+
+// 2) lire/écrire le mot de passe sur l'appareil (iPhone OU iPad)
+function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
+function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
+
+// 3) ouvrir/fermer la fenêtre Nuage
+function openCloud(){
+  $("cloudOverlay").classList.add("open");
+  $("cloudOverlay").setAttribute("aria-hidden","false");
+  $("cloudPass").value = getCloudPass();
+}
+function closeCloud(){
+  $("cloudOverlay").classList.remove("open");
+  $("cloudOverlay").setAttribute("aria-hidden","true");
+}
+
+// 4) lire le fichier todo.json depuis Nextcloud (partage protégé)
+// identifiant = anonymous / mot de passe = mot de passe du partage [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
+async function ncLoadTasks(){
+  const pass = getCloudPass();
+  if(!pass) return null; // pas de mot de passe => pas de synchro
+  const auth = btoa(`anonymous:${pass}`);
+  const r = await fetch(NC_FILE_URL, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
+  if(!r.ok) throw new Error("Lecture Nuage impossible");
+  return await r.json(); // doit être un tableau []
+}
+
+// 5) écrire le fichier todo.json vers Nextcloud
+async function ncSaveTasks(tasks){
+  const pass = getCloudPass();
+  if(!pass) return;
+  const auth = btoa(`anonymous:${pass}`);
+  const body = JSON.stringify(tasks, null, 2);
+  const r = await fetch(NC_FILE_URL, {
+    method:"PUT",
+    headers:{
+      "Authorization": `Basic ${auth}`,
+      "Content-Type":"application/json"
+    },
+    body
+  });
+  if(!r.ok) throw new Error("Écriture Nuage impossible (droits du partage ?)");
+}
+
+// 6) Brancher les boutons Nuage (une fois que le DOM est prêt)
+document.addEventListener("DOMContentLoaded", () => {
+  $("cloud-btn").addEventListener("click", openCloud);
+  $("cloudClose").addEventListener("click", closeCloud);
+  $("cloudCancel").addEventListener("click", closeCloud);
+  $("cloudOverlay").addEventListener("click", (e)=>{ if(e.target === $("cloudOverlay")) closeCloud(); });
+
+  $("cloudSave").addEventListener("click", async () => {
+    setCloudPass($("cloudPass").value.trim());
+    closeCloud();
+    // Option : tu peux déclencher une synchro ici ensuite (si tu veux)
+  });
+});
 </script>
 </body>
 </html>
