@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
-  <meta name="app-build" content="2026-04-22.3">
+
+  <!-- Version (sert à l’auto-update anti cache GitHub Pages/Safari) -->
+  <meta name="app-build" content="2026-04-22.4">
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
@@ -25,6 +27,7 @@
       --muted:rgba(7,22,42,.68);
 
       --green:#1F7A4C;
+      --greenDark:#165C3A; /* ✅ vert plus foncé pour réunions */
       --green2:#2CA768;
 
       --radius:14px;
@@ -37,8 +40,13 @@
       font-family:system-ui,-apple-system,ui-rounded,sans-serif;
       color:var(--ink);
       background:
-        radial-gradient(1200px 600px at 50% -200px, rgba(200,162,74,.18), transparent 55%),
-        linear-gradient(180deg, rgba(11,31,59,.10), transparent 35%),
+        radial-gradient(1200px 600px at 50% -220px, rgba(200,162,74,.14), transparent 55%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(11,31,59,.012) 0 8px,
+          rgba(200,162,74,.010) 8px 9px
+        ),
+        linear-gradient(180deg, rgba(11,31,59,.06), transparent 30%),
         var(--paper);
     }
 
@@ -78,15 +86,18 @@
       border:1px solid rgba(200,162,74,.7);
       background: rgba(255,255,255,.06);
       color:#fff;
-      padding:9px 12px;          /* boutons plus petits */
+      padding:9px 12px;
       border-radius:999px;
       font-weight:900;
       font-size:14px;
       cursor:pointer;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+      letter-spacing:.35px;
     }
     .tab.active{
       background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
       color:var(--navy2);
+      box-shadow: 0 10px 18px rgba(0,0,0,.16);
     }
 
     main{
@@ -95,12 +106,11 @@
       padding:14px 10px 92px;
     }
 
-    /* Cartes sobres */
     .card{
       background:var(--card);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      border:1px solid rgba(200,162,74,.35);
+      border:1px solid rgba(200,162,74,.30);
       position:relative;
       overflow:hidden;
       margin-bottom:12px;
@@ -113,9 +123,38 @@
       border-radius: calc(var(--radius) - 6px);
       pointer-events:none;
     }
+    /* coins Art déco */
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      pointer-events:none;
+      border-radius: calc(var(--radius) - 8px);
+      background:
+        linear-gradient(var(--gold) 0 0) top left,
+        linear-gradient(var(--gold) 0 0) top left,
+        linear-gradient(var(--gold) 0 0) top right,
+        linear-gradient(var(--gold) 0 0) top right,
+        linear-gradient(var(--gold) 0 0) bottom left,
+        linear-gradient(var(--gold) 0 0) bottom left,
+        linear-gradient(var(--gold) 0 0) bottom right,
+        linear-gradient(var(--gold) 0 0) bottom right;
+      background-size:
+        26px 1px, 1px 26px,
+        26px 1px, 1px 26px,
+        26px 1px, 1px 26px,
+        26px 1px, 1px 26px;
+      background-repeat:no-repeat;
+      background-position:
+        0 0, 0 0,
+        100% 0, 100% 0,
+        0 100%, 0 100%,
+        100% 100%, 100% 100%;
+      opacity:.85;
+    }
+
     .card-body{ padding:16px; position:relative; }
 
-    /* Sections */
     .section{ margin-top:14px; }
     .section-title{
       display:flex;
@@ -124,14 +163,18 @@
       margin:0 0 10px;
       font-weight:1000;
       color:rgba(7,22,42,.92);
-      letter-spacing:.2px;
+      letter-spacing:.45px;
     }
     .section-title::before,
     .section-title::after{
       content:"";
-      height:2px;
+      height:1px;
       flex:1;
-      background: linear-gradient(90deg, rgba(200,162,74,0), rgba(200,162,74,.85), rgba(200,162,74,0));
+      background: linear-gradient(90deg,
+        rgba(200,162,74,0),
+        rgba(200,162,74,.95),
+        rgba(200,162,74,0)
+      );
     }
     .section-title .tag{
       width:24px;height:24px;border-radius:9px;
@@ -143,7 +186,6 @@
       font-size:13px;
     }
 
-    /* Form : stable, pas de chevauchement */
     .stack{
       display:flex;
       flex-direction:column;
@@ -158,11 +200,13 @@
     }
 
     .box{
-      border:1px solid rgba(200,162,74,.45);
+      border:1px solid rgba(200,162,74,.42);
       border-radius:10px;
       background: rgba(255,255,255,.97);
-      box-shadow: inset 0 0 0 1px rgba(226,201,120,.25);
-      padding:9px 11px;          /* plus compact */
+      box-shadow:
+        inset 0 0 0 1px rgba(226,201,120,.22),
+        inset 0 0 0 2px rgba(255,255,255,.60);
+      padding:9px 11px;
     }
     .box input, .box select, .box textarea{
       width:100%;
@@ -172,7 +216,7 @@
       font:inherit;
       font-weight:900;
       min-width:0;
-      font-size:14px;           /* plus petit */
+      font-size:14px;
     }
     .box textarea{
       font-weight:800;
@@ -181,7 +225,9 @@
       font-size:14px;
     }
     .box:focus-within{
-      box-shadow: inset 0 0 0 2px rgba(200,162,74,.28), 0 0 0 4px rgba(200,162,74,.12);
+      box-shadow:
+        inset 0 0 0 2px rgba(200,162,74,.30),
+        0 0 0 4px rgba(200,162,74,.10);
     }
 
     .actions{
@@ -192,7 +238,7 @@
     }
     .btn{
       border:0;
-      padding:10px 12px;        /* boutons plus petits */
+      padding:10px 12px;
       border-radius:999px;
       cursor:pointer;
       font-weight:1000;
@@ -202,12 +248,14 @@
     .btn.gold{
       background: linear-gradient(135deg, rgba(200,162,74,.96), rgba(226,201,120,.96));
       color:var(--navy2);
-      box-shadow:0 10px 20px rgba(0,0,0,.10);
+      box-shadow: 0 10px 18px rgba(0,0,0,.14);
+      border: 1px solid rgba(7,22,42,.10);
     }
     .btn.green{
       background: linear-gradient(135deg, rgba(31,122,76,.92), rgba(44,167,104,.92));
       color:#fff;
-      box-shadow:0 10px 20px rgba(0,0,0,.10);
+      box-shadow:0 10px 18px rgba(0,0,0,.12);
+      border: 1px solid rgba(255,255,255,.14);
     }
     .btn.ghost{
       background:transparent;
@@ -215,15 +263,15 @@
       color:var(--navy2);
     }
 
-    /* Réunion inline (sous statut) */
     .meeting-inline{
       display:flex;
       align-items:center;
       gap:10px;
       padding:10px 12px;
       border-radius:10px;
-      border:1px solid rgba(31,122,76,.35);
+      border:1px solid rgba(31,122,76,.28);
       background: linear-gradient(135deg, rgba(31,122,76,.08), rgba(44,167,104,.06));
+      box-shadow: inset 0 0 0 1px rgba(200,162,74,.12);
     }
     .meeting-inline input{
       width:20px;
@@ -236,12 +284,11 @@
       letter-spacing:.2px;
     }
 
-    /* Liste */
     ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
 
     .item{
       display:grid;
-      grid-template-columns: 44px 1fr 110px 44px; /* statut plus étroit */
+      grid-template-columns: 44px 1fr 110px 44px;
       gap:10px;
       align-items:start;
       padding:12px;
@@ -249,10 +296,13 @@
       background: rgba(255,255,255,.92);
       border:1px solid rgba(7,22,42,.10);
     }
+
+    /* ✅ Réunion plus foncée */
     .item.meeting{
-      background: rgba(31,122,76,.10);
-      border-color: rgba(31,122,76,.22);
+      background: rgba(22,92,58,.18);     /* vert foncé translucide */
+      border-color: rgba(22,92,58,.38);
     }
+
     .done, .trash{
       width:44px;height:44px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;
@@ -297,7 +347,6 @@
       .trash{ grid-area:trash; justify-self:end; }
     }
 
-    /* Modal : iPad OK (scroll interne) */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -317,13 +366,45 @@
       background: rgba(255,255,255,.96);
       border:1px solid rgba(200,162,74,.55);
       box-shadow:var(--shadow);
+      position:relative;
     }
+    .modal::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      pointer-events:none;
+      border-radius: 12px;
+      background:
+        linear-gradient(var(--gold) 0 0) top left,
+        linear-gradient(var(--gold) 0 0) top left,
+        linear-gradient(var(--gold) 0 0) top right,
+        linear-gradient(var(--gold) 0 0) top right,
+        linear-gradient(var(--gold) 0 0) bottom left,
+        linear-gradient(var(--gold) 0 0) bottom left,
+        linear-gradient(var(--gold) 0 0) bottom right,
+        linear-gradient(var(--gold) 0 0) bottom right;
+      background-size:
+        22px 1px, 1px 22px,
+        22px 1px, 1px 22px,
+        22px 1px, 1px 22px,
+        22px 1px, 1px 22px;
+      background-repeat:no-repeat;
+      background-position:
+        0 0, 0 0,
+        100% 0, 100% 0,
+        0 100%, 0 100%,
+        100% 100%, 100% 100%;
+      opacity:.85;
+    }
+
     .modal-head{
       padding:12px 14px;
       color:#fff;
       background: linear-gradient(180deg, rgba(11,31,59,.96), rgba(7,22,42,.96));
       border-bottom:2px solid rgba(200,162,74,.65);
       display:flex;align-items:center;justify-content:space-between;
+      position:relative;
+      z-index:1;
     }
     .modal-head h3{ margin:0; font-weight:1000; font-size:16px; }
     .x{
@@ -342,9 +423,10 @@
       max-height: calc(100vh - 24px - 54px);
       overflow:auto;
       -webkit-overflow-scrolling: touch;
+      position:relative;
+      z-index:1;
     }
 
-    /* Archives papier ancien */
     .archive{
       background:
         radial-gradient(700px 400px at 40% 0%, rgba(255,255,255,.35), transparent 60%),
@@ -354,7 +436,6 @@
       border:1px solid rgba(123,95,42,.45);
     }
 
-    /* Stats */
     .canvas-wrap{
       margin-top:12px;
       border:1px solid rgba(200,162,74,.35);
@@ -371,150 +452,8 @@
       background: rgba(251,250,246,.92);
       backdrop-filter: blur(8px);
       border-top:1px solid rgba(0,0,0,.08);
+      z-index: 1000;
     }
-    /* ===========================
-   MINI TUNING ART DÉCO (SOBRE)
-   À COLLER À LA FIN DU <style>
-   =========================== */
-
-/* 1) Fond un peu plus "papier luxe" très léger (pas de bruit agressif) */
-body{
-  background:
-    radial-gradient(1200px 600px at 50% -220px, rgba(200,162,74,.14), transparent 55%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(11,31,59,.012) 0 8px,
-      rgba(200,162,74,.010) 8px 9px
-    ),
-    linear-gradient(180deg, rgba(11,31,59,.06), transparent 30%),
-    var(--paper);
-}
-
-/* 2) Onglets : plus "plaque" Art déco (filet + micro relief) */
-.tab{
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-  letter-spacing:.35px;
-}
-.tab.active{
-  box-shadow: 0 10px 18px rgba(0,0,0,.16);
-}
-
-/* 3) Cartes : coins géométriques fins dorés (sans ajouter de div)
-      -> on dessine des "équerres" aux 4 coins avec des backgrounds */
-.card{
-  border-color: rgba(200,162,74,.30);
-}
-.card::after{
-  content:"";
-  position:absolute;
-  inset:14px;             /* place l’ornement à l’intérieur du cadre */
-  pointer-events:none;
-  border-radius: calc(var(--radius) - 8px);
-
-  /* 8 traits (2 par coin) pour faire des coins Art déco */
-  background:
-    linear-gradient(var(--gold) 0 0) top left,
-    linear-gradient(var(--gold) 0 0) top left,
-    linear-gradient(var(--gold) 0 0) top right,
-    linear-gradient(var(--gold) 0 0) top right,
-    linear-gradient(var(--gold) 0 0) bottom left,
-    linear-gradient(var(--gold) 0 0) bottom left,
-    linear-gradient(var(--gold) 0 0) bottom right,
-    linear-gradient(var(--gold) 0 0) bottom right;
-
-  /* longueur des traits */
-  background-size:
-    26px 1px, 1px 26px,
-    26px 1px, 1px 26px,
-    26px 1px, 1px 26px,
-    26px 1px, 1px 26px;
-
-  background-repeat:no-repeat;
-
-  /* position exacte (2 traits par coin) */
-  background-position:
-    0 0, 0 0,
-    100% 0, 100% 0,
-    0 100%, 0 100%,
-    100% 100%, 100% 100%;
-
-  opacity:.85;
-}
-
-/* 4) Titres de section : séparateur plus Art déco (plus fin, plus net) */
-.section-title::before,
-.section-title::after{
-  height:1px;
-  background: linear-gradient(90deg,
-    rgba(200,162,74,0),
-    rgba(200,162,74,.95),
-    rgba(200,162,74,0)
-  );
-}
-.section-title{
-  letter-spacing:.45px;
-}
-
-/* 5) Encarts (inputs/select/textarea) : double filet discret + coins un peu plus "taillés" */
-.box{
-  border-color: rgba(200,162,74,.42);
-  box-shadow:
-    inset 0 0 0 1px rgba(226,201,120,.22),
-    inset 0 0 0 2px rgba(255,255,255,.60);
-}
-.box:focus-within{
-  box-shadow:
-    inset 0 0 0 2px rgba(200,162,74,.30),
-    0 0 0 4px rgba(200,162,74,.10);
-}
-
-/* 6) Boutons : un peu plus "bouton plaqué" */
-.btn.gold{
-  box-shadow: 0 10px 18px rgba(0,0,0,.14);
-  border: 1px solid rgba(7,22,42,.10);
-}
-.btn.green{
-  border: 1px solid rgba(255,255,255,.14);
-}
-
-/* 7) Réunion inline : la boîte devient plus "bijou" */
-.meeting-inline{
-  border-color: rgba(31,122,76,.28);
-  box-shadow: inset 0 0 0 1px rgba(200,162,74,.12);
-}
-
-/* 8) Pop-up : même coins Art déco que les cartes */
-.modal{
-  border-color: rgba(200,162,74,.38);
-}
-.modal::after{
-  content:"";
-  position:absolute;
-  inset:14px;
-  pointer-events:none;
-  border-radius: 12px;
-  background:
-    linear-gradient(var(--gold) 0 0) top left,
-    linear-gradient(var(--gold) 0 0) top left,
-    linear-gradient(var(--gold) 0 0) top right,
-    linear-gradient(var(--gold) 0 0) top right,
-    linear-gradient(var(--gold) 0 0) bottom left,
-    linear-gradient(var(--gold) 0 0) bottom left,
-    linear-gradient(var(--gold) 0 0) bottom right,
-    linear-gradient(var(--gold) 0 0) bottom right;
-  background-size:
-    22px 1px, 1px 22px,
-    22px 1px, 1px 22px,
-    22px 1px, 1px 22px,
-    22px 1px, 1px 22px;
-  background-repeat:no-repeat;
-  background-position:
-    0 0, 0 0,
-    100% 0, 100% 0,
-    0 100%, 0 100%,
-    100% 100%, 100% 100%;
-  opacity:.85;
-}
   </style>
 </head>
 
@@ -557,7 +496,7 @@ body{
 
             <div class="field">
               <span>Nom</span>
-              <div class="box"><input id="nom" placeholder=""></div>
+              <div class="box"><input id="nom"></div>
             </div>
           </div>
 
@@ -672,7 +611,13 @@ body{
 </main>
 
 <footer>
-  <!-- POPUP NUAGE (Nextcloud) -->
+  <button class="btn ghost" id="cloud-btn" type="button">Nuage</button>
+  <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
+  <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
+  <input id="import-file" type="file" accept=".csv,text/csv" hidden>
+</footer>
+
+<!-- POPUP NUAGE (Nextcloud) -->
 <div class="overlay" id="cloudOverlay" aria-hidden="true">
   <div class="modal">
     <div class="modal-head">
@@ -692,17 +637,10 @@ body{
           <button class="btn green" id="cloudSave" type="button">Enregistrer</button>
           <button class="btn ghost" id="cloudCancel" type="button">Annuler</button>
         </div>
-
-        <div class="note">Le mot de passe reste sur cet appareil (iPhone/iPad) et n’est pas écrit dans le code.</div>
       </div>
     </div>
   </div>
 </div>
-  <button class="btn ghost" id="cloud-btn" type="button">Nuage</button>
-  <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
-  <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
-  <input id="import-file" type="file" accept=".csv,text/csv" hidden>
-</footer>
 
 <!-- POPUP RÉUNION -->
 <div class="overlay" id="meetingOverlay" aria-hidden="true">
@@ -763,7 +701,9 @@ body{
 </div>
 
 <script>
-  // ----- listes menus -----
+  // -----------------------------
+  // Listes menus
+  // -----------------------------
   const FAMILLES = [
     "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
     "Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir",
@@ -777,13 +717,15 @@ body{
 
   const STATUTS = ["A faire","En cours","Terminé"];
 
-  // ----- IndexedDB -----
+  // -----------------------------
+  // IndexedDB
+  // -----------------------------
   const DB_NAME="todo_local_db";
-  const DB_VERSION=12;
+  const DB_VERSION=13;
   const STORE="items";
   let db=null;
 
-  const $=id=>document.getElementById(id);
+  const $ = (id)=>document.getElementById(id);
 
   function openDb(){
     return new Promise((resolve,reject)=>{
@@ -800,37 +742,11 @@ body{
       req.onerror=()=>reject(req.error);
     });
   }
-
   function os(mode="readonly"){ return db.transaction(STORE,mode).objectStore(STORE); }
-
-  function addItem(item){
-    return new Promise((res,rej)=>{
-      const r=os("readwrite").add(item);
-      r.onsuccess=()=>res(r.result);
-      r.onerror=()=>rej(r.error);
-    });
-  }
-  function putItem(item){
-    return new Promise((res,rej)=>{
-      const r=os("readwrite").put(item);
-      r.onsuccess=()=>res(true);
-      r.onerror=()=>rej(r.error);
-    });
-  }
-  function getAll(){
-    return new Promise((res,rej)=>{
-      const r=os().getAll();
-      r.onsuccess=()=>res(r.result||[]);
-      r.onerror=()=>rej(r.error);
-    });
-  }
-  function del(id){
-    return new Promise((res,rej)=>{
-      const r=os("readwrite").delete(id);
-      r.onsuccess=()=>res(true);
-      r.onerror=()=>rej(r.error);
-    });
-  }
+  function addItem(item){ return new Promise((res,rej)=>{ const r=os("readwrite").add(item); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });}
+  function putItem(item){ return new Promise((res,rej)=>{ const r=os("readwrite").put(item); r.onsuccess=()=>res(true); r.onerror=()=>rej(r.error); });}
+  function getAll(){ return new Promise((res,rej)=>{ const r=os().getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); });}
+  function del(id){ return new Promise((res,rej)=>{ const r=os("readwrite").delete(id); r.onsuccess=()=>res(true); r.onerror=()=>rej(r.error); });}
 
   function fillSelect(id, values, selected){
     const sel=$(id); sel.innerHTML="";
@@ -841,6 +757,7 @@ body{
     });
   }
 
+  // ✅ échappement correct (ton ancien était cassé)
   function esc(s){
     return (s||"").replace(/[&<>"']/g, m => ({
       "&":"&amp;",
@@ -851,13 +768,131 @@ body{
     }[m]));
   }
 
+  // -----------------------------
+  // UID + updatedAt (pour fusion)
+  // -----------------------------
+  function makeUID() {
+    if (crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "uid-" + Math.random().toString(16).slice(2) + "-" + Date.now();
+  }
+
+  async function ensureUidAndUpdated(items){
+    for (const it of items){
+      let changed = false;
+      if(!it.uid){ it.uid = makeUID(); changed=true; }
+      if(!it.updatedAt){ it.updatedAt = it.createdAt || Date.now(); changed=true; }
+      if(changed) await putItem(it);
+    }
+  }
+
+  // -----------------------------
+  // Nextcloud (partage dossier)
+  // token = EbxSNijiQN5zxtj
+  //-sf-symbols-and-custom-icons-in-your-app-22cd)
+  // -----------------------------
+  const NC_FILE_URL = "https://nuage03.apps.education.fr/public.php/dav/files/EbxSNijiQN5zxtj/todo.json";
+  function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
+  function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
+
+  function openCloud(){
+    $("cloudOverlay").classList.add("open");
+    $("cloudOverlay").setAttribute("aria-hidden","false");
+    $("cloudPass").value = getCloudPass();
+  }
+  function closeCloud(){
+    $("cloudOverlay").classList.remove("open");
+    $("cloudOverlay").setAttribute("aria-hidden","true");
+  }
+
+  async function ncLoadTasks(){
+    const pass = getCloudPass();
+    if(!pass) return null;
+    const auth = btoa(`anonymous:${pass}`); // [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
+    const r = await fetch(NC_FILE_URL, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
+    if(!r.ok) throw new Error("Lecture Nuage impossible");
+    return await r.json();
+  }
+
+  async function ncSaveTasks(tasks){
+    const pass = getCloudPass();
+    if(!pass) return;
+    const auth = btoa(`anonymous:${pass}`); // [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
+    const body = JSON.stringify(tasks, null, 2);
+    const r = await fetch(NC_FILE_URL, {
+      method:"PUT",
+      headers:{
+        "Authorization": `Basic ${auth}`,
+        "Content-Type":"application/json"
+      },
+      body
+    });
+    if(!r.ok) throw new Error("Écriture Nuage impossible (partage en lecture seule ?)");
+  }
+
+  // Fusion local + nuage
+  function mergeByUID(localItems, cloudItems){
+    const map = new Map();
+    const add = (it)=>{
+      if(!it || !it.uid) return;
+      const prev = map.get(it.uid);
+      if(!prev){ map.set(it.uid, it); return; }
+      const a = prev.updatedAt || 0;
+      const b = it.updatedAt || 0;
+      map.set(it.uid, b >= a ? it : prev);
+    };
+    localItems.forEach(add);
+    (cloudItems||[]).forEach(add);
+    return Array.from(map.values());
+  }
+
+  async function syncMergeWithCloud(){
+    try{
+      const cloud = await ncLoadTasks();
+      if(!cloud) return;
+
+      let local = await getAll();
+      await ensureUidAndUpdated(local);
+      local = await getAll();
+
+      const merged = mergeByUID(local, cloud);
+
+      // Écrire la fusion en local
+      for (const it of merged){
+        await putItem(it);
+      }
+
+      // Écrire la fusion dans le nuage
+      await ncSaveTasks(merged);
+    }catch(e){
+      console.log("Nuage: fusion non faite", e);
+    }
+  }
+
+  let cloudTimer = null;
+  function scheduleCloudSave(){
+    clearTimeout(cloudTimer);
+    cloudTimer = setTimeout(async ()=>{
+      try{
+        const items = await getAll();
+        await ncSaveTasks(items);
+      }catch(e){
+        console.log("Nuage: sauvegarde impossible", e);
+      }
+    }, 800);
+  }
+
+  // -----------------------------
+  // Statuts / tabs
+  // -----------------------------
   async function updateStatus(id, statut){
     const items=await getAll();
     const it=items.find(x=>x.id===id);
     if(!it) return;
     it.statut=statut;
+    it.updatedAt = Date.now();
     it.archivedAt = (statut==="Terminé") ? Date.now() : null;
     await putItem(it);
+    scheduleCloudSave();
   }
 
   function switchTab(tab){
@@ -869,19 +904,20 @@ body{
     $("tab-stats").classList.toggle("active", tab==="stats");
   }
 
+  // -----------------------------
+  // Stats (canvas)
+  // -----------------------------
   function parseTimeToMinutes(t){
     if(!t||!t.includes(":")) return 0;
     const [h,m]=t.split(":").map(n=>parseInt(n,10));
     return (isNaN(h)||isNaN(m))?0:h*60+m;
   }
-
   function dateKeyForItem(it){
     if(it.dateLimite) return it.dateLimite;
     if(it.isMeeting && it.meeting?.date) return it.meeting.date;
     return new Date(it.createdAt||Date.now()).toISOString().slice(0,10);
   }
 
-  // ----- stats canvas -----
   function clearCanvas(c){ const ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height); return ctx; }
 
   function drawLine(canvas, labels, values){
@@ -915,99 +951,86 @@ body{
   }
 
   function drawBars(canvas, entries){
-  const ctx = clearCanvas(canvas);
-  const W = canvas.width, H = canvas.height;
+    const ctx = clearCanvas(canvas);
+    const W = canvas.width, H = canvas.height;
 
-  const padL = 46;
-  const padR = 16;
-  const padT = 18;
-  const padB = 44;
+    const padL = 46, padR = 16, padT = 18, padB = 44;
 
-  // Couleurs par statut (lisibles + cohérentes avec ton thème)
-  const colorFor = (label) => {
-    if (label === "A faire") return "rgba(200,162,74,.95)";   // or
-    if (label === "En cours") return "rgba(11,31,59,.85)";    // bleu nuit
-    if (label === "Terminé") return "rgba(31,122,76,.85)";    // vert
-    return "rgba(7,22,42,.75)";
-  };
+    const colorFor = (label) => {
+      if (label === "A faire") return "rgba(200,162,74,.95)";
+      if (label === "En cours") return "rgba(11,31,59,.85)";
+      if (label === "Terminé") return "rgba(22,92,58,.85)";  // vert foncé
+      return "rgba(7,22,42,.75)";
+    };
 
-  // Valeur max
-  const maxV = Math.max(1, ...entries.map(e => e.value));
+    const maxV = Math.max(1, ...entries.map(e => e.value));
 
-  // Axes
-  ctx.strokeStyle = "rgba(7,22,42,.18)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(padL, padT);
-  ctx.lineTo(padL, H - padB);
-  ctx.lineTo(W - padR, H - padB);
-  ctx.stroke();
-
-  // Graduations Y (0 -> max)
-  ctx.fillStyle = "rgba(7,22,42,.72)";
-  ctx.font = "12px system-ui";
-  for (let i=0;i<=4;i++){
-    const y = padT + (H - padT - padB) * (i/4);
-    const v = Math.round(maxV * (1 - i/4));
-
-    ctx.strokeStyle = "rgba(7,22,42,.08)";
+    ctx.strokeStyle = "rgba(7,22,42,.18)";
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(padL, y);
-    ctx.lineTo(W - padR, y);
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, H - padB);
+    ctx.lineTo(W - padR, H - padB);
     ctx.stroke();
 
-    ctx.fillText(String(v), 8, y + 4);
+    ctx.fillStyle = "rgba(7,22,42,.72)";
+    ctx.font = "12px system-ui";
+    for (let i=0;i<=4;i++){
+      const y = padT + (H - padT - padB) * (i/4);
+      const v = Math.round(maxV * (1 - i/4));
+
+      ctx.strokeStyle = "rgba(7,22,42,.08)";
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(W - padR, y);
+      ctx.stroke();
+
+      ctx.fillText(String(v), 8, y + 4);
+    }
+
+    const n = Math.max(1, entries.length);
+    const slot = (W - padL - padR) / n;
+    const barW = Math.max(18, slot * 0.55);
+
+    entries.forEach((e, i) => {
+      const x = padL + i * slot + (slot - barW) / 2;
+      const h = (H - padT - padB) * (e.value / maxV);
+      const y = (H - padB) - h;
+
+      ctx.fillStyle = colorFor(e.label);
+      ctx.fillRect(x, y, barW, h);
+
+      ctx.fillStyle = "rgba(7,22,42,.85)";
+      ctx.font = "12px system-ui";
+      ctx.fillText(String(e.value), x + barW/2 - 6, y - 6);
+
+      ctx.fillStyle = "rgba(7,22,42,.75)";
+      ctx.font = "12px system-ui";
+      const txt = e.label;
+      const tw = ctx.measureText(txt).width;
+      ctx.fillText(txt, x + barW/2 - tw/2, H - padB + 22);
+    });
+
+    // Légende
+    const legend = entries.map(e => e.label);
+    const lx = W - padR - 160;
+    let ly = padT + 4;
+
+    ctx.fillStyle = "rgba(255,255,255,.85)";
+    ctx.fillRect(lx - 10, ly - 12, 170, 70);
+
+    ctx.strokeStyle = "rgba(200,162,74,.35)";
+    ctx.strokeRect(lx - 10, ly - 12, 170, 70);
+
+    ctx.font = "12px system-ui";
+    legend.forEach((lab, idx) => {
+      const yy = ly + idx * 18;
+      ctx.fillStyle = colorFor(lab);
+      ctx.fillRect(lx, yy, 12, 12);
+      ctx.fillStyle = "rgba(7,22,42,.85)";
+      ctx.fillText(lab, lx + 18, yy + 10);
+    });
   }
-
-  // Barres
-  const n = Math.max(1, entries.length);
-  const slot = (W - padL - padR) / n;
-  const barW = Math.max(18, slot * 0.55);
-
-  entries.forEach((e, i) => {
-    const x = padL + i * slot + (slot - barW) / 2;
-    const h = (H - padT - padB) * (e.value / maxV);
-    const y = (H - padB) - h;
-
-    // Barre
-    ctx.fillStyle = colorFor(e.label);
-    ctx.fillRect(x, y, barW, h);
-
-    // Valeur au-dessus
-    ctx.fillStyle = "rgba(7,22,42,.85)";
-    ctx.font = "12px system-ui";
-    ctx.fillText(String(e.value), x + barW/2 - 6, y - 6);
-
-    // Étiquette sous la barre (légende directe)
-    ctx.fillStyle = "rgba(7,22,42,.75)";
-    ctx.font = "12px system-ui";
-    const txt = e.label;
-    const tw = ctx.measureText(txt).width;
-    ctx.fillText(txt, x + barW/2 - tw/2, H - padB + 22);
-  });
-
-  // LÉGENDE (en haut à droite du graphique)
-  const legend = entries.map(e => e.label);
-  const lx = W - padR - 160;
-  let ly = padT + 4;
-
-  ctx.fillStyle = "rgba(255,255,255,.85)";
-  ctx.fillRect(lx - 10, ly - 12, 170, 70);
-
-  ctx.strokeStyle = "rgba(200,162,74,.35)";
-  ctx.strokeRect(lx - 10, ly - 12, 170, 70);
-
-  ctx.font = "12px system-ui";
-  legend.forEach((lab, idx) => {
-    const yy = ly + idx * 18;
-
-    ctx.fillStyle = colorFor(lab);
-    ctx.fillRect(lx, yy, 12, 12);
-
-    ctx.fillStyle = "rgba(7,22,42,.85)";
-    ctx.fillText(lab, lx + 18, yy + 10);
-  });
-}
 
   async function renderStats(items){
     const from=$("statsFrom").value?new Date($("statsFrom").value):null;
@@ -1046,7 +1069,9 @@ body{
     drawBars($("barChart"), stEntries);
   }
 
-  // ----- réunion modal -----
+  // -----------------------------
+  // Réunion modal
+  // -----------------------------
   function openMeeting(){
     $("meetingOverlay").classList.add("open");
     $("meetingOverlay").setAttribute("aria-hidden","false");
@@ -1058,7 +1083,9 @@ body{
     $("meetingToggle").checked=false;
   }
 
-  // ----- CSV -----
+  // -----------------------------
+  // CSV
+  // -----------------------------
   async function exportCSV(){
     const items = await getAll();
     const headers = ["Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur","Nom","Temps estimé","Temps réel","Date limite","Statut"];
@@ -1102,9 +1129,14 @@ body{
       const v = lines[i].split(";");
       const action = (v[iAct]||"").trim();
       if(!action) continue;
+
       const statut = (v[iSt]||"A faire").trim();
+      const now = Date.now();
+
       await addItem({
-        createdAt: Date.now(),
+        uid: makeUID(),
+        updatedAt: now,
+        createdAt: now,
         actionPrecise: action,
         famille: (iFam>=0 ? (v[iFam]||"").trim() : ""),
         categorie: (iCat>=0 ? (v[iCat]||"").trim() : ""),
@@ -1113,14 +1145,17 @@ body{
         tempsReel: (iTR>=0 ? (v[iTR]||"").trim() : ""),
         dateLimite: (iDL>=0 ? (v[iDL]||"").trim() : ""),
         statut,
-        archivedAt: statut==="Terminé" ? Date.now() : null,
+        archivedAt: statut==="Terminé" ? now : null,
         isMeeting:false,
         meeting:null
       });
     }
+    scheduleCloudSave();
   }
 
-  // ----- render -----
+  // -----------------------------
+  // Render
+  // -----------------------------
   async function render(){
     const items=await getAll();
     const todo=items.filter(x=>x.statut!=="Terminé");
@@ -1149,11 +1184,9 @@ body{
         </select>
         <div class="trash" title="Supprimer">🗑</div>
       `;
-
       li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"Terminé"); await render(); });
-      li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); await render(); });
+      li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); scheduleCloudSave(); await render(); });
       li.querySelector(".status").addEventListener("change", async(e)=>{ await updateStatus(it.id,e.target.value); await render(); });
-
       ul.appendChild(li);
     });
 
@@ -1180,6 +1213,9 @@ body{
     }
   }
 
+  // -----------------------------
+  // DOM Ready
+  // -----------------------------
   document.addEventListener("DOMContentLoaded", async()=>{
     db=await openDb();
 
@@ -1191,16 +1227,31 @@ body{
     $("tab-archive").addEventListener("click", async()=>{ switchTab("archive"); await render(); });
     $("tab-stats").addEventListener("click", async()=>{ switchTab("stats"); await render(); });
 
+    // Cloud popup
+    $("cloud-btn").addEventListener("click", openCloud);
+    $("cloudClose").addEventListener("click", closeCloud);
+    $("cloudCancel").addEventListener("click", closeCloud);
+    $("cloudOverlay").addEventListener("click",(e)=>{ if(e.target===$("cloudOverlay")) closeCloud(); });
+
+    $("cloudSave").addEventListener("click", async()=>{
+      setCloudPass($("cloudPass").value.trim());
+      closeCloud();
+      // fusion immédiate après avoir enregistré le mot de passe
+      await syncMergeWithCloud();
+      await render();
+    });
+
+    // Réunion
     $("meetingToggle").addEventListener("change", (e)=>{
       if(e.target.checked) openMeeting();
     });
-
     $("closeMeeting").addEventListener("click", closeMeeting);
     $("meetingCancel").addEventListener("click", closeMeeting);
     $("meetingOverlay").addEventListener("click",(e)=>{ if(e.target===$("meetingOverlay")) closeMeeting(); });
 
     $("meeting-form").addEventListener("submit", async(e)=>{
       e.preventDefault();
+      const now = Date.now();
       const meeting={
         date:$("m_date").value,
         time:$("m_time").value,
@@ -1212,7 +1263,9 @@ body{
       const label=`Réunion ${meeting.date||""} ${meeting.time||""}`.trim();
 
       await addItem({
-        createdAt:Date.now(),
+        uid: makeUID(),
+        updatedAt: now,
+        createdAt: now,
         actionPrecise:label||"Réunion",
         famille:"Réunion",
         categorie:"Moi-même",
@@ -1226,17 +1279,22 @@ body{
         meeting
       });
 
+      scheduleCloudSave();
       closeMeeting();
       switchTab("todo");
       await render();
     });
 
+    // Ajout normal
     $("add-form").addEventListener("submit", async(e)=>{
       e.preventDefault();
       const statut=$("statut").value;
+      const now = Date.now();
 
       await addItem({
-        createdAt:Date.now(),
+        uid: makeUID(),
+        updatedAt: now,
+        createdAt: now,
         actionPrecise:$("actionPrecise").value.trim(),
         famille:$("famille").value,
         categorie:$("categorie").value,
@@ -1245,11 +1303,12 @@ body{
         tempsReel:$("tempsReel").value,
         dateLimite:$("dateLimite").value,
         statut,
-        archivedAt: statut==="Terminé" ? Date.now() : null,
+        archivedAt: statut==="Terminé" ? now : null,
         isMeeting:false,
         meeting:null
       });
 
+      scheduleCloudSave();
       $("add-form").reset();
       fillSelect("statut",STATUTS,"A faire");
       fillSelect("categorie",CATEGORIES,"Moi-même");
@@ -1271,6 +1330,9 @@ body{
       await render();
     });
 
+    // ✅ Fusion au démarrage si un mot de passe nuage est déjà enregistré
+    await syncMergeWithCloud();
+
     await render();
   });
 </script>
@@ -1281,7 +1343,7 @@ body{
     window.addEventListener("load", async () => {
       try {
         const reg = await navigator.serviceWorker.register("./sw.js");
-        await reg.update(); /* force update() */ /* [1](https://www.reddit.com/r/SwiftUI/comments/147imp3/build_a_todo_list_app_using_swiftdata_tutorial/) */
+        await reg.update();
       } catch(e) {}
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         window.location.reload();
@@ -1289,118 +1351,39 @@ body{
     });
   }
 </script>
+
+<!-- Auto-update anti cache GitHub Pages/Safari -->
 <script>
-/*
-  Auto-update anti cache GitHub Pages/Safari
-  - Ne laisse pas ?v=... dans l’URL (on le retire)
-  - Ne boucle pas (sessionStorage)
-*/
 (function(){
   const build = document.querySelector('meta[name="app-build"]')?.content || "0";
   const key = "todoupdated:" + build;
 
-  // Si on a déjà tenté une mise à jour pour cette version, on ne recommence pas
   if (sessionStorage.getItem(key)) {
-    // Nettoie l’URL si elle a un ?v=
-    if (location.search.includes("v=")) {
-      history.replaceState(null, "", location.pathname);
-    }
+    if (location.search.includes("v=")) history.replaceState(null, "", location.pathname);
     return;
   }
 
-  // 1) On force une requête "fresh" de index.html via une URL unique
   const bustUrl = location.pathname.replace(/\/?$/, "/") + "index.html?__=" + Date.now();
 
   fetch(bustUrl, { cache: "no-store" })
     .then(r => r.text())
     .then(html => {
-      // 2) On lit le build distant (meta app-build)
       const m = html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i);
       const remoteBuild = m ? m[1] : build;
 
-      // 3) Si la version distante est différente, on recharge une seule fois
       if (remoteBuild !== build) {
         sessionStorage.setItem(key, "1");
-        // Recharge avec un cache-bust, puis l’URL sera nettoyée au prochain chargement
         location.replace(location.pathname + "?v=" + Date.now());
       } else {
-        // Pas de nouvelle version → on marque comme fait et on nettoie l’URL si besoin
         sessionStorage.setItem(key, "1");
-        if (location.search.includes("v=")) {
-          history.replaceState(null, "", location.pathname);
-        }
+        if (location.search.includes("v=")) history.replaceState(null, "", location.pathname);
       }
     })
     .catch(() => {
-      // En cas d’échec réseau, on ne casse rien.
-      if (location.search.includes("v=")) {
-        history.replaceState(null, "", location.pathname);
-      }
+      if (location.search.includes("v=")) history.replaceState(null, "", location.pathname);
     });
 })();
-  // =========================
-// NUAGE NEXTCLOUD (simple)
-// =========================
-
-// 1) URL de TON fichier todo.json (déjà calculée)
-const NC_FILE_URL = "https://nuage03.apps.education.fr/public.php/dav/files/EbxSNijiQN5zxtj/todo.json";
-
-// 2) lire/écrire le mot de passe sur l'appareil (iPhone OU iPad)
-function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
-function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
-
-// 3) ouvrir/fermer la fenêtre Nuage
-function openCloud(){
-  $("cloudOverlay").classList.add("open");
-  $("cloudOverlay").setAttribute("aria-hidden","false");
-  $("cloudPass").value = getCloudPass();
-}
-function closeCloud(){
-  $("cloudOverlay").classList.remove("open");
-  $("cloudOverlay").setAttribute("aria-hidden","true");
-}
-
-// 4) lire le fichier todo.json depuis Nextcloud (partage protégé)
-// identifiant = anonymous / mot de passe = mot de passe du partage [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
-async function ncLoadTasks(){
-  const pass = getCloudPass();
-  if(!pass) return null; // pas de mot de passe => pas de synchro
-  const auth = btoa(`anonymous:${pass}`);
-  const r = await fetch(NC_FILE_URL, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
-  if(!r.ok) throw new Error("Lecture Nuage impossible");
-  return await r.json(); // doit être un tableau []
-}
-
-// 5) écrire le fichier todo.json vers Nextcloud
-async function ncSaveTasks(tasks){
-  const pass = getCloudPass();
-  if(!pass) return;
-  const auth = btoa(`anonymous:${pass}`);
-  const body = JSON.stringify(tasks, null, 2);
-  const r = await fetch(NC_FILE_URL, {
-    method:"PUT",
-    headers:{
-      "Authorization": `Basic ${auth}`,
-      "Content-Type":"application/json"
-    },
-    body
-  });
-  if(!r.ok) throw new Error("Écriture Nuage impossible (droits du partage ?)");
-}
-
-// 6) Brancher les boutons Nuage (une fois que le DOM est prêt)
-document.addEventListener("DOMContentLoaded", () => {
-  $("cloud-btn").addEventListener("click", openCloud);
-  $("cloudClose").addEventListener("click", closeCloud);
-  $("cloudCancel").addEventListener("click", closeCloud);
-  $("cloudOverlay").addEventListener("click", (e)=>{ if(e.target === $("cloudOverlay")) closeCloud(); });
-
-  $("cloudSave").addEventListener("click", async () => {
-    setCloudPass($("cloudPass").value.trim());
-    closeCloud();
-    // Option : tu peux déclencher une synchro ici ensuite (si tu veux)
-  });
-});
 </script>
+
 </body>
 </html>
