@@ -887,18 +887,99 @@ body{
   }
 
   function drawBars(canvas, entries){
-    const ctx=clearCanvas(canvas), W=canvas.width,H=canvas.height,pad=40;
-    const max=Math.max(1,...entries.map(e=>e.value));
-    ctx.strokeStyle="rgba(7,22,42,.18)";
-    ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
-    const slot=(W-2*pad)/Math.max(1,entries.length), barW=slot*0.6;
-    entries.forEach((e,i)=>{
-      const x=pad+i*slot+slot*0.2;
-      const h=(H-2*pad)*(e.value/max);
-      ctx.fillStyle="rgba(11,31,59,.85)";
-      ctx.fillRect(x,(H-pad)-h,barW,h);
-    });
+  const ctx = clearCanvas(canvas);
+  const W = canvas.width, H = canvas.height;
+
+  const padL = 46;
+  const padR = 16;
+  const padT = 18;
+  const padB = 44;
+
+  // Couleurs par statut (lisibles + cohérentes avec ton thème)
+  const colorFor = (label) => {
+    if (label === "A faire") return "rgba(200,162,74,.95)";   // or
+    if (label === "En cours") return "rgba(11,31,59,.85)";    // bleu nuit
+    if (label === "Terminé") return "rgba(31,122,76,.85)";    // vert
+    return "rgba(7,22,42,.75)";
+  };
+
+  // Valeur max
+  const maxV = Math.max(1, ...entries.map(e => e.value));
+
+  // Axes
+  ctx.strokeStyle = "rgba(7,22,42,.18)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, H - padB);
+  ctx.lineTo(W - padR, H - padB);
+  ctx.stroke();
+
+  // Graduations Y (0 -> max)
+  ctx.fillStyle = "rgba(7,22,42,.72)";
+  ctx.font = "12px system-ui";
+  for (let i=0;i<=4;i++){
+    const y = padT + (H - padT - padB) * (i/4);
+    const v = Math.round(maxV * (1 - i/4));
+
+    ctx.strokeStyle = "rgba(7,22,42,.08)";
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+
+    ctx.fillText(String(v), 8, y + 4);
   }
+
+  // Barres
+  const n = Math.max(1, entries.length);
+  const slot = (W - padL - padR) / n;
+  const barW = Math.max(18, slot * 0.55);
+
+  entries.forEach((e, i) => {
+    const x = padL + i * slot + (slot - barW) / 2;
+    const h = (H - padT - padB) * (e.value / maxV);
+    const y = (H - padB) - h;
+
+    // Barre
+    ctx.fillStyle = colorFor(e.label);
+    ctx.fillRect(x, y, barW, h);
+
+    // Valeur au-dessus
+    ctx.fillStyle = "rgba(7,22,42,.85)";
+    ctx.font = "12px system-ui";
+    ctx.fillText(String(e.value), x + barW/2 - 6, y - 6);
+
+    // Étiquette sous la barre (légende directe)
+    ctx.fillStyle = "rgba(7,22,42,.75)";
+    ctx.font = "12px system-ui";
+    const txt = e.label;
+    const tw = ctx.measureText(txt).width;
+    ctx.fillText(txt, x + barW/2 - tw/2, H - padB + 22);
+  });
+
+  // LÉGENDE (en haut à droite du graphique)
+  const legend = entries.map(e => e.label);
+  const lx = W - padR - 160;
+  let ly = padT + 4;
+
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  ctx.fillRect(lx - 10, ly - 12, 170, 70);
+
+  ctx.strokeStyle = "rgba(200,162,74,.35)";
+  ctx.strokeRect(lx - 10, ly - 12, 170, 70);
+
+  ctx.font = "12px system-ui";
+  legend.forEach((lab, idx) => {
+    const yy = ly + idx * 18;
+
+    ctx.fillStyle = colorFor(lab);
+    ctx.fillRect(lx, yy, 12, 12);
+
+    ctx.fillStyle = "rgba(7,22,42,.85)";
+    ctx.fillText(lab, lx + 18, yy + 10);
+  });
+}
 
   async function renderStats(items){
     const from=$("statsFrom").value?new Date($("statsFrom").value):null;
