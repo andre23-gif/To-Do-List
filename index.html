@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To Do List</title>
 
-  <!-- Version (sert à l’auto-update anti cache GitHub Pages/Safari) -->
-  <meta name="app-build" content="2026-04-22.4">
+  <!-- Version (sert à l’auto-update anti-cache) -->
+  <meta name="app-build" content="2026-04-22.5">
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
@@ -27,7 +27,7 @@
       --muted:rgba(7,22,42,.68);
 
       --green:#1F7A4C;
-      --greenDark:#165C3A; /* ✅ vert plus foncé pour réunions */
+      --greenDark:#165C3A; /* vert plus foncé */
       --green2:#2CA768;
 
       --radius:14px;
@@ -35,6 +35,7 @@
     }
 
     *{ box-sizing:border-box; }
+
     body{
       margin:0;
       font-family:system-ui,-apple-system,ui-rounded,sans-serif;
@@ -123,7 +124,6 @@
       border-radius: calc(var(--radius) - 6px);
       pointer-events:none;
     }
-    /* coins Art déco */
     .card::after{
       content:"";
       position:absolute;
@@ -152,7 +152,6 @@
         100% 100%, 100% 100%;
       opacity:.85;
     }
-
     .card-body{ padding:16px; position:relative; }
 
     .section{ margin-top:14px; }
@@ -186,11 +185,7 @@
       font-size:13px;
     }
 
-    .stack{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
+    .stack{ display:flex; flex-direction:column; gap:12px; }
     .field span{
       display:block;
       margin:0 0 6px;
@@ -296,10 +291,9 @@
       background: rgba(255,255,255,.92);
       border:1px solid rgba(7,22,42,.10);
     }
-
-    /* ✅ Réunion plus foncée */
+    /* ✅ réunion plus foncée */
     .item.meeting{
-      background: rgba(22,92,58,.18);     /* vert foncé translucide */
+      background: rgba(22,92,58,.18);
       border-color: rgba(22,92,58,.38);
     }
 
@@ -357,6 +351,9 @@
       z-index:9999;
     }
     .overlay.open{ display:flex; }
+
+    /* ✅ pour être sûr que Nuage est toujours visible */
+    #cloudOverlay.open{ align-items:center; }
 
     .modal{
       width:min(920px, 100%);
@@ -470,7 +467,6 @@
 </header>
 
 <main>
-  <!-- À FAIRE -->
   <section id="todo-section">
     <div class="card">
       <div class="card-body">
@@ -553,7 +549,6 @@
     </div>
   </section>
 
-  <!-- ARCHIVES -->
   <section id="archive-section" hidden>
     <div class="card archive">
       <div class="card-body">
@@ -563,7 +558,6 @@
     </div>
   </section>
 
-  <!-- STATS -->
   <section id="stats-section" hidden>
     <div class="card">
       <div class="card-body">
@@ -617,7 +611,7 @@
   <input id="import-file" type="file" accept=".csv,text/csv" hidden>
 </footer>
 
-<!-- POPUP NUAGE (Nextcloud) -->
+<!-- ✅ POPUP NUAGE (placé hors du footer) -->
 <div class="overlay" id="cloudOverlay" aria-hidden="true">
   <div class="modal">
     <div class="modal-head">
@@ -701,25 +695,19 @@
 </div>
 
 <script>
-  // -----------------------------
-  // Listes menus
-  // -----------------------------
+  // Menus
   const FAMILLES = [
     "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
     "Cours","Gestion","Histoire des Arts","Instances","Numérique","Parcours Avenir",
     "Pépinières","Photocopies","Préparation","Réunion"
   ];
-
   const CATEGORIES = [
     "Moi-même","Parents","Partenaires","Collègues","Administration","Elèves",
     "Professeurs principaux","Public"
   ];
-
   const STATUTS = ["A faire","En cours","Terminé"];
 
-  // -----------------------------
   // IndexedDB
-  // -----------------------------
   const DB_NAME="todo_local_db";
   const DB_VERSION=13;
   const STORE="items";
@@ -757,7 +745,6 @@
     });
   }
 
-  // ✅ échappement correct (ton ancien était cassé)
   function esc(s){
     return (s||"").replace(/[&<>"']/g, m => ({
       "&":"&amp;",
@@ -768,14 +755,11 @@
     }[m]));
   }
 
-  // -----------------------------
-  // UID + updatedAt (pour fusion)
-  // -----------------------------
+  // UID / updatedAt (fusion)
   function makeUID() {
     if (crypto && crypto.randomUUID) return crypto.randomUUID();
     return "uid-" + Math.random().toString(16).slice(2) + "-" + Date.now();
   }
-
   async function ensureUidAndUpdated(items){
     for (const it of items){
       let changed = false;
@@ -785,11 +769,7 @@
     }
   }
 
-  // -----------------------------
-  // Nextcloud (partage dossier)
-  // token = EbxSNijiQN5zxtj
-  //-sf-symbols-and-custom-icons-in-your-app-22cd)
-  // -----------------------------
+  // Nextcloud (fichier du partage)
   const NC_FILE_URL = "https://nuage03.apps.education.fr/public.php/dav/files/EbxSNijiQN5zxtj/todo.json";
   function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
   function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
@@ -829,7 +809,6 @@
     if(!r.ok) throw new Error("Écriture Nuage impossible (partage en lecture seule ?)");
   }
 
-  // Fusion local + nuage
   function mergeByUID(localItems, cloudItems){
     const map = new Map();
     const add = (it)=>{
@@ -856,12 +835,9 @@
 
       const merged = mergeByUID(local, cloud);
 
-      // Écrire la fusion en local
       for (const it of merged){
         await putItem(it);
       }
-
-      // Écrire la fusion dans le nuage
       await ncSaveTasks(merged);
     }catch(e){
       console.log("Nuage: fusion non faite", e);
@@ -881,9 +857,6 @@
     }, 800);
   }
 
-  // -----------------------------
-  // Statuts / tabs
-  // -----------------------------
   async function updateStatus(id, statut){
     const items=await getAll();
     const it=items.find(x=>x.id===id);
@@ -904,9 +877,7 @@
     $("tab-stats").classList.toggle("active", tab==="stats");
   }
 
-  // -----------------------------
-  // Stats (canvas)
-  // -----------------------------
+  // Stats
   function parseTimeToMinutes(t){
     if(!t||!t.includes(":")) return 0;
     const [h,m]=t.split(":").map(n=>parseInt(n,10));
@@ -917,7 +888,6 @@
     if(it.isMeeting && it.meeting?.date) return it.meeting.date;
     return new Date(it.createdAt||Date.now()).toISOString().slice(0,10);
   }
-
   function clearCanvas(c){ const ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height); return ctx; }
 
   function drawLine(canvas, labels, values){
@@ -953,13 +923,12 @@
   function drawBars(canvas, entries){
     const ctx = clearCanvas(canvas);
     const W = canvas.width, H = canvas.height;
-
     const padL = 46, padR = 16, padT = 18, padB = 44;
 
     const colorFor = (label) => {
       if (label === "A faire") return "rgba(200,162,74,.95)";
       if (label === "En cours") return "rgba(11,31,59,.85)";
-      if (label === "Terminé") return "rgba(22,92,58,.85)";  // vert foncé
+      if (label === "Terminé") return "rgba(22,92,58,.85)";
       return "rgba(7,22,42,.75)";
     };
 
@@ -978,13 +947,11 @@
     for (let i=0;i<=4;i++){
       const y = padT + (H - padT - padB) * (i/4);
       const v = Math.round(maxV * (1 - i/4));
-
       ctx.strokeStyle = "rgba(7,22,42,.08)";
       ctx.beginPath();
       ctx.moveTo(padL, y);
       ctx.lineTo(W - padR, y);
       ctx.stroke();
-
       ctx.fillText(String(v), 8, y + 4);
     }
 
@@ -1011,14 +978,12 @@
       ctx.fillText(txt, x + barW/2 - tw/2, H - padB + 22);
     });
 
-    // Légende
     const legend = entries.map(e => e.label);
     const lx = W - padR - 160;
     let ly = padT + 4;
 
     ctx.fillStyle = "rgba(255,255,255,.85)";
     ctx.fillRect(lx - 10, ly - 12, 170, 70);
-
     ctx.strokeStyle = "rgba(200,162,74,.35)";
     ctx.strokeRect(lx - 10, ly - 12, 170, 70);
 
@@ -1069,9 +1034,7 @@
     drawBars($("barChart"), stEntries);
   }
 
-  // -----------------------------
   // Réunion modal
-  // -----------------------------
   function openMeeting(){
     $("meetingOverlay").classList.add("open");
     $("meetingOverlay").setAttribute("aria-hidden","false");
@@ -1083,9 +1046,7 @@
     $("meetingToggle").checked=false;
   }
 
-  // -----------------------------
   // CSV
-  // -----------------------------
   async function exportCSV(){
     const items = await getAll();
     const headers = ["Numéro","Famille de tâches","Action précise","Catégorie d'interlocuteur","Nom","Temps estimé","Temps réel","Date limite","Statut"];
@@ -1108,54 +1069,7 @@
     URL.revokeObjectURL(url);
   }
 
-  async function importCSV(file){
-    const text = await file.text();
-    const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
-    if(lines.length<2) return;
-
-    const headers = lines[0].split(";").map(h=>h.trim().toLowerCase());
-    const col = (name)=> headers.indexOf(name.toLowerCase());
-
-    const iFam = col("famille de tâches");
-    const iAct = col("action précise");
-    const iCat = col("catégorie d'interlocuteur");
-    const iNom = col("nom");
-    const iTE  = col("temps estimé");
-    const iTR  = col("temps réel");
-    const iDL  = col("date limite");
-    const iSt  = col("statut");
-
-    for(let i=1;i<lines.length;i++){
-      const v = lines[i].split(";");
-      const action = (v[iAct]||"").trim();
-      if(!action) continue;
-
-      const statut = (v[iSt]||"A faire").trim();
-      const now = Date.now();
-
-      await addItem({
-        uid: makeUID(),
-        updatedAt: now,
-        createdAt: now,
-        actionPrecise: action,
-        famille: (iFam>=0 ? (v[iFam]||"").trim() : ""),
-        categorie: (iCat>=0 ? (v[iCat]||"").trim() : ""),
-        nom: (iNom>=0 ? (v[iNom]||"").trim() : ""),
-        tempsEstime: (iTE>=0 ? (v[iTE]||"").trim() : ""),
-        tempsReel: (iTR>=0 ? (v[iTR]||"").trim() : ""),
-        dateLimite: (iDL>=0 ? (v[iDL]||"").trim() : ""),
-        statut,
-        archivedAt: statut==="Terminé" ? now : null,
-        isMeeting:false,
-        meeting:null
-      });
-    }
-    scheduleCloudSave();
-  }
-
-  // -----------------------------
-  // Render
-  // -----------------------------
+  // Render listes
   async function render(){
     const items=await getAll();
     const todo=items.filter(x=>x.statut!=="Terminé");
@@ -1213,9 +1127,6 @@
     }
   }
 
-  // -----------------------------
-  // DOM Ready
-  // -----------------------------
   document.addEventListener("DOMContentLoaded", async()=>{
     db=await openDb();
 
@@ -1227,24 +1138,20 @@
     $("tab-archive").addEventListener("click", async()=>{ switchTab("archive"); await render(); });
     $("tab-stats").addEventListener("click", async()=>{ switchTab("stats"); await render(); });
 
-    // Cloud popup
+    // Nuage
     $("cloud-btn").addEventListener("click", openCloud);
     $("cloudClose").addEventListener("click", closeCloud);
     $("cloudCancel").addEventListener("click", closeCloud);
     $("cloudOverlay").addEventListener("click",(e)=>{ if(e.target===$("cloudOverlay")) closeCloud(); });
-
     $("cloudSave").addEventListener("click", async()=>{
       setCloudPass($("cloudPass").value.trim());
       closeCloud();
-      // fusion immédiate après avoir enregistré le mot de passe
       await syncMergeWithCloud();
       await render();
     });
 
     // Réunion
-    $("meetingToggle").addEventListener("change", (e)=>{
-      if(e.target.checked) openMeeting();
-    });
+    $("meetingToggle").addEventListener("change", (e)=>{ if(e.target.checked) openMeeting(); });
     $("closeMeeting").addEventListener("click", closeMeeting);
     $("meetingCancel").addEventListener("click", closeMeeting);
     $("meetingOverlay").addEventListener("click",(e)=>{ if(e.target===$("meetingOverlay")) closeMeeting(); });
@@ -1317,22 +1224,12 @@
     });
 
     $("reset-btn").addEventListener("click", ()=> $("add-form").reset());
-
     $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll()));
 
     $("export-btn").addEventListener("click", exportCSV);
-    $("import-btn").addEventListener("click", ()=> $("import-file").click());
-    $("import-file").addEventListener("change", async(e)=>{
-      const file=e.target.files?.[0];
-      if(!file) return;
-      await importCSV(file);
-      e.target.value="";
-      await render();
-    });
 
-    // ✅ Fusion au démarrage si un mot de passe nuage est déjà enregistré
+    // Fusion au démarrage si mot de passe déjà enregistré
     await syncMergeWithCloud();
-
     await render();
   });
 </script>
@@ -1371,11 +1268,10 @@
       const m = html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i);
       const remoteBuild = m ? m[1] : build;
 
+      sessionStorage.setItem(key, "1");
       if (remoteBuild !== build) {
-        sessionStorage.setItem(key, "1");
         location.replace(location.pathname + "?v=" + Date.now());
       } else {
-        sessionStorage.setItem(key, "1");
         if (location.search.includes("v=")) history.replaceState(null, "", location.pathname);
       }
     })
