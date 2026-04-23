@@ -371,6 +371,149 @@
       backdrop-filter: blur(8px);
       border-top:1px solid rgba(0,0,0,.08);
     }
+    /* ===========================
+   MINI TUNING ART DÉCO (SOBRE)
+   À COLLER À LA FIN DU <style>
+   =========================== */
+
+/* 1) Fond un peu plus "papier luxe" très léger (pas de bruit agressif) */
+body{
+  background:
+    radial-gradient(1200px 600px at 50% -220px, rgba(200,162,74,.14), transparent 55%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(11,31,59,.012) 0 8px,
+      rgba(200,162,74,.010) 8px 9px
+    ),
+    linear-gradient(180deg, rgba(11,31,59,.06), transparent 30%),
+    var(--paper);
+}
+
+/* 2) Onglets : plus "plaque" Art déco (filet + micro relief) */
+.tab{
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  letter-spacing:.35px;
+}
+.tab.active{
+  box-shadow: 0 10px 18px rgba(0,0,0,.16);
+}
+
+/* 3) Cartes : coins géométriques fins dorés (sans ajouter de div)
+      -> on dessine des "équerres" aux 4 coins avec des backgrounds */
+.card{
+  border-color: rgba(200,162,74,.30);
+}
+.card::after{
+  content:"";
+  position:absolute;
+  inset:14px;             /* place l’ornement à l’intérieur du cadre */
+  pointer-events:none;
+  border-radius: calc(var(--radius) - 8px);
+
+  /* 8 traits (2 par coin) pour faire des coins Art déco */
+  background:
+    linear-gradient(var(--gold) 0 0) top left,
+    linear-gradient(var(--gold) 0 0) top left,
+    linear-gradient(var(--gold) 0 0) top right,
+    linear-gradient(var(--gold) 0 0) top right,
+    linear-gradient(var(--gold) 0 0) bottom left,
+    linear-gradient(var(--gold) 0 0) bottom left,
+    linear-gradient(var(--gold) 0 0) bottom right,
+    linear-gradient(var(--gold) 0 0) bottom right;
+
+  /* longueur des traits */
+  background-size:
+    26px 1px, 1px 26px,
+    26px 1px, 1px 26px,
+    26px 1px, 1px 26px,
+    26px 1px, 1px 26px;
+
+  background-repeat:no-repeat;
+
+  /* position exacte (2 traits par coin) */
+  background-position:
+    0 0, 0 0,
+    100% 0, 100% 0,
+    0 100%, 0 100%,
+    100% 100%, 100% 100%;
+
+  opacity:.85;
+}
+
+/* 4) Titres de section : séparateur plus Art déco (plus fin, plus net) */
+.section-title::before,
+.section-title::after{
+  height:1px;
+  background: linear-gradient(90deg,
+    rgba(200,162,74,0),
+    rgba(200,162,74,.95),
+    rgba(200,162,74,0)
+  );
+}
+.section-title{
+  letter-spacing:.45px;
+}
+
+/* 5) Encarts (inputs/select/textarea) : double filet discret + coins un peu plus "taillés" */
+.box{
+  border-color: rgba(200,162,74,.42);
+  box-shadow:
+    inset 0 0 0 1px rgba(226,201,120,.22),
+    inset 0 0 0 2px rgba(255,255,255,.60);
+}
+.box:focus-within{
+  box-shadow:
+    inset 0 0 0 2px rgba(200,162,74,.30),
+    0 0 0 4px rgba(200,162,74,.10);
+}
+
+/* 6) Boutons : un peu plus "bouton plaqué" */
+.btn.gold{
+  box-shadow: 0 10px 18px rgba(0,0,0,.14);
+  border: 1px solid rgba(7,22,42,.10);
+}
+.btn.green{
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+/* 7) Réunion inline : la boîte devient plus "bijou" */
+.meeting-inline{
+  border-color: rgba(31,122,76,.28);
+  box-shadow: inset 0 0 0 1px rgba(200,162,74,.12);
+}
+
+/* 8) Pop-up : même coins Art déco que les cartes */
+.modal{
+  border-color: rgba(200,162,74,.38);
+}
+.modal::after{
+  content:"";
+  position:absolute;
+  inset:14px;
+  pointer-events:none;
+  border-radius: 12px;
+  background:
+    linear-gradient(var(--gold) 0 0) top left,
+    linear-gradient(var(--gold) 0 0) top left,
+    linear-gradient(var(--gold) 0 0) top right,
+    linear-gradient(var(--gold) 0 0) top right,
+    linear-gradient(var(--gold) 0 0) bottom left,
+    linear-gradient(var(--gold) 0 0) bottom left,
+    linear-gradient(var(--gold) 0 0) bottom right,
+    linear-gradient(var(--gold) 0 0) bottom right;
+  background-size:
+    22px 1px, 1px 22px,
+    22px 1px, 1px 22px,
+    22px 1px, 1px 22px,
+    22px 1px, 1px 22px;
+  background-repeat:no-repeat;
+  background-position:
+    0 0, 0 0,
+    100% 0, 100% 0,
+    0 100%, 0 100%,
+    100% 100%, 100% 100%;
+  opacity:.85;
+}
   </style>
 </head>
 
