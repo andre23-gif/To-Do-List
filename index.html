@@ -6,7 +6,7 @@
   <title>To Do List</title>
 
   <!-- Version (sert à l’auto-update anti-cache) -->
-  <meta name="app-build" content="2026-04-22.5">
+  <meta name="app-build" content="2026-04-22.6">
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.webmanifest">
@@ -291,7 +291,7 @@
       background: rgba(255,255,255,.92);
       border:1px solid rgba(7,22,42,.10);
     }
-    /* ✅ réunion plus foncée */
+    /* Réunion plus foncée */
     .item.meeting{
       background: rgba(22,92,58,.18);
       border-color: rgba(22,92,58,.38);
@@ -352,7 +352,7 @@
     }
     .overlay.open{ display:flex; }
 
-    /* ✅ pour être sûr que Nuage est toujours visible */
+    /* Nuage centré */
     #cloudOverlay.open{ align-items:center; }
 
     .modal{
@@ -442,6 +442,36 @@
     }
     canvas{ width:100%; height:280px; }
 
+    .note{
+      margin-top:8px;
+      font-size:12px;
+      font-weight:850;
+      color:rgba(7,22,42,.70);
+      line-height:1.35;
+    }
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    .legend-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(200,162,74,.22);
+      background: rgba(255,255,255,.82);
+      font-size:12px;
+      font-weight:900;
+      color:rgba(7,22,42,.82);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      display:inline-block;
+    }
+
     footer{
       position:fixed; left:0; right:0; bottom:0;
       display:flex; gap:10px; justify-content:center;
@@ -471,7 +501,6 @@
     <div class="card">
       <div class="card-body">
         <form id="add-form" class="stack">
-
           <div class="section">
             <div class="section-title"><span class="tag">I</span> Informations</div>
 
@@ -536,7 +565,6 @@
             <button class="btn gold" type="submit">Ajouter</button>
             <button class="btn ghost" id="reset-btn" type="button">Vider</button>
           </div>
-
         </form>
       </div>
     </div>
@@ -587,11 +615,13 @@
         <div class="canvas-wrap">
           <div class="section-title"><span class="tag">⟂</span> Courbe</div>
           <canvas id="lineChart" width="1000" height="280"></canvas>
+          <div id="lineLegend" class="note"></div>
         </div>
 
         <div class="canvas-wrap">
           <div class="section-title"><span class="tag">◔</span> Familles</div>
           <canvas id="pieChart" width="1000" height="280"></canvas>
+          <div id="pieLegend" class="legend"></div>
         </div>
 
         <div class="canvas-wrap">
@@ -611,7 +641,7 @@
   <input id="import-file" type="file" accept=".csv,text/csv" hidden>
 </footer>
 
-<!-- ✅ POPUP NUAGE (placé hors du footer) -->
+<!-- POPUP NUAGE (hors footer) -->
 <div class="overlay" id="cloudOverlay" aria-hidden="true">
   <div class="modal">
     <div class="modal-head">
@@ -631,6 +661,8 @@
           <button class="btn green" id="cloudSave" type="button">Enregistrer</button>
           <button class="btn ghost" id="cloudCancel" type="button">Annuler</button>
         </div>
+
+        <div id="cloudStatus" class="note"></div>
       </div>
     </div>
   </div>
@@ -769,36 +801,49 @@
     }
   }
 
-  // Nextcloud (fichier du partage)
-  const NC_FILE_URL = "https://nuage03.apps.education.fr/public.php/dav/files/EbxSNijiQN5zxtj/todo.json";
+  // -----------------------------
+  // Nextcloud robuste (2 endpoints)
+  // -----------------------------
+  const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
+  const NC_FILE_NAME = "todo.json";
+
+  // A: endpoint moderne
+  const NC_URL_A = `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE_NAME}`;
+  // B: variante rencontrée sur certaines instances
+  const NC_URL_B = `https://nuage03.apps.education.fr/public.php/webdav/${NC_FILE_NAME}`;
+
   function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
   function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
+
+  function setCloudStatus(msg){
+    const el = $("cloudStatus");
+    if(el) el.textContent = msg || "";
+  }
 
   function openCloud(){
     $("cloudOverlay").classList.add("open");
     $("cloudOverlay").setAttribute("aria-hidden","false");
     $("cloudPass").value = getCloudPass();
+    setCloudStatus("");
   }
   function closeCloud(){
     $("cloudOverlay").classList.remove("open");
     $("cloudOverlay").setAttribute("aria-hidden","true");
   }
 
-  async function ncLoadTasks(){
-    const pass = getCloudPass();
-    if(!pass) return null;
-    const auth = btoa(`anonymous:${pass}`); // [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
-    const r = await fetch(NC_FILE_URL, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
-    if(!r.ok) throw new Error("Lecture Nuage impossible");
-    return await r.json();
+  async function tryFetchJson(url, username, password){
+    const auth = btoa(`${username}:${password}`);
+    const r = await fetch(url, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
+    const text = await r.text();
+    if(!r.ok) throw { type:"http", status:r.status, body:text };
+    try { return JSON.parse(text); }
+    catch { throw { type:"json", status:r.status, body:text }; }
   }
 
-  async function ncSaveTasks(tasks){
-    const pass = getCloudPass();
-    if(!pass) return;
-    const auth = btoa(`anonymous:${pass}`); // [1](https://dev.to/cl0udleadanis/tutorial-22-using-sf-symbols-and-custom-icons-in-your-app-22cd)
-    const body = JSON.stringify(tasks, null, 2);
-    const r = await fetch(NC_FILE_URL, {
+  async function tryPutJson(url, username, password, data){
+    const auth = btoa(`${username}:${password}`);
+    const body = JSON.stringify(data, null, 2);
+    const r = await fetch(url, {
       method:"PUT",
       headers:{
         "Authorization": `Basic ${auth}`,
@@ -806,7 +851,67 @@
       },
       body
     });
-    if(!r.ok) throw new Error("Écriture Nuage impossible (partage en lecture seule ?)");
+    const text = await r.text().catch(()=> "");
+    if(!r.ok) throw { type:"http", status:r.status, body:text };
+    return true;
+  }
+
+  async function ncLoadTasks(){
+    const pass = getCloudPass();
+    if(!pass) return null;
+
+    setCloudStatus("Connexion au nuage…");
+
+    // 1) Essai A : anonymous + mot de passe (endpoint /dav)
+    try{
+      const data = await tryFetchJson(NC_URL_A, "anonymous", pass);
+      setCloudStatus(`Nuage OK (${Array.isArray(data)?data.length:0} éléments)`);
+      return Array.isArray(data) ? data : [];
+    }catch(eA){
+      // 2) Essai B : token + mot de passe (endpoint /webdav)
+      try{
+        const data = await tryFetchJson(NC_URL_B, NC_SHARE_TOKEN, pass);
+        setCloudStatus(`Nuage OK (${Array.isArray(data)?data.length:0} éléments)`);
+        return Array.isArray(data) ? data : [];
+      }catch(eB){
+        if(eB && eB.type==="http"){
+          setCloudStatus(`Nuage erreur ${eB.status} (mot de passe / droits / URL)`);
+        }else if(eB && eB.type==="json"){
+          setCloudStatus("Nuage : todo.json n’est pas un JSON valide");
+        }else{
+          setCloudStatus("Nuage : connexion bloquée ou réseau");
+        }
+        console.log("Nextcloud A erreur:", eA);
+        console.log("Nextcloud B erreur:", eB);
+        return null;
+      }
+    }
+  }
+
+  async function ncSaveTasks(tasks){
+    const pass = getCloudPass();
+    if(!pass) return;
+
+    // Essai écriture A puis B
+    try{
+      await tryPutJson(NC_URL_A, "anonymous", pass, tasks);
+      setCloudStatus("Nuage : sauvegarde OK");
+      return;
+    }catch(eA){
+      try{
+        await tryPutJson(NC_URL_B, NC_SHARE_TOKEN, pass, tasks);
+        setCloudStatus("Nuage : sauvegarde OK");
+        return;
+      }catch(eB){
+        if(eB && eB.type==="http"){
+          setCloudStatus(`Nuage : sauvegarde refusée (${eB.status})`);
+        }else{
+          setCloudStatus("Nuage : sauvegarde impossible");
+        }
+        console.log("Nextcloud A PUT erreur:", eA);
+        console.log("Nextcloud B PUT erreur:", eB);
+      }
+    }
   }
 
   function mergeByUID(localItems, cloudItems){
@@ -825,23 +930,19 @@
   }
 
   async function syncMergeWithCloud(){
-    try{
-      const cloud = await ncLoadTasks();
-      if(!cloud) return;
+    const cloud = await ncLoadTasks();
+    if(!cloud) return;
 
-      let local = await getAll();
-      await ensureUidAndUpdated(local);
-      local = await getAll();
+    let local = await getAll();
+    await ensureUidAndUpdated(local);
+    local = await getAll();
 
-      const merged = mergeByUID(local, cloud);
+    const merged = mergeByUID(local, cloud);
 
-      for (const it of merged){
-        await putItem(it);
-      }
-      await ncSaveTasks(merged);
-    }catch(e){
-      console.log("Nuage: fusion non faite", e);
+    for (const it of merged){
+      await putItem(it);
     }
+    await ncSaveTasks(merged);
   }
 
   let cloudTimer = null;
@@ -907,16 +1008,35 @@
     ctx.stroke();
   }
 
+  const PIE_COLORS=["#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98","#1F77B4","#D35400","#2E4053"];
+
   function drawPie(canvas, entries){
     const ctx=clearCanvas(canvas), W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,r=Math.min(W,H)*0.32;
     const total=entries.reduce((s,e)=>s+e.value,0)||1;
     let a=-Math.PI/2;
-    const colors=["#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98","#1F77B4","#D35400","#2E4053"];
     entries.forEach((e,i)=>{
       const slice=(e.value/total)*Math.PI*2;
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a,a+slice); ctx.closePath();
-      ctx.fillStyle=colors[i%colors.length]; ctx.fill();
+      ctx.fillStyle=PIE_COLORS[i%PIE_COLORS.length]; ctx.fill();
       a+=slice;
+    });
+  }
+
+  function renderPieLegend(entries){
+    const box = $("pieLegend");
+    if(!box) return;
+    box.innerHTML = "";
+    entries.forEach((e,i)=>{
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = PIE_COLORS[i%PIE_COLORS.length];
+      const txt = document.createElement("span");
+      txt.textContent = `${e.label} (${e.value})`;
+      item.appendChild(dot);
+      item.appendChild(txt);
+      box.appendChild(item);
     });
   }
 
@@ -977,24 +1097,6 @@
       const tw = ctx.measureText(txt).width;
       ctx.fillText(txt, x + barW/2 - tw/2, H - padB + 22);
     });
-
-    const legend = entries.map(e => e.label);
-    const lx = W - padR - 160;
-    let ly = padT + 4;
-
-    ctx.fillStyle = "rgba(255,255,255,.85)";
-    ctx.fillRect(lx - 10, ly - 12, 170, 70);
-    ctx.strokeStyle = "rgba(200,162,74,.35)";
-    ctx.strokeRect(lx - 10, ly - 12, 170, 70);
-
-    ctx.font = "12px system-ui";
-    legend.forEach((lab, idx) => {
-      const yy = ly + idx * 18;
-      ctx.fillStyle = colorFor(lab);
-      ctx.fillRect(lx, yy, 12, 12);
-      ctx.fillStyle = "rgba(7,22,42,.85)";
-      ctx.fillText(lab, lx + 18, yy + 10);
-    });
   }
 
   async function renderStats(items){
@@ -1009,6 +1111,7 @@
       return true;
     });
 
+    // Courbe
     const map=new Map();
     filtered.forEach(it=>{
       const k=dateKeyForItem(it);
@@ -1019,6 +1122,12 @@
     const values=labels.map(k=>map.get(k));
     drawLine($("lineChart"), labels, values);
 
+    const lineLegend = $("lineLegend");
+    if(lineLegend){
+      lineLegend.textContent = `Courbe : minutes par jour — mode : ${mode==="reel" ? "Temps réel" : "Temps estimé"}`;
+    }
+
+    // Familles + légende
     const fam=new Map();
     filtered.forEach(it=>{
       const k=it.famille||"(Sans famille)";
@@ -1027,7 +1136,9 @@
     const famEntries=Array.from(fam.entries()).map(([label,value])=>({label,value}))
       .sort((a,b)=>b.value-a.value).slice(0,8);
     drawPie($("pieChart"), famEntries);
+    renderPieLegend(famEntries);
 
+    // Statuts
     const st=new Map([["A faire",0],["En cours",0],["Terminé",0]]);
     filtered.forEach(it=>st.set(it.statut,(st.get(it.statut)||0)+1));
     const stEntries=Array.from(st.entries()).map(([label,value])=>({label,value}));
@@ -1067,6 +1178,50 @@
     const a = document.createElement("a");
     a.href=url; a.download="todo-export.csv"; a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function importCSV(file){
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
+    if(lines.length<2) return;
+
+    const headers = lines[0].split(";").map(h=>h.trim().toLowerCase());
+    const col = (name)=> headers.indexOf(name.toLowerCase());
+
+    const iFam = col("famille de tâches");
+    const iAct = col("action précise");
+    const iCat = col("catégorie d'interlocuteur");
+    const iNom = col("nom");
+    const iTE  = col("temps estimé");
+    const iTR  = col("temps réel");
+    const iDL  = col("date limite");
+    const iSt  = col("statut");
+
+    for(let i=1;i<lines.length;i++){
+      const v = lines[i].split(";");
+      const action = (v[iAct]||"").trim();
+      if(!action) continue;
+      const statut = (v[iSt]||"A faire").trim();
+      const now = Date.now();
+
+      await addItem({
+        uid: makeUID(),
+        updatedAt: now,
+        createdAt: now,
+        actionPrecise: action,
+        famille: (iFam>=0 ? (v[iFam]||"").trim() : ""),
+        categorie: (iCat>=0 ? (v[iCat]||"").trim() : ""),
+        nom: (iNom>=0 ? (v[iNom]||"").trim() : ""),
+        tempsEstime: (iTE>=0 ? (v[iTE]||"").trim() : ""),
+        tempsReel: (iTR>=0 ? (v[iTR]||"").trim() : ""),
+        dateLimite: (iDL>=0 ? (v[iDL]||"").trim() : ""),
+        statut,
+        archivedAt: statut==="Terminé" ? now : null,
+        isMeeting:false,
+        meeting:null
+      });
+    }
+    scheduleCloudSave();
   }
 
   // Render listes
@@ -1143,10 +1298,11 @@
     $("cloudClose").addEventListener("click", closeCloud);
     $("cloudCancel").addEventListener("click", closeCloud);
     $("cloudOverlay").addEventListener("click",(e)=>{ if(e.target===$("cloudOverlay")) closeCloud(); });
+
     $("cloudSave").addEventListener("click", async()=>{
       setCloudPass($("cloudPass").value.trim());
-      closeCloud();
       await syncMergeWithCloud();
+      closeCloud();
       await render();
     });
 
@@ -1227,6 +1383,14 @@
     $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll()));
 
     $("export-btn").addEventListener("click", exportCSV);
+    $("import-btn").addEventListener("click", ()=> $("import-file").click());
+    $("import-file").addEventListener("change", async(e)=>{
+      const file=e.target.files?.[0];
+      if(!file) return;
+      await importCSV(file);
+      e.target.value="";
+      await render();
+    });
 
     // Fusion au démarrage si mot de passe déjà enregistré
     await syncMergeWithCloud();
