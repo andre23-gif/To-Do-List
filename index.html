@@ -1334,6 +1334,7 @@ async function ncSaveTasks(tasks){
 
       await addItem({
         uid: makeUID(),
+        device: DEVICE_ID,
         updatedAt: now,
         createdAt: now,
         actionPrecise:label||"Réunion",
@@ -1363,6 +1364,7 @@ async function ncSaveTasks(tasks){
 
       await addItem({
         uid: makeUID(),
+        device: DEVICE_ID,
         updatedAt: now,
         createdAt: now,
         actionPrecise:$("actionPrecise").value.trim(),
