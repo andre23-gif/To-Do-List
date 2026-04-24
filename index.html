@@ -812,134 +812,104 @@ const DEVICE_ID = getDeviceId();
     }
   }
 
- // ===============================
-// NEXTCLOUD – UN FICHIER PAR APPAREIL
-// ===============================
+// =======================================================
+// NEXTCLOUD — PROTOCOLE FINAL (1 FICHIER PAR APPAREIL)
+// =======================================================
+
 const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
 
-// fichier que CET appareil va écrire
+// Fichier écrit UNIQUEMENT par cet appareil
 const NC_WRITE_FILE = `todo-${DEVICE_ID}.json`;
 
-// fichiers à lire (fusion)
+// Fichiers lus (fusion)
 const NC_READ_FILES = [
   "todo-iphone.json",
   "todo-ipad.json"
 ];
 
-// URLs WebDAV possibles pour un fichier
+// URLs WebDAV valides (stables)
 function ncUrlsFor(file){
   return [
     `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${file}`,
-    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${file}`,
-    `https://nuage03.apps.education.fr/public.php/webdav/${file}`,
-    `https://nuage03.apps.education.fr/index.php/public.php/webdav/${file}`
+    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${file}`
   ];
 }
-  // A: endpoint moderne
-  const NC_URL_A = `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE_NAME}`;
-  // B: variante rencontrée sur certaines instances
-  const NC_URL_B = `https://nuage03.apps.education.fr/public.php/webdav/${NC_FILE_NAME}`;
 
-  function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
-  function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
+// Mot de passe local
+function getCloudPass(){
+  return localStorage.getItem("todo_nc_pass") || "";
+}
+function setCloudPass(p){
+  localStorage.setItem("todo_nc_pass", p || "");
+}
 
-  function setCloudStatus(msg){
-    const el = $("cloudStatus");
-    if(el) el.textContent = msg || "";
-  }
+// Message UI
+function setCloudStatus(msg){
+  const el = $("cloudStatus");
+  if(el) el.textContent = msg || "";
+}
 
-  function openCloud(){
-    $("cloudOverlay").classList.add("open");
-    $("cloudOverlay").setAttribute("aria-hidden","false");
-    $("cloudPass").value = getCloudPass();
-    setCloudStatus("");
-  }
-  function closeCloud(){
-    $("cloudOverlay").classList.remove("open");
-    $("cloudOverlay").setAttribute("aria-hidden","true");
-  }
+// Base64 UTF‑8 sûr (évite les bugs iOS)
+function b64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
 
-  async function tryFetchJson(url, username, password){
-    const auth = btoa(`${username}:${password}`);
-    const r = await fetch(url, { method:"GET", headers:{ "Authorization": `Basic ${auth}` }});
-    const text = await r.text();
-    if(!r.ok) throw { type:"http", status:r.status, body:text };
-    try { return JSON.parse(text); }
-    catch { throw { type:"json", status:r.status, body:text }; }
-  }
-
-  async function tryPutJson(url, username, password, data){
-    const auth = btoa(`${username}:${password}`);
-    const body = JSON.stringify(data, null, 2);
-    const r = await fetch(url, {
-      method:"PUT",
-      headers:{
-        "Authorization": `Basic ${auth}`,
-        "Content-Type":"application/json"
-      },
-      body
-    });
-    const text = await r.text().catch(()=> "");
-    if(!r.ok) throw { type:"http", status:r.status, body:text };
-    return true;
-  }
-
+// ---------- LECTURE : 2 fichiers ----------
 async function ncLoadTasks(){
   const pass = getCloudPass();
-  if(!pass) return null;
+  if(!pass) return [];
 
   setCloudStatus("Lecture du nuage…");
 
   let all = [];
 
   for(const file of NC_READ_FILES){
-    const urls = ncUrlsFor(file);
-
-    for(const url of urls){
+    for(const url of ncUrlsFor(file)){
       try{
-        const useTokenAsUser = url.includes("/webdav");
-        const user = useTokenAsUser ? NC_SHARE_TOKEN : "anonymous";
+        const r = await fetch(url, {
+          headers:{
+            "Authorization": "Basic " + b64("anonymous:" + pass)
+          }
+        });
+        if(!r.ok) continue;
 
-        const data = await tryGETJson(url, user, pass);
-        if(Array.isArray(data)){
-          all = all.concat(data);
-          break; // ce fichier est lu → on passe au suivant
-        }
-      }catch(e){
-        continue;
-      }
+        const data = await r.json();
+        if(Array.isArray(data)) all = all.concat(data);
+        break;
+      }catch(e){}
     }
   }
 
-  setCloudStatus(`Nuage OK (${all.length} éléments fusionnés)`);
+  setCloudStatus(`Nuage OK (${all.length} éléments)`);
   return all;
 }
 
-  async function ncSaveTasks(tasks){
+// ---------- ÉCRITURE : 1 fichier ----------
+async function ncSaveTasks(tasks){
   const pass = getCloudPass();
   if(!pass) return;
 
-  setCloudStatus(`Sauvegarde (${DEVICE_ID})…`);
+  setCloudStatus(`Sauvegarde ${NC_WRITE_FILE}…`);
 
-  const urls = ncUrlsFor(NC_WRITE_FILE);
-
-  for(const url of urls){
+  for(const url of ncUrlsFor(NC_WRITE_FILE)){
     try{
-      const useTokenAsUser = url.includes("/webdav");
-      const user = useTokenAsUser ? NC_SHARE_TOKEN : "anonymous";
-
-      await tryPUTJson(url, user, pass, tasks);
-      setCloudStatus(`Nuage OK → ${NC_WRITE_FILE}`);
-      return;
-    }catch(e){
-      continue;
-    }
+      const r = await fetch(url, {
+        method: "PUT",
+        headers:{
+          "Authorization": "Basic " + b64("anonymous:" + pass),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(tasks, null, 2)
+      });
+      if(r.ok){
+        setCloudStatus("✅ Nuage synchronisé");
+        return;
+      }
+    }catch(e){}
   }
 
-  setCloudStatus("Nuage : sauvegarde impossible");
-}
-
-  function mergeByUID(localItems, cloudItems){
+  setCloudStatus("❌ Sauvegarde impossible");
+}  function mergeByUID(localItems, cloudItems){
     const map = new Map();
     const add = (it)=>{
       if(!it || !it.uid) return;
