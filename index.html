@@ -869,7 +869,10 @@ function closeCloud(){
 // ----------- LECTURE DES 2 FICHIERS -----------
 async function ncLoadTasks(){
   const pass = getCloudPass();
-  if(!pass) return [];
+if(!pass){
+  setCloudStatus("Mot de passe requis pour lire le nuage");
+  return [];
+}
 
   setCloudStatus("Lecture du nuage…");
   let all = [];
