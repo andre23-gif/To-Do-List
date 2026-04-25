@@ -825,8 +825,136 @@ const DEVICE_ID = getDeviceId();
     (cloudItems||[]).forEach(add);
     return Array.from(map.values());
   }
+// ====== DEBUT BLOC NUAGE MANUEL ======
 
-  let cloudTimer = null;
+// Paramètres Nextcloud
+const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
+const NC_FILE = "todo.json";
+
+function ncUrls(){
+  return [
+    `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`,
+    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`
+  ];
+}
+
+// Mot de passe
+function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
+function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
+
+// Message UI
+function setCloudStatus(msg){
+  const el = $("cloudStatus");
+  if(el) el.textContent = msg || "";
+}
+
+// Base64 UTF-8 (compatible iOS)
+function b64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+// Ouvrir/Fermer popup (tu as déjà le HTML)
+function openCloud(){
+  $("cloudOverlay").classList.add("open");
+  $("cloudOverlay").setAttribute("aria-hidden","false");
+  $("cloudPass").value = getCloudPass();
+  setCloudStatus("");
+}
+function closeCloud(){
+  $("cloudOverlay").classList.remove("open");
+  $("cloudOverlay").setAttribute("aria-hidden","true");
+}
+
+// Lire le JSON nuage (retourne [] si absent)
+async function readCloudJson(){
+  const pass = getCloudPass();
+  if(!pass){
+    setCloudStatus("Mot de passe requis");
+    return null;
+  }
+
+  for(const url of ncUrls()){
+    try{
+      const r = await fetch(url, {
+        headers:{ Authorization: "Basic " + b64("anonymous:" + pass) }
+      });
+      if(!r.ok) continue;
+      const j = await r.json();
+      return Array.isArray(j) ? j : null;
+    }catch(e){}
+  }
+  return []; // fichier introuvable => considéré vide
+}
+
+// Écrire le JSON nuage (écrase le fichier avec la version fusionnée)
+async function writeCloudJson(array){
+  const pass = getCloudPass();
+  if(!pass){
+    setCloudStatus("Mot de passe requis");
+    return false;
+  }
+
+  for(const url of ncUrls()){
+    try{
+      const r = await fetch(url, {
+        method:"PUT",
+        headers:{
+          Authorization: "Basic " + b64("anonymous:" + pass),
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(array, null, 2)
+      });
+      if(r.ok) return true;
+    }catch(e){}
+  }
+  return false;
+}
+
+// IMPORT = ajouter localement ce qui est dans le nuage mais pas chez toi
+async function importFromCloud(){
+  setCloudStatus("Import…");
+
+  const cloud = await readCloudJson();
+  if(cloud === null){
+    setCloudStatus("Nuage: JSON invalide");
+    return;
+  }
+
+  const local = await getAll();
+  const localUIDs = new Set(local.map(it => it.uid));
+
+  let added = 0;
+  for(const it of cloud){
+    if(it && it.uid && !localUIDs.has(it.uid)){
+      await addItem(it);
+      added++;
+    }
+  }
+
+  setCloudStatus(`Import terminé (${added} ajout(s))`);
+  await render();
+}
+
+// EXPORT = ajouter dans le nuage ce qui est local mais absent du nuage
+async function exportToCloud(){
+  setCloudStatus("Export…");
+
+  const cloud = await readCloudJson();
+  if(cloud === null){
+    setCloudStatus("Nuage: JSON invalide");
+    return;
+  }
+
+  const local = await getAll();
+
+  const cloudUIDs = new Set((cloud||[]).filter(x=>x&&x.uid).map(x=>x.uid));
+  const merged = (cloud||[]).concat(local.filter(it => it && it.uid && !cloudUIDs.has(it.uid)));
+
+  const ok = await writeCloudJson(merged);
+  setCloudStatus(ok ? "Export terminé" : "Export échoué");
+}
+
+// ====== FIN BLOC NUAGE MANUEL ======
  
   async function updateStatus(id, statut){
     const items=await getAll();
@@ -1247,7 +1375,31 @@ const DEVICE_ID = getDeviceId();
       e.target.value="";
       await render();
     });
+// ====== DEBUT BRANCHEMENT BOUTONS NUAGE ======
 
+// Ouvrir popup
+$("cloud-btn").addEventListener("click", openCloud);
+
+// Fermer popup
+$("cloudClose").addEventListener("click", closeCloud);
+$("cloudCancel").addEventListener("click", closeCloud);
+$("cloudOverlay").addEventListener("click", (e)=>{
+  if(e.target === $("cloudOverlay")) closeCloud();
+});
+
+// Bouton vert = IMPORT (ajoute du nuage vers local)
+$("cloudSave").addEventListener("click", async()=>{
+  setCloudPass($("cloudPass").value.trim());
+  await importFromCloud();
+});
+
+// BONUS: Export via double-clic sur bouton vert (optionnel)
+$("cloudSave").addEventListener("dblclick", async()=>{
+  setCloudPass($("cloudPass").value.trim());
+  await exportToCloud();
+});
+
+// ====== FIN BRANCHEMENT BOUTONS NUAGE ======
     await render();
   });
 </script>
