@@ -1117,8 +1117,7 @@ const NC_FILE = "todo.json";
 
 function ncUrls(){
   return [
-    `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`,
-    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`
+    `https://nuage03.apps.education.fr/public.php/webdav/${NC_FILE}`
   ];
 }
 
@@ -1209,7 +1208,7 @@ async function writeCloud(data){
       const r = await fetch(url,{
         method:"PUT",
         headers:{
-          Authorization:"Basic "+b64("anonymous:"+pass),
+          Authorization: Basic base64("TOKEN:motdepasse")
           "Content-Type":"application/json"
         },
         body:JSON.stringify(data,null,2)
