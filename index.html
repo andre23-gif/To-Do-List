@@ -926,12 +926,14 @@ async function importFromCloud(){
   const localUIDs = new Set(local.map(it => it.uid));
 
   let added = 0;
-  for(const it of cloud){
-    if(it && it.uid && !localUIDs.has(it.uid)){
-      await addItem(it);
-      added++;
-    }
+for(const it of cloud){
+  if(it && it.uid && !localUIDs.has(it.uid)){
+    const copy = { ...it };
+    delete copy.id;           // <-- IMPORTANT (id local)
+    await addItem(copy);
+    added++;
   }
+}
 
   setCloudStatus(`Import terminé (${added} ajout(s))`);
   await render();
@@ -950,8 +952,15 @@ async function exportToCloud(){
   const local = await getAll();
 
   const cloudUIDs = new Set((cloud||[]).filter(x=>x&&x.uid).map(x=>x.uid));
-  const merged = (cloud||[]).concat(local.filter(it => it && it.uid && !cloudUIDs.has(it.uid)));
-
+const merged = (cloud||[]).concat(
+  local
+    .filter(it => it && it.uid && !cloudUIDs.has(it.uid))
+    .map(it => {
+      const copy = { ...it };
+      delete copy.id;         // <-- IMPORTANT
+      return copy;
+    })
+);
   const ok = await writeCloudJson(merged);
   setCloudStatus(ok ? "Export terminé" : "Export échoué");
 }
