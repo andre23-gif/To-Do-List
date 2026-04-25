@@ -718,7 +718,48 @@
     it.archivedAt = (statut==="Terminé") ? Date.now() : null;
     await putItem(it);
   }
+async function updateStatus(id, statut){
+  const items=await getAll();
+  const it=items.find(x=>x.id===id);
+  if(!it) return;
+  it.statut=statut;
+  it.updatedAt = Date.now();
+  it.archivedAt = (statut==="Terminé") ? Date.now() : null;
+  await putItem(it);
+}
 
+async function finishTask(id){
+  const items = await getAll();
+  const it = items.find(x => x.id === id);
+  if(!it) return;
+
+  if(!it.tempsReel){
+    const saisie = prompt(
+      "Temps réel passé (HH:MM)",
+      it.tempsEstime || "00:00"
+    );
+
+    if(saisie === null) return;
+
+    if(!/^\d{1,2}:\d{2}$/.test(saisie)){
+      alert("Format invalide. Utilise HH:MM");
+      return;
+    }
+
+    it.tempsReel = saisie;
+  }
+
+  it.statut = "Terminé";
+  it.updatedAt = Date.now();
+  it.archivedAt = Date.now();
+
+  await putItem(it);
+  await render();
+}
+
+function switchTab(tab){
+  ...
+}
   function switchTab(tab){
     $("todo-section").hidden = tab!=="todo";
     $("archive-section").hidden = tab!=="archive";
@@ -1062,7 +1103,7 @@ if (legend) {
         </select>
         <div class="trash" title="Supprimer">🗑</div>
       `;
-      li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"Terminé"); await render(); });
+li.querySelector(".done").addEventListener("click", async()=>{  await finishTask(it.id);});
       li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); await render(); });
       li.querySelector(".status").addEventListener("change", async(e)=>{ await updateStatus(it.id,e.target.value); await render(); });
       ul.appendChild(li);
