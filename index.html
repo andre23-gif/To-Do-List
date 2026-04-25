@@ -9,9 +9,9 @@
   <meta name="app-build" content="2026-04-22.7">
 
   <!-- PWA -->
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon-192.png">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  ./manifest.webmanifest
+  ./icon-192.png
+  ./icon-192.png
   <meta name="theme-color" content="#0B1F3B">
 
   <style>
@@ -1106,177 +1106,7 @@
     await render();
   });
 </script>
-<!-- =========================
-     NUAGE — SYNCHRO INCRÉMENTALE
-     (nouveaux éléments uniquement)
-========================= -->
-<script>
-/* ---------- CONFIG ---------- */
-const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
-const NC_FILE = "todo.json";
 
-function ncUrls(){
-  return [
-    `https://nuage03.apps.education.fr/public.php/webdav/${NC_FILE}`
-  ];
-}
-
-/* ---------- UI ---------- */
-
-// Bouton Nuage (ajout immédiat, sans DOMContentLoaded fragile)
-(function addCloudButton(){
-  const footer = document.querySelector("footer");
-  if(!footer || document.getElementById("cloud-btn")) return;
-
-  const btn = document.createElement("button");
-  btn.className = "btn ghost";
-  btn.id = "cloud-btn";
-  btn.type = "button";
-  btn.textContent = "Nuage";
-  footer.prepend(btn);
-})();
-
-// Popup Nuage
-document.body.insertAdjacentHTML("beforeend", `
-<div class="overlay" id="cloudOverlay" aria-hidden="true">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>Nuage</h3>
-      <button class="x" id="cloudClose">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="stack">
-        <div class="field">
-          <span>Mot de passe du partage</span>
-          <div class="box">
-            <input id="cloudPass" type="password">
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn green" id="cloudImport">Importer (nouveaux)</button>
-          <button class="btn gold" id="cloudExport">Enregistrer (nouveaux)</button>
-          <button class="btn ghost" id="cloudCancel">Annuler</button>
-        </div>
-
-        <div id="cloudStatus" class="note"></div>
-      </div>
-    </div>
-  </div>
-</div>
-`);
-
-/* ---------- UTILITAIRES ---------- */
-const b64 = s => btoa(unescape(encodeURIComponent(s)));
-
-function cloudStatus(msg){
-  const el = document.getElementById("cloudStatus");
-  if(el) el.textContent = msg || "";
-}
-function getCloudPass(){
-  return localStorage.getItem("todo_nc_pass") || "";
-}
-function setCloudPass(p){
-  localStorage.setItem("todo_nc_pass", p || "");
-}
-
-/* ---------- NUAGE ---------- */
-async function readCloud(){
-  const pass = getCloudPass();
-  if(!pass){ cloudStatus("Mot de passe requis"); return null; }
-
-  for(const url of ncUrls()){
-    try{
-      const r = await fetch(url,{
-        headers:{ Authorization:"Basic "+b64("anonymous:"+pass) }
-      });
-      if(r.status===404) return [];
-      if(!r.ok) continue;
-      const j = await r.json();
-      return Array.isArray(j)?j:null;
-    }catch{}
-  }
-  return null;
-}
-
-async function writeCloud(data){
-  const pass = getCloudPass();
-  if(!pass){ cloudStatus("Mot de passe requis"); return false; }
-
-  for(const url of ncUrls()){
-    try{
-      const r = await fetch(url,{
-        method:"PUT",
-        headers:{
-          Authorization: Basic base64("TOKEN:motdepasse")
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(data,null,2)
-      });
-      if(r.ok) return true;
-    }catch{}
-  }
-  return false;
-}
-
-/* ---------- LOGIQUE INCRÉMENTALE ---------- */
-async function importNew(){
-  cloudStatus("Import…");
-  const cloud = await readCloud();
-  if(!cloud){ cloudStatus("Erreur lecture"); return; }
-
-  await ensureUidAndUpdated(await getAll());
-  const local = await getAll();
-  const uids = new Set(local.map(it=>it.uid));
-
-  let added=0;
-  for(const it of cloud){
-    if(it?.uid && !uids.has(it.uid)){
-      const c={...it}; delete c.id;
-      await addItem(c);
-      added++;
-    }
-  }
-  cloudStatus(`Import terminé : ${added}`);
-  await render();
-}
-
-async function exportNew(){
-  cloudStatus("Enregistrement…");
-  const cloud = await readCloud();
-  if(!cloud){ cloudStatus("Erreur lecture"); return; }
-
-  await ensureUidAndUpdated(await getAll());
-  const local = await getAll();
-  const cloudUIDs = new Set(cloud.map(it=>it.uid));
-
-  const toAdd = local
-    .filter(it=>it.uid && !cloudUIDs.has(it.uid))
-    .map(it=>{const c={...it}; delete c.id; return c;});
-
-  const ok = await writeCloud(cloud.concat(toAdd));
-  cloudStatus(ok?`Enregistré : ${toAdd.length}`:"Échec");
-}
-
-/* ---------- BRANCHEMENTS ---------- */
-document.getElementById("cloud-btn").onclick = ()=>{
-  cloudStatus("");
-  document.getElementById("cloudPass").value = getCloudPass();
-  cloudOverlay.classList.add("open");
-};
-
-cloudClose.onclick =
-cloudCancel.onclick = ()=> cloudOverlay.classList.remove("open");
-
-cloudImport.onclick = async()=>{
-  setCloudPass(cloudPass.value.trim());
-  await importNew();
-};
-cloudExport.onclick = async()=>{
-  setCloudPass(cloudPass.value.trim());
-  await exportNew();
-};
-</script>
 <!-- Service worker -->
 <script>
   if ("serviceWorker" in navigator) {
@@ -1308,7 +1138,7 @@ cloudExport.onclick = async()=>{
   fetch(bustUrl, { cache: "no-store" })
     .then(r => r.text())
     .then(html => {
-      const m = html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i);
+      const m = html.match(/<meta\s+name=[^"']+["']/i);
       const remoteBuild = m ? m[1] : build;
 
       sessionStorage.setItem(key, "1");
