@@ -1108,114 +1108,12 @@
 </script>
 <!-- =========================
      NUAGE — SYNCHRO INCRÉMENTALE
-     ( }     (nouveaux éléments uniquement)
-      });
-      if(r.status === 404) return [];        // fichier absent → nuage vide
-      if(!r.ok) continue;
-      const j = await r.json();
-      return Array.isArray(j) ? j : null;
-    }catch{}
-  }
-  return null;
-}
-
-async function writeCloud(data){
-  const pass = getCloudPass();
-  if(!pass){ cloudStatus("Mot de passe requis"); return false; }
-
-  for(const url of ncUrls()){
-    try{
-      const r = await fetch(url, {
-        method:"PUT",
-        headers:{
-          Authorization:"Basic "+b64("anonymous:"+pass),
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify(data,null,2)
-      });
-      if(r.ok) return true;
-    }catch{}
-  }
-  return false;
-}
-
-/* ---------- LOGIQUE INCRÉMENTALE ---------- */
-async function importNew(){
-  cloudStatus("Import…");
-  const cloud = await readCloud();
-  if(cloud === null){ cloudStatus("Lecture impossible"); return; }
-
-  await ensureUidAndUpdated(await getAll());
-  const local = await getAll();
-  const localUIDs = new Set(local.map(it=>it.uid));
-
-  let added = 0;
-  for(const it of cloud){
-    if(it && it.uid && !localUIDs.has(it.uid)){
-      const copy = { ...it };
-      delete copy.id;
-      await addItem(copy);
-      added++;
-    }
-  }
-  cloudStatus(`Import terminé : ${added}`);
-  await render();
-}
-
-async function exportNew(){
-  cloudStatus("Enregistrement…");
-  const cloud = await readCloud();
-  if(cloud === null){ cloudStatus("Lecture impossible"); return; }
-
-  await ensureUidAndUpdated(await getAll());
-  const local = await getAll();
-  const cloudUIDs = new Set(cloud.map(it=>it.uid));
-
-  const toAdd = local
-    .filter(it=>it.uid && !cloudUIDs.has(it.uid))
-    .map(it=>{ const c={...it}; delete c.id; return c; });
-
-  const ok = await writeCloud(cloud.concat(toAdd));
-  cloudStatus(ok ? `Enregistré : ${toAdd.length}` : "Échec");
-}
-
-/* ---------- BRANCHEMENTS ---------- */
-document.addEventListener("DOMContentLoaded", ()=>{
-  $("cloud-btn").onclick = ()=>{
-    $("cloudOverlay").classList.add("open");
-    $("cloudOverlay").setAttribute("aria-hidden","false");
-    $("cloudPass").value = getCloudPass();
-    cloudStatus("");
-  };
-
-  $("cloudClose").onclick =
-  $("cloudCancel").onclick = ()=>{
-    $("cloudOverlay").classList.remove("open");
-    $("cloudOverlay").setAttribute("aria-hidden","true");
-  };
-
-  $("cloudOverlay").onclick = e =>{
-    if(e.target === $("cloudOverlay"))
-      $("cloudOverlay").classList.remove("open");
-  };
-
-  $("cloudImport").onclick = async()=>{
-    setCloudPass($("cloudPass").value.trim());
-    await importNew();
-  };
-
-  $("cloudExport").onclick = async()=>{
-    setCloudPass($("cloudPass").value.trim());
-    await exportNew();
-  };
-});
-</script>
+     (nouveaux éléments uniquement)
 ========================= -->
-
 <script>
 /* ---------- CONFIG ---------- */
-const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj"; // token du partage
-const NC_FILE = "todo.json";              // fichier nuage
+const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
+const NC_FILE = "todo.json";
 
 function ncUrls(){
   return [
@@ -1226,8 +1124,8 @@ function ncUrls(){
 
 /* ---------- UI ---------- */
 
-// Ajout du bouton Nuage dans le footer (sans toucher au CSV)
-document.addEventListener("DOMContentLoaded", ()=>{
+// Bouton Nuage (ajout immédiat, sans DOMContentLoaded fragile)
+(function addCloudButton(){
   const footer = document.querySelector("footer");
   if(!footer || document.getElementById("cloud-btn")) return;
 
@@ -1237,7 +1135,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   btn.type = "button";
   btn.textContent = "Nuage";
   footer.prepend(btn);
-});
+})();
 
 // Popup Nuage
 document.body.insertAdjacentHTML("beforeend", `
@@ -1245,7 +1143,7 @@ document.body.insertAdjacentHTML("beforeend", `
   <div class="modal">
     <div class="modal-head">
       <h3>Nuage</h3>
-      <button class="x" id="cloudClose" type="button">✕</button>
+      <button class="x" id="cloudClose">✕</button>
     </div>
     <div class="modal-body">
       <div class="stack">
@@ -1269,7 +1167,7 @@ document.body.insertAdjacentHTML("beforeend", `
 </div>
 `);
 
-/* ---------- OUTILS ---------- */
+/* ---------- UTILITAIRES ---------- */
 const b64 = s => btoa(unescape(encodeURIComponent(s)));
 
 function cloudStatus(msg){
@@ -1283,15 +1181,103 @@ function setCloudPass(p){
   localStorage.setItem("todo_nc_pass", p || "");
 }
 
-/* ---------- LECTURE / ÉCRITURE ---------- */
+/* ---------- NUAGE ---------- */
 async function readCloud(){
   const pass = getCloudPass();
   if(!pass){ cloudStatus("Mot de passe requis"); return null; }
 
   for(const url of ncUrls()){
     try{
-      const r = await fetch(url, {
+      const r = await fetch(url,{
+        headers:{ Authorization:"Basic "+b64("anonymous:"+pass) }
+      });
+      if(r.status===404) return [];
+      if(!r.ok) continue;
+      const j = await r.json();
+      return Array.isArray(j)?j:null;
+    }catch{}
+  }
+  return null;
+}
 
+async function writeCloud(data){
+  const pass = getCloudPass();
+  if(!pass){ cloudStatus("Mot de passe requis"); return false; }
+
+  for(const url of ncUrls()){
+    try{
+      const r = await fetch(url,{
+        method:"PUT",
+        headers:{
+          Authorization:"Basic "+b64("anonymous:"+pass),
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(data,null,2)
+      });
+      if(r.ok) return true;
+    }catch{}
+  }
+  return false;
+}
+
+/* ---------- LOGIQUE INCRÉMENTALE ---------- */
+async function importNew(){
+  cloudStatus("Import…");
+  const cloud = await readCloud();
+  if(!cloud){ cloudStatus("Erreur lecture"); return; }
+
+  await ensureUidAndUpdated(await getAll());
+  const local = await getAll();
+  const uids = new Set(local.map(it=>it.uid));
+
+  let added=0;
+  for(const it of cloud){
+    if(it?.uid && !uids.has(it.uid)){
+      const c={...it}; delete c.id;
+      await addItem(c);
+      added++;
+    }
+  }
+  cloudStatus(`Import terminé : ${added}`);
+  await render();
+}
+
+async function exportNew(){
+  cloudStatus("Enregistrement…");
+  const cloud = await readCloud();
+  if(!cloud){ cloudStatus("Erreur lecture"); return; }
+
+  await ensureUidAndUpdated(await getAll());
+  const local = await getAll();
+  const cloudUIDs = new Set(cloud.map(it=>it.uid));
+
+  const toAdd = local
+    .filter(it=>it.uid && !cloudUIDs.has(it.uid))
+    .map(it=>{const c={...it}; delete c.id; return c;});
+
+  const ok = await writeCloud(cloud.concat(toAdd));
+  cloudStatus(ok?`Enregistré : ${toAdd.length}`:"Échec");
+}
+
+/* ---------- BRANCHEMENTS ---------- */
+document.getElementById("cloud-btn").onclick = ()=>{
+  cloudStatus("");
+  document.getElementById("cloudPass").value = getCloudPass();
+  cloudOverlay.classList.add("open");
+};
+
+cloudClose.onclick =
+cloudCancel.onclick = ()=> cloudOverlay.classList.remove("open");
+
+cloudImport.onclick = async()=>{
+  setCloudPass(cloudPass.value.trim());
+  await importNew();
+};
+cloudExport.onclick = async()=>{
+  setCloudPass(cloudPass.value.trim());
+  await exportNew();
+};
+</script>
 <!-- Service worker -->
 <script>
   if ("serviceWorker" in navigator) {
