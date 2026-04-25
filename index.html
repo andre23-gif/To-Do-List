@@ -850,7 +850,28 @@
     });
     const labels=Array.from(map.keys()).sort();
     const values=labels.map(k=>map.get(k));
-    drawLine($("lineChart"), labels, values);
+drawLine($("lineChart"), labels, values);
+
+// ===== LÉGENDE COURBE TEMPS =====
+const legend = $("lineLegend");
+if (legend) {
+  const totalMinutes = values.reduce((a,b)=>a+b,0);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  const labelTemps = (mode === "reel")
+    ? "Temps réel"
+    : "Temps estimé";
+
+  const fromTxt = from ? from.toLocaleDateString("fr-FR") : "début";
+  const toTxt = to ? to.toLocaleDateString("fr-FR") : "fin";
+
+  legend.innerHTML = `
+    <strong style="color:rgba(200,162,74,.95)">● ${labelTemps}</strong><br>
+    Période : ${fromTxt} → ${toTxt}<br>
+    Total cumulé : ${hours} h ${minutes} min
+  `;
+}
 
     const fam=new Map();
     filtered.forEach(it=>{
