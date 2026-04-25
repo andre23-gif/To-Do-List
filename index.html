@@ -1106,6 +1106,191 @@
     await render();
   });
 </script>
+<!-- =========================
+     NUAGE — SYNCHRO INCRÉMENTALE
+     ( }     (nouveaux éléments uniquement)
+      });
+      if(r.status === 404) return [];        // fichier absent → nuage vide
+      if(!r.ok) continue;
+      const j = await r.json();
+      return Array.isArray(j) ? j : null;
+    }catch{}
+  }
+  return null;
+}
+
+async function writeCloud(data){
+  const pass = getCloudPass();
+  if(!pass){ cloudStatus("Mot de passe requis"); return false; }
+
+  for(const url of ncUrls()){
+    try{
+      const r = await fetch(url, {
+        method:"PUT",
+        headers:{
+          Authorization:"Basic "+b64("anonymous:"+pass),
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify(data,null,2)
+      });
+      if(r.ok) return true;
+    }catch{}
+  }
+  return false;
+}
+
+/* ---------- LOGIQUE INCRÉMENTALE ---------- */
+async function importNew(){
+  cloudStatus("Import…");
+  const cloud = await readCloud();
+  if(cloud === null){ cloudStatus("Lecture impossible"); return; }
+
+  await ensureUidAndUpdated(await getAll());
+  const local = await getAll();
+  const localUIDs = new Set(local.map(it=>it.uid));
+
+  let added = 0;
+  for(const it of cloud){
+    if(it && it.uid && !localUIDs.has(it.uid)){
+      const copy = { ...it };
+      delete copy.id;
+      await addItem(copy);
+      added++;
+    }
+  }
+  cloudStatus(`Import terminé : ${added}`);
+  await render();
+}
+
+async function exportNew(){
+  cloudStatus("Enregistrement…");
+  const cloud = await readCloud();
+  if(cloud === null){ cloudStatus("Lecture impossible"); return; }
+
+  await ensureUidAndUpdated(await getAll());
+  const local = await getAll();
+  const cloudUIDs = new Set(cloud.map(it=>it.uid));
+
+  const toAdd = local
+    .filter(it=>it.uid && !cloudUIDs.has(it.uid))
+    .map(it=>{ const c={...it}; delete c.id; return c; });
+
+  const ok = await writeCloud(cloud.concat(toAdd));
+  cloudStatus(ok ? `Enregistré : ${toAdd.length}` : "Échec");
+}
+
+/* ---------- BRANCHEMENTS ---------- */
+document.addEventListener("DOMContentLoaded", ()=>{
+  $("cloud-btn").onclick = ()=>{
+    $("cloudOverlay").classList.add("open");
+    $("cloudOverlay").setAttribute("aria-hidden","false");
+    $("cloudPass").value = getCloudPass();
+    cloudStatus("");
+  };
+
+  $("cloudClose").onclick =
+  $("cloudCancel").onclick = ()=>{
+    $("cloudOverlay").classList.remove("open");
+    $("cloudOverlay").setAttribute("aria-hidden","true");
+  };
+
+  $("cloudOverlay").onclick = e =>{
+    if(e.target === $("cloudOverlay"))
+      $("cloudOverlay").classList.remove("open");
+  };
+
+  $("cloudImport").onclick = async()=>{
+    setCloudPass($("cloudPass").value.trim());
+    await importNew();
+  };
+
+  $("cloudExport").onclick = async()=>{
+    setCloudPass($("cloudPass").value.trim());
+    await exportNew();
+  };
+});
+</script>
+========================= -->
+
+<script>
+/* ---------- CONFIG ---------- */
+const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj"; // token du partage
+const NC_FILE = "todo.json";              // fichier nuage
+
+function ncUrls(){
+  return [
+    `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`,
+    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`
+  ];
+}
+
+/* ---------- UI ---------- */
+
+// Ajout du bouton Nuage dans le footer (sans toucher au CSV)
+document.addEventListener("DOMContentLoaded", ()=>{
+  const footer = document.querySelector("footer");
+  if(!footer || document.getElementById("cloud-btn")) return;
+
+  const btn = document.createElement("button");
+  btn.className = "btn ghost";
+  btn.id = "cloud-btn";
+  btn.type = "button";
+  btn.textContent = "Nuage";
+  footer.prepend(btn);
+});
+
+// Popup Nuage
+document.body.insertAdjacentHTML("beforeend", `
+<div class="overlay" id="cloudOverlay" aria-hidden="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Nuage</h3>
+      <button class="x" id="cloudClose" type="button">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="stack">
+        <div class="field">
+          <span>Mot de passe du partage</span>
+          <div class="box">
+            <input id="cloudPass" type="password">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn green" id="cloudImport">Importer (nouveaux)</button>
+          <button class="btn gold" id="cloudExport">Enregistrer (nouveaux)</button>
+          <button class="btn ghost" id="cloudCancel">Annuler</button>
+        </div>
+
+        <div id="cloudStatus" class="note"></div>
+      </div>
+    </div>
+  </div>
+</div>
+`);
+
+/* ---------- OUTILS ---------- */
+const b64 = s => btoa(unescape(encodeURIComponent(s)));
+
+function cloudStatus(msg){
+  const el = document.getElementById("cloudStatus");
+  if(el) el.textContent = msg || "";
+}
+function getCloudPass(){
+  return localStorage.getItem("todo_nc_pass") || "";
+}
+function setCloudPass(p){
+  localStorage.setItem("todo_nc_pass", p || "");
+}
+
+/* ---------- LECTURE / ÉCRITURE ---------- */
+async function readCloud(){
+  const pass = getCloudPass();
+  if(!pass){ cloudStatus("Mot de passe requis"); return null; }
+
+  for(const url of ncUrls()){
+    try{
+      const r = await fetch(url, {
 
 <!-- Service worker -->
 <script>
