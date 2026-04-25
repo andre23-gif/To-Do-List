@@ -826,19 +826,6 @@ const DEVICE_ID = getDeviceId();
     return Array.from(map.values());
   }
 
-
-    let local = await getAll();
-    await ensureUidAndUpdated(local);
-    local = await getAll();
-
-    const merged = mergeByUID(local, cloud);
-
-    for (const it of merged){
-      await putItem(it);
-    }
-    await ncSaveTasks(merged);
-  }
-
   let cloudTimer = null;
  
   async function updateStatus(id, statut){
