@@ -1389,14 +1389,12 @@ $("cloudOverlay").addEventListener("click", (e)=>{
   if(e.target === $("cloudOverlay")) closeCloud();
 });
 
-// Bouton vert = IMPORT (ajoute du nuage vers local)
-$("cloudSave").addEventListener("click", async()=>{
+$("cloudImport").addEventListener("click", async()=>{
   setCloudPass($("cloudPass").value.trim());
   await importFromCloud();
 });
 
-// BONUS: Export via double-clic sur bouton vert (optionnel)
-$("cloudSave").addEventListener("dblclick", async()=>{
+$("cloudExport").addEventListener("click", async()=>{
   setCloudPass($("cloudPass").value.trim());
   await exportToCloud();
 });
