@@ -742,21 +742,82 @@
   function clearCanvas(c){ const ctx=c.getContext("2d"); ctx.clearRect(0,0,c.width,c.height); return ctx; }
 
   function drawLine(canvas, labels, values){
-    const ctx=clearCanvas(canvas), W=canvas.width, H=canvas.height, pad=40;
-    const max=Math.max(10,...values);
-    ctx.strokeStyle="rgba(7,22,42,.18)";
-    ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
-    if(!labels.length) return;
-    const step=(W-2*pad)/Math.max(1,labels.length-1);
-    ctx.strokeStyle="rgba(200,162,74,.95)"; ctx.lineWidth=3;
+  const ctx = clearCanvas(canvas);
+  const W = canvas.width;
+  const H = canvas.height;
+
+  const padL = 60;
+  const padR = 20;
+  const padT = 20;
+  const padB = 60;
+
+  const max = Math.max(10, ...values);
+
+  // Axes
+  ctx.strokeStyle = "rgba(7,22,42,.25)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, H - padB);
+  ctx.lineTo(W - padR, H - padB);
+  ctx.stroke();
+
+  // Axe Y : graduations (temps)
+  ctx.fillStyle = "rgba(7,22,42,.7)";
+  ctx.font = "12px system-ui";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+
+  const steps = 4;
+  for(let i=0;i<=steps;i++){
+    const v = Math.round((max/steps)*i);
+    const y = (H - padB) - (H - padT - padB) * (v / max);
+    ctx.fillText(`${v} min`, padL - 6, y);
+
+    ctx.strokeStyle = "rgba(7,22,42,.08)";
     ctx.beginPath();
-    labels.forEach((lab,i)=>{
-      const x=pad+step*i;
-      const y=(H-pad)-(H-2*pad)*(values[i]/max);
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    });
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
     ctx.stroke();
   }
+
+  if(!labels.length) return;
+
+  // Courbe
+  const stepX = (W - padL - padR) / Math.max(1, labels.length - 1);
+  ctx.strokeStyle = "rgba(200,162,74,.95)";
+  ctx.lineWidth = 3;
+
+  ctx.beginPath();
+  labels.forEach((lab,i)=>{
+    const x = padL + stepX * i;
+    const y = (H - padB) - (H - padT - padB) * (values[i] / max);
+    if(i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // Axe X : dates (abscisses)
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillStyle = "rgba(7,22,42,.7)";
+
+  labels.forEach((lab,i)=>{
+    if(i % Math.ceil(labels.length / 6) !== 0 && i !== labels.length - 1) return;
+    const x = padL + stepX * i;
+    ctx.fillText(lab, x, H - padB + 8);
+  });
+
+  // Titres des axes
+  ctx.save();
+  ctx.fillStyle = "rgba(7,22,42,.85)";
+  ctx.font = "13px system-ui";
+  ctx.fillText("Période", (W + padL - padR)/2, H - 24);
+
+  ctx.translate(16, (H - padT - padB)/2 + padT);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("Temps passé (minutes)", 0, 0);
+  ctx.restore();
+}
 
   const PIE_COLORS=["#C8A24A","#0B1F3B","#2CA768","#7B5F2A","#7D3C98","#1F77B4","#D35400","#2E4053"];
 
