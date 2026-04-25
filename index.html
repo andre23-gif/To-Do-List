@@ -811,119 +811,6 @@ const DEVICE_ID = getDeviceId();
       if(changed) await putItem(it);
     }
   }
-// ===============================
-// NUAGE — BLOC PROPRE (2 APPAREILS)
-// ===============================
-
-// Token de partage Nextcloud
-const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
-
-// Fichiers lus (fusion)
-const NC_READ_FILES = [
-  "todo-iphone.json",
-  "todo-ipad.json"
-];
-
-// Fichier écrit par CET appareil uniquement
-const NC_WRITE_FILE = `todo-${DEVICE_ID}.json`;
-
-// URLs WebDAV stables (PAS de /webdav)
-function ncUrlsFor(file){
-  return [
-    `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${file}`,
-    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${file}`
-  ];
-}
-
-// Mot de passe (stocké localement)
-function getCloudPass(){
-  return localStorage.getItem("todo_nc_pass") || "";
-}
-function setCloudPass(p){
-  localStorage.setItem("todo_nc_pass", p || "");
-}
-
-// Message UI
-function setCloudStatus(msg){
-  const el = $("cloudStatus");
-  if(el) el.textContent = msg || "";
-}
-
-// Base64 UTF‑8 sûr (iOS inclus)
-function b64(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-
-// ----------- OUVERTURE / FERMETURE POPUP -----------
-function openCloud(){
-  $("cloudOverlay").classList.add("open");
-  $("cloudOverlay").setAttribute("aria-hidden","false");
-  $("cloudPass").value = getCloudPass();
-  setCloudStatus("");
-}
-function closeCloud(){
-  $("cloudOverlay").classList.remove("open");
-  $("cloudOverlay").setAttribute("aria-hidden","true");
-}
-
-// ----------- LECTURE DES 2 FICHIERS -----------
-async function ncLoadTasks(){
-  const pass = getCloudPass();
-if(!pass){
-  setCloudStatus("Mot de passe requis pour lire le nuage");
-  return [];
-}
-
-  setCloudStatus("Lecture du nuage…");
-  let all = [];
-
-  for(const file of NC_READ_FILES){
-    for(const url of ncUrlsFor(file)){
-      try{
-        const r = await fetch(url, {
-          headers:{
-            "Authorization": "Basic " + b64("anonymous:" + pass)
-          }
-        });
-        if(!r.ok) continue;
-
-        const data = await r.json();
-        if(Array.isArray(data)) all = all.concat(data);
-        break;
-      }catch(e){}
-    }
-  }
-
-  setCloudStatus(`Nuage OK (${all.length} éléments)`);
-  return all;
-}
-
-// ----------- ÉCRITURE : 1 SEUL FICHIER -----------
-async function ncSaveTasks(tasks){
-  const pass = getCloudPass();
-  if(!pass) return;
-
-  setCloudStatus(`Sauvegarde ${NC_WRITE_FILE}…`);
-
-  for(const url of ncUrlsFor(NC_WRITE_FILE)){
-    try{
-      const r = await fetch(url,{
-        method:"PUT",
-        headers:{
-          "Authorization": "Basic " + b64("anonymous:" + pass),
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify(tasks, null, 2)
-      });
-      if(r.ok){
-        setCloudStatus("✅ Nuage synchronisé");
-        return;
-      }
-    }catch(e){}
-  }
-
-  setCloudStatus("❌ Sauvegarde impossible");
-}
   function mergeByUID(localItems, cloudItems){
     const map = new Map();
     const add = (it)=>{
@@ -939,9 +826,6 @@ async function ncSaveTasks(tasks){
     return Array.from(map.values());
   }
 
-  async function syncMergeWithCloud(){
-    const cloud = await ncLoadTasks();
-    if(!cloud) return;
 
     let local = await getAll();
     await ensureUidAndUpdated(local);
@@ -956,18 +840,7 @@ async function ncSaveTasks(tasks){
   }
 
   let cloudTimer = null;
-  function scheduleCloudSave(){
-    clearTimeout(cloudTimer);
-    cloudTimer = setTimeout(async ()=>{
-      try{
-        const items = await getAll();
-        await ncSaveTasks(items);
-      }catch(e){
-        console.log("Nuage: sauvegarde impossible", e);
-      }
-    }, 800);
-  }
-
+ 
   async function updateStatus(id, statut){
     const items=await getAll();
     const it=items.find(x=>x.id===id);
@@ -976,7 +849,6 @@ async function ncSaveTasks(tasks){
     it.updatedAt = Date.now();
     it.archivedAt = (statut==="Terminé") ? Date.now() : null;
     await putItem(it);
-    scheduleCloudSave();
   }
 
   function switchTab(tab){
@@ -1231,7 +1103,6 @@ async function ncSaveTasks(tasks){
         meeting:null
       });
     }
-    scheduleCloudSave();
   }
 
   // Render listes
@@ -1264,7 +1135,7 @@ async function ncSaveTasks(tasks){
         <div class="trash" title="Supprimer">🗑</div>
       `;
       li.querySelector(".done").addEventListener("click", async()=>{ await updateStatus(it.id,"Terminé"); await render(); });
-      li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); scheduleCloudSave(); await render(); });
+      li.querySelector(".trash").addEventListener("click", async()=>{ await del(it.id); await render(); });
       li.querySelector(".status").addEventListener("change", async(e)=>{ await updateStatus(it.id,e.target.value); await render(); });
       ul.appendChild(li);
     });
@@ -1303,19 +1174,7 @@ async function ncSaveTasks(tasks){
     $("tab-archive").addEventListener("click", async()=>{ switchTab("archive"); await render(); });
     $("tab-stats").addEventListener("click", async()=>{ switchTab("stats"); await render(); });
 
-    // Nuage
-    $("cloud-btn").addEventListener("click", openCloud);
-    $("cloudClose").addEventListener("click", closeCloud);
-    $("cloudCancel").addEventListener("click", closeCloud);
-    $("cloudOverlay").addEventListener("click",(e)=>{ if(e.target===$("cloudOverlay")) closeCloud(); });
-
-    $("cloudSave").addEventListener("click", async()=>{
-      setCloudPass($("cloudPass").value.trim());
-      await syncMergeWithCloud();
-      closeCloud();
-      await render();
-    });
-
+  
     // Réunion
     $("meetingToggle").addEventListener("change", (e)=>{ if(e.target.checked) openMeeting(); });
     $("closeMeeting").addEventListener("click", closeMeeting);
@@ -1353,7 +1212,6 @@ async function ncSaveTasks(tasks){
         meeting
       });
 
-      scheduleCloudSave();
       closeMeeting();
       switchTab("todo");
       await render();
@@ -1383,7 +1241,6 @@ async function ncSaveTasks(tasks){
         meeting:null
       });
 
-      scheduleCloudSave();
       $("add-form").reset();
       fillSelect("statut",STATUTS,"A faire");
       fillSelect("categorie",CATEGORIES,"Moi-même");
@@ -1404,8 +1261,6 @@ async function ncSaveTasks(tasks){
       await render();
     });
 
-    // Fusion au démarrage si mot de passe déjà enregistré
-    await syncMergeWithCloud();
     await render();
   });
 </script>
