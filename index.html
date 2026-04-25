@@ -219,11 +219,6 @@
       resize:vertical;
       font-size:14px;
     }
-    .box:focus-within{
-      box-shadow:
-        inset 0 0 0 2px rgba(200,162,74,.30),
-        0 0 0 4px rgba(200,162,74,.10);
-    }
 
     .actions{
       display:flex;
@@ -258,27 +253,6 @@
       color:var(--navy2);
     }
 
-    .meeting-inline{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(31,122,76,.28);
-      background: linear-gradient(135deg, rgba(31,122,76,.08), rgba(44,167,104,.06));
-      box-shadow: inset 0 0 0 1px rgba(200,162,74,.12);
-    }
-    .meeting-inline input{
-      width:20px;
-      height:20px;
-      accent-color: var(--green);
-    }
-    .meeting-inline strong{
-      font-weight:1000;
-      color:rgba(7,22,42,.92);
-      letter-spacing:.2px;
-    }
-
     ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
 
     .item{
@@ -290,11 +264,6 @@
       border-radius:14px;
       background: rgba(255,255,255,.92);
       border:1px solid rgba(7,22,42,.10);
-    }
-    /* Réunion plus foncée */
-    .item.meeting{
-      background: rgba(22,92,58,.18);
-      border-color: rgba(22,92,58,.38);
     }
 
     .done, .trash{
@@ -314,9 +283,6 @@
       color:rgba(7,22,42,.82);
       border:1px solid rgba(7,22,42,.14);
     }
-    .main{ min-width:0; }
-    .line{ font-weight:1000; color:rgba(7,22,42,.92); }
-    .meta{ font-size:12px; color:rgba(7,22,42,.70); margin-top:4px; line-height:1.35; }
 
     .status{
       width:110px;
@@ -336,7 +302,6 @@
           "status trash";
       }
       .done{ grid-area:done; }
-      .main{ grid-area:main; }
       .status{ grid-area:status; width:100%; }
       .trash{ grid-area:trash; justify-self:end; }
     }
@@ -352,9 +317,6 @@
     }
     .overlay.open{ display:flex; }
 
-    /* Nuage centré */
-    #cloudOverlay.open{ align-items:center; }
-
     .modal{
       width:min(920px, 100%);
       max-height: calc(100vh - 24px);
@@ -364,34 +326,6 @@
       border:1px solid rgba(200,162,74,.55);
       box-shadow:var(--shadow);
       position:relative;
-    }
-    .modal::after{
-      content:"";
-      position:absolute;
-      inset:14px;
-      pointer-events:none;
-      border-radius: 12px;
-      background:
-        linear-gradient(var(--gold) 0 0) top left,
-        linear-gradient(var(--gold) 0 0) top left,
-        linear-gradient(var(--gold) 0 0) top right,
-        linear-gradient(var(--gold) 0 0) top right,
-        linear-gradient(var(--gold) 0 0) bottom left,
-        linear-gradient(var(--gold) 0 0) bottom left,
-        linear-gradient(var(--gold) 0 0) bottom right,
-        linear-gradient(var(--gold) 0 0) bottom right;
-      background-size:
-        22px 1px, 1px 22px,
-        22px 1px, 1px 22px,
-        22px 1px, 1px 22px,
-        22px 1px, 1px 22px;
-      background-repeat:no-repeat;
-      background-position:
-        0 0, 0 0,
-        100% 0, 100% 0,
-        0 100%, 0 100%,
-        100% 100%, 100% 100%;
-      opacity:.85;
     }
 
     .modal-head{
@@ -561,11 +495,10 @@
             </div>
           </div>
 
-<div class="actions">
-  <button class="btn green" id="cloudImport" type="button">Importer</button>
-  <button class="btn gold" id="cloudExport" type="button">Exporter</button>
-  <button class="btn ghost" id="cloudCancel" type="button">Annuler</button>
-</div>
+          <!-- ✅ Boutons normaux (ajout / vider) -->
+          <div class="actions">
+            <button class="btn gold" type="submit">Ajouter</button>
+            <button class="btn ghost" id="reset-btn" type="button">Vider</button>
           </div>
         </form>
       </div>
@@ -630,47 +563,19 @@
           <div class="section-title"><span class="tag">▮</span> Statuts</div>
           <canvas id="barChart" width="1000" height="280"></canvas>
         </div>
-
       </div>
     </div>
   </section>
 </main>
 
 <footer>
-  <button class="btn ghost" id="cloud-btn" type="button">Nuage</button>
+  <!-- ✅ Nuage supprimé -->
   <button class="btn ghost" id="export-btn" type="button">Exporter CSV</button>
   <button class="btn ghost" id="import-btn" type="button">Importer CSV</button>
   <input id="import-file" type="file" accept=".csv,text/csv" hidden>
 </footer>
 
-<!-- POPUP NUAGE (hors footer) -->
-<div class="overlay" id="cloudOverlay" aria-hidden="true">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>Nuage</h3>
-      <button class="x" id="cloudClose" type="button">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="stack">
-        <div class="field">
-          <span>Mot de passe du partage</span>
-          <div class="box">
-            <input id="cloudPass" type="password" autocomplete="current-password">
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn green" id="cloudSave" type="button">Enregistrer</button>
-          <button class="btn ghost" id="cloudCancel" type="button">Annuler</button>
-        </div>
-
-        <div id="cloudStatus" class="note"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- POPUP RÉUNION -->
+<!-- POPUP RÉUNION (conservée) -->
 <div class="overlay" id="meetingOverlay" aria-hidden="true">
   <div class="modal">
     <div class="modal-head">
@@ -729,17 +634,6 @@
 </div>
 
 <script>
-  // ===============================
-// IDENTIFICATION DE L’APPAREIL
-// ===============================
-function getDeviceId(){
-  const ua = navigator.userAgent.toLowerCase();
-  if (ua.includes("ipad")) return "ipad";
-  if (ua.includes("iphone")) return "iphone";
-  return "autre";
-}
-
-const DEVICE_ID = getDeviceId();
   // Menus
   const FAMILLES = [
     "Amicale","Baroque","CDC/suivi","Communication","Coordination","Correction",
@@ -791,7 +685,7 @@ const DEVICE_ID = getDeviceId();
   }
 
   function esc(s){
-    return (s||"").replace(/[&<>"']/g, m => ({
+    return (s||"").replace(/[&<>\"']/g, m => ({
       "&":"&amp;",
       "<":"&lt;",
       ">":"&gt;",
@@ -800,7 +694,6 @@ const DEVICE_ID = getDeviceId();
     }[m]));
   }
 
-  // UID / updatedAt (fusion)
   function makeUID() {
     if (crypto && crypto.randomUUID) return crypto.randomUUID();
     return "uid-" + Math.random().toString(16).slice(2) + "-" + Date.now();
@@ -813,160 +706,7 @@ const DEVICE_ID = getDeviceId();
       if(changed) await putItem(it);
     }
   }
-  function mergeByUID(localItems, cloudItems){
-    const map = new Map();
-    const add = (it)=>{
-      if(!it || !it.uid) return;
-      const prev = map.get(it.uid);
-      if(!prev){ map.set(it.uid, it); return; }
-      const a = prev.updatedAt || 0;
-      const b = it.updatedAt || 0;
-      map.set(it.uid, b >= a ? it : prev);
-    };
-    localItems.forEach(add);
-    (cloudItems||[]).forEach(add);
-    return Array.from(map.values());
-  }
-// ====== DEBUT BLOC NUAGE MANUEL ======
 
-// Paramètres Nextcloud
-const NC_SHARE_TOKEN = "EbxSNijiQN5zxtj";
-const NC_FILE = "todo.json";
-
-function ncUrls(){
-  return [
-    `https://nuage03.apps.education.fr/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`,
-    `https://nuage03.apps.education.fr/index.php/public.php/dav/files/${NC_SHARE_TOKEN}/${NC_FILE}`
-  ];
-}
-
-// Mot de passe
-function getCloudPass(){ return localStorage.getItem("todo_nc_pass") || ""; }
-function setCloudPass(p){ localStorage.setItem("todo_nc_pass", p || ""); }
-
-// Message UI
-function setCloudStatus(msg){
-  const el = $("cloudStatus");
-  if(el) el.textContent = msg || "";
-}
-
-// Base64 UTF-8 (compatible iOS)
-function b64(str){
-  return btoa(unescape(encodeURIComponent(str)));
-}
-
-// Ouvrir/Fermer popup (tu as déjà le HTML)
-function openCloud(){
-  $("cloudOverlay").classList.add("open");
-  $("cloudOverlay").setAttribute("aria-hidden","false");
-  $("cloudPass").value = getCloudPass();
-  setCloudStatus("");
-}
-function closeCloud(){
-  $("cloudOverlay").classList.remove("open");
-  $("cloudOverlay").setAttribute("aria-hidden","true");
-}
-
-// Lire le JSON nuage (retourne [] si absent)
-async function readCloudJson(){
-  const pass = getCloudPass();
-  if(!pass){
-    setCloudStatus("Mot de passe requis");
-    return null;
-  }
-
-  for(const url of ncUrls()){
-    try{
-      const r = await fetch(url, {
-        headers:{ Authorization: "Basic " + b64("anonymous:" + pass) }
-      });
-      if(!r.ok) continue;
-      const j = await r.json();
-      return Array.isArray(j) ? j : null;
-    }catch(e){}
-  }
-  return []; // fichier introuvable => considéré vide
-}
-
-// Écrire le JSON nuage (écrase le fichier avec la version fusionnée)
-async function writeCloudJson(array){
-  const pass = getCloudPass();
-  if(!pass){
-    setCloudStatus("Mot de passe requis");
-    return false;
-  }
-
-  for(const url of ncUrls()){
-    try{
-      const r = await fetch(url, {
-        method:"PUT",
-        headers:{
-          Authorization: "Basic " + b64("anonymous:" + pass),
-          "Content-Type":"application/json"
-        },
-        body: JSON.stringify(array, null, 2)
-      });
-      if(r.ok) return true;
-    }catch(e){}
-  }
-  return false;
-}
-
-// IMPORT = ajouter localement ce qui est dans le nuage mais pas chez toi
-async function importFromCloud(){
-  setCloudStatus("Import…");
-
-  const cloud = await readCloudJson();
-  if(cloud === null){
-    setCloudStatus("Nuage: JSON invalide");
-    return;
-  }
-
-  const local = await getAll();
-  const localUIDs = new Set(local.map(it => it.uid));
-
-  let added = 0;
-for(const it of cloud){
-  if(it && it.uid && !localUIDs.has(it.uid)){
-    const copy = { ...it };
-    delete copy.id;           // <-- IMPORTANT (id local)
-    await addItem(copy);
-    added++;
-  }
-}
-
-  setCloudStatus(`Import terminé (${added} ajout(s))`);
-  await render();
-}
-
-// EXPORT = ajouter dans le nuage ce qui est local mais absent du nuage
-async function exportToCloud(){
-  setCloudStatus("Export…");
-
-  const cloud = await readCloudJson();
-  if(cloud === null){
-    setCloudStatus("Nuage: JSON invalide");
-    return;
-  }
-
-  const local = await getAll();
-
-  const cloudUIDs = new Set((cloud||[]).filter(x=>x&&x.uid).map(x=>x.uid));
-const merged = (cloud||[]).concat(
-  local
-    .filter(it => it && it.uid && !cloudUIDs.has(it.uid))
-    .map(it => {
-      const copy = { ...it };
-      delete copy.id;         // <-- IMPORTANT
-      return copy;
-    })
-);
-  const ok = await writeCloudJson(merged);
-  setCloudStatus(ok ? "Export terminé" : "Export échoué");
-}
-
-// ====== FIN BLOC NUAGE MANUEL ======
- 
   async function updateStatus(id, statut){
     const items=await getAll();
     const it=items.find(x=>x.id===id);
@@ -986,7 +726,7 @@ const merged = (cloud||[]).concat(
     $("tab-stats").classList.toggle("active", tab==="stats");
   }
 
-  // Stats
+  // Stats helpers
   function parseTimeToMinutes(t){
     if(!t||!t.includes(":")) return 0;
     const [h,m]=t.split(":").map(n=>parseInt(n,10));
@@ -1070,19 +810,6 @@ const merged = (cloud||[]).concat(
     ctx.lineTo(W - padR, H - padB);
     ctx.stroke();
 
-    ctx.fillStyle = "rgba(7,22,42,.72)";
-    ctx.font = "12px system-ui";
-    for (let i=0;i<=4;i++){
-      const y = padT + (H - padT - padB) * (i/4);
-      const v = Math.round(maxV * (1 - i/4));
-      ctx.strokeStyle = "rgba(7,22,42,.08)";
-      ctx.beginPath();
-      ctx.moveTo(padL, y);
-      ctx.lineTo(W - padR, y);
-      ctx.stroke();
-      ctx.fillText(String(v), 8, y + 4);
-    }
-
     const n = Math.max(1, entries.length);
     const slot = (W - padL - padR) / n;
     const barW = Math.max(18, slot * 0.55);
@@ -1094,10 +821,6 @@ const merged = (cloud||[]).concat(
 
       ctx.fillStyle = colorFor(e.label);
       ctx.fillRect(x, y, barW, h);
-
-      ctx.fillStyle = "rgba(7,22,42,.85)";
-      ctx.font = "12px system-ui";
-      ctx.fillText(String(e.value), x + barW/2 - 6, y - 6);
 
       ctx.fillStyle = "rgba(7,22,42,.75)";
       ctx.font = "12px system-ui";
@@ -1119,7 +842,6 @@ const merged = (cloud||[]).concat(
       return true;
     });
 
-    // Courbe
     const map=new Map();
     filtered.forEach(it=>{
       const k=dateKeyForItem(it);
@@ -1130,12 +852,6 @@ const merged = (cloud||[]).concat(
     const values=labels.map(k=>map.get(k));
     drawLine($("lineChart"), labels, values);
 
-    const lineLegend = $("lineLegend");
-    if(lineLegend){
-      lineLegend.textContent = `Courbe : minutes par jour — mode : ${mode==="reel" ? "Temps réel" : "Temps estimé"}`;
-    }
-
-    // Familles + légende
     const fam=new Map();
     filtered.forEach(it=>{
       const k=it.famille||"(Sans famille)";
@@ -1146,7 +862,6 @@ const merged = (cloud||[]).concat(
     drawPie($("pieChart"), famEntries);
     renderPieLegend(famEntries);
 
-    // Statuts
     const st=new Map([["A faire",0],["En cours",0],["Terminé",0]]);
     filtered.forEach(it=>st.set(it.statut,(st.get(it.statut)||0)+1));
     const stEntries=Array.from(st.entries()).map(([label,value])=>({label,value}));
@@ -1234,8 +949,11 @@ const merged = (cloud||[]).concat(
   // Render listes
   async function render(){
     const items=await getAll();
-    const todo=items.filter(x=>x.statut!=="Terminé");
-    const arch=items.filter(x=>x.statut==="Terminé").sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
+    await ensureUidAndUpdated(items);
+
+    const all = await getAll();
+    const todo=all.filter(x=>x.statut!=="Terminé");
+    const arch=all.filter(x=>x.statut==="Terminé").sort((a,b)=>(b.archivedAt||0)-(a.archivedAt||0));
 
     const ul=$("todo-list"); ul.innerHTML="";
     todo.forEach(it=>{
@@ -1285,7 +1003,7 @@ const merged = (cloud||[]).concat(
     });
 
     if(!$("stats-section").hidden){
-      await renderStats(items);
+      await renderStats(all);
     }
   }
 
@@ -1300,7 +1018,6 @@ const merged = (cloud||[]).concat(
     $("tab-archive").addEventListener("click", async()=>{ switchTab("archive"); await render(); });
     $("tab-stats").addEventListener("click", async()=>{ switchTab("stats"); await render(); });
 
-  
     // Réunion
     $("meetingToggle").addEventListener("change", (e)=>{ if(e.target.checked) openMeeting(); });
     $("closeMeeting").addEventListener("click", closeMeeting);
@@ -1322,7 +1039,6 @@ const merged = (cloud||[]).concat(
 
       await addItem({
         uid: makeUID(),
-        device: DEVICE_ID,
         updatedAt: now,
         createdAt: now,
         actionPrecise:label||"Réunion",
@@ -1351,7 +1067,6 @@ const merged = (cloud||[]).concat(
 
       await addItem({
         uid: makeUID(),
-        device: DEVICE_ID,
         updatedAt: now,
         createdAt: now,
         actionPrecise:$("actionPrecise").value.trim(),
@@ -1377,6 +1092,7 @@ const merged = (cloud||[]).concat(
     $("reset-btn").addEventListener("click", ()=> $("add-form").reset());
     $("statsRefresh").addEventListener("click", async()=> renderStats(await getAll()));
 
+    // CSV (seul mécanisme externe conservé)
     $("export-btn").addEventListener("click", exportCSV);
     $("import-btn").addEventListener("click", ()=> $("import-file").click());
     $("import-file").addEventListener("change", async(e)=>{
@@ -1386,34 +1102,12 @@ const merged = (cloud||[]).concat(
       e.target.value="";
       await render();
     });
-// ====== DEBUT BRANCHEMENT BOUTONS NUAGE ======
 
-// Ouvrir popup
-$("cloud-btn").addEventListener("click", openCloud);
-
-// Fermer popup
-$("cloudClose").addEventListener("click", closeCloud);
-$("cloudCancel").addEventListener("click", closeCloud);
-$("cloudOverlay").addEventListener("click", (e)=>{
-  if(e.target === $("cloudOverlay")) closeCloud();
-});
-
-$("cloudImport").addEventListener("click", async()=>{
-  setCloudPass($("cloudPass").value.trim());
-  await importFromCloud();
-});
-
-$("cloudExport").addEventListener("click", async()=>{
-  setCloudPass($("cloudPass").value.trim());
-  await exportToCloud();
-});
-
-// ====== FIN BRANCHEMENT BOUTONS NUAGE ======
     await render();
   });
 </script>
 
-<!-- Service worker: update + reload si nouveau contrôleur -->
+<!-- Service worker -->
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
@@ -1428,7 +1122,7 @@ $("cloudExport").addEventListener("click", async()=>{
   }
 </script>
 
-<!-- Auto-update anti cache GitHub Pages/Safari -->
+<!-- Auto-update anti cache -->
 <script>
 (function(){
   const build = document.querySelector('meta[name="app-build"]')?.content || "0";
