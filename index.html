@@ -11,6 +11,7 @@
   <!-- PWA (FIX : plus de texte brut affiché) -->
 <!-- PWA -->
 <link rel="manifest" href="./manifest.webmanifest">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 <meta name="theme-color" content="#0B1F3B">
 
   <style>
@@ -459,7 +460,12 @@
     </div>
   </div>
 </header>
-
+<div id="auth-form">
+  <input id="auth-email" type="email" placeholder="Email">
+  <input id="auth-password" type="password" placeholder="Mot de passe">
+  <button onclick="login(document.getElementById('auth-email').value, document.getElementById('auth-password').value)">Connexion</button>
+  <button onclick="signup(document.getElementById('auth-email').value, document.getElementById('auth-password').value)">Inscription</button>
+</div>
 <main>
   <section id="todo-section">
     <div class="card">
@@ -690,6 +696,31 @@ const CATEGORIES = [
 ];
 const STATUTS = ["A faire","En cours","Terminé"];
 
+const supabase = supabase.createClient(
+  "https://pxdtyaqjxmihaeericqf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4ZHR5YXFqeG1paGFlZXJpY3FmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODg1NDEsImV4cCI6MjA5Mjc2NDU0MX0.3sS2Nj9GqcgEAn8OzA1a24xOiwDCIWFL-XKLTd9CWus"
+);  
+
+async function login(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) { alert("Erreur de connexion : " + error.message); return null; }
+  alert("Connexion réussie !");
+  location.reload();
+  return data.user;
+}
+
+async function signup(email, password) {
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) { alert("Erreur d’inscription : " + error.message); return null; }
+  alert("Inscription réussie ! Connecte-toi.");
+  return data.user;
+}
+
+async function getUserId() {
+  const { data } = await supabase.auth.getUser();
+  return data?.user?.id || null;
+}
+  
 // IndexedDB
 const DB_NAME="todo_local_db";
 const DB_VERSION=13;
@@ -746,9 +777,21 @@ function makeUID() {
 async function ensureUidAndUpdated(items){
   for (const it of items){
     let changed = false;
-    if(!it.uid){ it.uid = makeUID(); changed=true; }
-    if(!it.updatedAt){ it.updatedAt = it.createdAt || Date.now(); changed=true; }
-    if(changed) await putItem(it);
+
+    if(!it.uid){
+      it.uid = makeUID();
+      changed = true;
+    }
+
+    if(!it.updatedAt){
+      it.updatedAt = it.createdAt || Date.now();
+      changed = true;
+    }
+
+    if(changed){
+      it.owner = await getUserId();
+      await putItem(it);
+    }
   }
 }
 
@@ -782,6 +825,7 @@ async function finishTaskById(id){
   it.statut = "Terminé";
   it.updatedAt = Date.now();
   it.archivedAt = Date.now();
+  it.owner = await getUserId();
   await putItem(it);
   return true;
 }
@@ -793,6 +837,7 @@ async function updateStatus(id, statut){
   it.statut=statut;
   it.updatedAt = Date.now();
   it.archivedAt = (statut==="Terminé") ? Date.now() : null;
+  it.owner = await getUserId();
   await putItem(it);
 }
 
@@ -1113,6 +1158,7 @@ async function importCSV(file){
       archivedAt: statut==="Terminé" ? now : null,
       isMeeting:false,
       meeting:null
+      owner: await getUserId(),
     });
   }
 }
@@ -1210,6 +1256,20 @@ async function render(){
    Boot
 =============================== */
 document.addEventListener("DOMContentLoaded", async()=>{
+  const { data } = await supabase.auth.getUser();
+if (!data?.user) {
+  alert("Connecte-toi pour accéder à l'application.");
+  document.getElementById("auth-form").style.display = "block";
+  return;
+}
+document.getElementById("auth-form").style.display = "none";
+  // Ici tu peux continuer le reste de ton code d'initialisation
+// Par exemple :
+db=await openDb();
+fillSelect("famille",FAMILLES,FAMILLES[0]);
+fillSelect("categorie",CATEGORIES,"Moi-même");
+fillSelect("statut",STATUTS,"A faire");
+// ... etc.
   db=await openDb();
 
   fillSelect("famille",FAMILLES,FAMILLES[0]);
@@ -1255,6 +1315,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
       archivedAt:null,
       isMeeting:true,
       meeting
+      owner: await getUserId(),
     });
 
     closeMeeting();
