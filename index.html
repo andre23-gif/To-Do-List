@@ -836,7 +836,16 @@ function drawLine(canvas, labels, values){
   ctx.lineTo(padL, H - padB);
   ctx.lineTo(W - padR, H - padB);
   ctx.stroke();
-
+// --- AJOUT : dessiner des points pour rendre visible même 1 seule valeur ---
+ctx.fillStyle = "rgba(200,162,74,.95)";
+labels.forEach((lab,i)=>{
+  const x = padL + stepX*i;
+  const y = (H-padB)-(H-padT-padB)*(values[i]/max);
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+});
+``
   // graduations Y
   ctx.fillStyle = "rgba(7,22,42,.7)";
   ctx.font = "12px system-ui";
