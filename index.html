@@ -1256,13 +1256,13 @@ async function render(){
    Boot
 =============================== */
 document.addEventListener("DOMContentLoaded", async()=>{
-  const { data } = await supabase.auth.getUser();
+const { data } = await supabase.auth.getUser();
 if (!data?.user) {
-  alert("Connecte-toi pour accéder à l'application.");
   document.getElementById("auth-form").style.display = "block";
-  return;
+} else {
+  document.getElementById("auth-form").style.display = "none";
 }
-document.getElementById("auth-form").style.display = "none";
+
   // Ici tu peux continuer le reste de ton code d'initialisation
 // Par exemple :
 db=await openDb();
